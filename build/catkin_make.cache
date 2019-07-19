@@ -1,0 +1,2 @@
+point_cloud_transport
+-DCATKIN_DEVEL_PREFIX=/home/jakub/Desktop/ROS_workspace_1/devel -DCMAKE_INSTALL_PREFIX=/home/jakub/Desktop/ROS_workspace_1/install -G Unix Makefiles

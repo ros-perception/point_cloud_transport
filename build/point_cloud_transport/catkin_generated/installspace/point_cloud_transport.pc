@@ -1,0 +1,8 @@
+prefix=/home/jakub/Desktop/ROS_workspace_1/install
+
+Name: point_cloud_transport
+Description: Description of point_cloud_transport
+Version: 0.0.1
+Cflags: -I/home/jakub/Desktop/ROS_workspace_1/install/include
+Libs: -L/home/jakub/Desktop/ROS_workspace_1/install/lib 
+Requires: dynamic_reconfigure message_runtime roscpp rosgraph_msgs std_msgs
