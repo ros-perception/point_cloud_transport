@@ -1,9 +1,0 @@
-\subsubsection usage Usage
-\verbatim
-<node name="point_cloud_transport" pkg="point_cloud_transport" type="point_cloud_transport">
-  <param name="teststring" type="str" value="Why did the chicken cross the road?" />
-  <param name="enable" type="bool" value="True" />
-  <param name="testint" type="int" value="0" />
-</node>
-\endverbatim
-

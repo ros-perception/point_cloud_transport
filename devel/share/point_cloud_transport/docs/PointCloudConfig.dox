@@ -1,8 +1,0 @@
-\subsubsection parameters ROS parameters
-
-Reads and maintains the following parameters on the ROS server
-
-- \b "~teststring" : \b [str] String. min: , default: Why did the chicken cross the road?, max: 
-- \b "~enable" : \b [bool] Enable node operation. min: False, default: True, max: True
-- \b "~testint" : \b [int] Number. min: -100, default: 0, max: 100
-
