@@ -5,13 +5,15 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/PointField.h>
 #include <iomanip> // for std::setprecision and std::fixed
 #include "PC2toDraco.h"
+#include "DracotoPC2.h"
 #include "draco/compression/decode.h"
 #include "draco/compression/encode.h"
 
 
-// a callback function executed each time a new pose message arrives
+// a callback function executed each time a new message arrives
 void PC2MessageReceived(const sensor_msgs::PointCloud2 & msg){
     ROS_INFO_STREAM(std::setprecision(2) << std::fixed);
     //std::cout << "Received PC2, size: " << msg.width*msg.height << std::endl;
@@ -52,7 +54,7 @@ void PC2MessageReceived(const sensor_msgs::PointCloud2 & msg){
     }
 
 
-    PC2toDraco converter(msg);
+    PC2toDraco converter(cloud_msg);
 
     std::unique_ptr<draco::PointCloud> pc = converter.convert();
 
@@ -115,14 +117,32 @@ void PC2MessageReceived(const sensor_msgs::PointCloud2 & msg){
         //std::cout << float_arr[i] << std::endl;
     }
 
+    //! DracotoPC2 testing
+
+    sensor_msgs::PointCloud2 new_PC2;
+
+    DracotoPC2 converter_b( std::move(decoded_pc), &cloud_msg.fields[0], cloud_msg.point_step);
+
+    new_PC2 = converter_b.convert();
+
+    new_PC2.header=msg.header;
+    new_PC2.fields=msg.fields;
+    new_PC2.is_bigendian=msg.is_bigendian;
+    new_PC2.is_dense=msg.is_dense;
+    //new_PC2.header=msg.header;
 
 
+    std::cout << " FULL PROCESS FINISHED" << std::endl;
 }
 
 int main(int argc, char**argv){
     // initialize the ROS system
     ros::init(argc, argv, "subscribe_to_pose");
     ros::NodeHandle nh;
+
+    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2>(
+            "/new_point_cloud", 1000); // 1000 is size of queue
+
 
     // create a subscriber object
     ros::Subscriber sub = nh.subscribe("/dynamic_point_cloud", 1000, &PC2MessageReceived);

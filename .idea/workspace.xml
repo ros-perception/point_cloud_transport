@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3969babf-0904-4b53-99d3-32b9bbdf4cd3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/ROS_workspace_1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/dictionaries/jakub.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/point_cloud_transport.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cfg/PointCloud.cfg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CMakeCCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CMakeCXXCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CMakeSystem.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CompilerIdC/CMakeCCompilerId.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CompilerIdC/a.out" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CompilerIdCXX/CMakeCXXCompilerId.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/3.14.3/CompilerIdCXX/a.out" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/clion-environment.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/cmake.check_cache" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/feature_tests.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/feature_tests.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/cmake-build-debug/CMakeFiles/feature_tests.cxx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/debug_msg.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_encoding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/animation/keyframe_animation_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_octahedron_transform.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_octahedron_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_quantization_transform.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_quantization_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_transform.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_transform_data.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/attribute_transform_type.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/geometry_attribute.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/geometry_attribute.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/geometry_indices.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/point_attribute.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/point_attribute.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/attributes/point_attribute_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/attributes_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/attributes_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/attributes_decoder_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/attributes_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/attributes_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/kd_tree_attributes_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/kd_tree_attributes_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/kd_tree_attributes_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/kd_tree_attributes_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/kd_tree_attributes_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/linear_sequencer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/mesh_attribute_indices_encoding_data.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/normal_compression_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/point_d_vector.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/point_d_vector_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/points_sequencer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_constrained_multi_parallelogram_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_data.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_geometric_normal_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_geometric_normal_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_geometric_normal_predictor_area.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_geometric_normal_predictor_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_multi_parallelogram_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_multi_parallelogram_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_parallelogram_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_parallelogram_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_parallelogram_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_tex_coords_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_tex_coords_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_tex_coords_portable_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_tex_coords_portable_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/mesh_prediction_scheme_tex_coords_portable_predictor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_decoder_factory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_decoder_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_decoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_delta_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_delta_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_encoder_factory.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_encoder_factory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_encoder_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_encoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_factory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_canonicalized_transform_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_canonicalized_transform_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_decoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_encoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_transform_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_normal_octahedron_transform_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_wrap_decoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_wrap_encoding_transform.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/prediction_schemes/prediction_scheme_wrap_transform_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_decoders_controller.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_decoders_controller.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_encoders_controller.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_attribute_encoders_controller.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_integer_attribute_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_integer_attribute_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_integer_attribute_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_integer_attribute_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_integer_attribute_encoding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_normal_attribute_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_normal_attribute_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_normal_attribute_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_normal_attribute_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_quantization_attribute_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_quantization_attribute_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_quantization_attribute_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/attributes/sequential_quantization_attribute_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/adaptive_rans_bit_coding_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/adaptive_rans_bit_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/adaptive_rans_bit_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/adaptive_rans_bit_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/adaptive_rans_bit_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/direct_bit_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/direct_bit_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/direct_bit_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/direct_bit_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/folded_integer_bit_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/folded_integer_bit_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/rans_bit_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/rans_bit_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/rans_bit_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/rans_bit_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/rans_coding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/symbol_bit_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/symbol_bit_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/symbol_bit_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/bit_coders/symbol_bit_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/compression_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/decoder_options.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/decoder_options_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/draco_options.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/encoder_options.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/config/encoding_features.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/decode.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/decode.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/decode_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/encode.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/encode.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/encode_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/encode_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/ans.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/rans_symbol_coding.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/rans_symbol_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/rans_symbol_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/shannon_entropy.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/shannon_entropy.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/shannon_entropy_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/symbol_coding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/symbol_decoding.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/symbol_decoding.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/symbol_encoding.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/entropy/symbol_encoding.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/expert_encode.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/expert_encode.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_decoder_helpers.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_decoder_impl.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_decoder_impl.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_decoder_impl_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoder_impl.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoder_impl.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoder_impl_interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_encoding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_shared.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_predictive_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_predictive_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_valence_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_edgebreaker_traversal_valence_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_encoder_helpers.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_encoder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_sequential_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_sequential_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_sequential_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/mesh_sequential_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/traverser/depth_first_traverser.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/traverser/max_prediction_degree_traverser.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/traverser/mesh_attribute_indices_encoding_observer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/traverser/mesh_traversal_sequencer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/mesh/traverser/traverser_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/dynamic_integer_points_kd_tree_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/dynamic_integer_points_kd_tree_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/dynamic_integer_points_kd_tree_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/dynamic_integer_points_kd_tree_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/float_points_tree_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/float_points_tree_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/float_points_tree_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/float_points_tree_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/integer_points_kd_tree_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/integer_points_kd_tree_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/integer_points_kd_tree_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/integer_points_kd_tree_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/point_cloud_compression_method.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/point_cloud_types.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/quantize_points_3.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/algorithms/queuing_policy.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_kd_tree_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_kd_tree_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_kd_tree_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_kd_tree_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_kd_tree_encoding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_sequential_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_sequential_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_sequential_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_sequential_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/compression/point_cloud/point_cloud_sequential_encoding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/bit_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/bit_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/bounding_box.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/bounding_box.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/buffer_bit_coding_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/cycle_timer.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/cycle_timer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/data_buffer.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/data_buffer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/decoder_buffer.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/decoder_buffer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/divide.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/divide.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_index_type.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_index_type_vector.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_test_base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_test_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_test_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_tests.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_types.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_types.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/draco_version.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/encoder_buffer.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/encoder_buffer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/hash_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/hash_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/macros.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/math_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/math_utils_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/options.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/options.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/quantization_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/quantization_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/quantization_utils_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/status.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/status_or.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/status_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/varint_decoding.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/varint_encoding.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/vector_d.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/core/vector_d_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/draco_features.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/file_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/file_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/file_utils_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/mesh_io.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/mesh_io.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_decoder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/obj_encoder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/parser_utils.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/parser_utils.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_decoder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_property_reader.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_property_writer.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_reader.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_reader.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/ply_reader_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/point_cloud_io.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/point_cloud_io.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/io/point_cloud_io_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/animation_decoder_webidl_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/animation_decoder_webidl_wrapper.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/animation_encoder_webidl_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/animation_encoder_webidl_wrapper.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/decoder_webidl_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/decoder_webidl_wrapper.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_animation_decoder_glue_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_animation_encoder_glue_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_animation_web_decoder.idl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_animation_web_encoder.idl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_decoder_glue_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_encoder_glue_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_web_decoder.idl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/draco_web_encoder.idl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/encoder_webidl_wrapper.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/encoder_webidl_wrapper.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/finalize.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/prepareCallbacks.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/javascript/emscripten/version.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/maya/draco_maya_plugin.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/maya/draco_maya_plugin.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/corner_table.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/corner_table.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/corner_table_iterators.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_are_equivalent.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_are_equivalent.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_are_equivalent_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_attribute_corner_table.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_attribute_corner_table.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_cleanup.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_cleanup.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_cleanup_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_misc_functions.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_misc_functions.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_stripifier.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/mesh_stripifier.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/triangle_soup_mesh_builder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/triangle_soup_mesh_builder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/triangle_soup_mesh_builder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/mesh/valence_cache.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/geometry_metadata.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/geometry_metadata.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_decoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_encoder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_encoder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/metadata/metadata_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud_builder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud_builder.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud_builder_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/point_cloud/point_cloud_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/tools/draco_decoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/tools/draco_encoder.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/unity/draco_unity_plugin.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/unity/draco_unity_plugin.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/draco/unity/draco_unity_plugin_test.cc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/DracotoPC2.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/PC2toDraco.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_transport/listener.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_transport/talker.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/launch/test.launch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/launch/tools.launch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/lib/libdraco.a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/lib/libdracodec.a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/lib/libdracoenc.a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/msg/PointCloudTransportData.msg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/package.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/DracotoPC2.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/PC2toDraco.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/listener.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/nodes/listener_node.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/nodes/talker_node.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/notes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/src/talker.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/test/pubtry.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport/test/subtry.cpp" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/src/cmake-build-debug/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/DracotoPC2.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="688">
+              <caret line="67" column="27" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/src/DracotoPC2.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="786">
+              <caret line="113" selection-start-line="113" selection-end-line="113" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/test/subtry.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="505">
+              <caret line="108" column="70" selection-start-line="108" selection-start-column="70" selection-end-line="108" selection-end-column="70" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/test/pubtry.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="667">
+              <caret line="130" column="25" selection-start-line="130" selection-start-column="8" selection-end-line="130" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="448">
+              <caret line="40" column="75" selection-start-line="40" selection-start-column="75" selection-end-line="40" selection-end-column="75" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>msg</find>
+      <find>field</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/src/point_cloud_transport" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/point_cloud_transport/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/DracotoPC2.h" />
+        <option value="$PROJECT_DIR$/src/point_cloud_transport/src/DracotoPC2.cpp" />
+        <option value="$PROJECT_DIR$/src/point_cloud_transport/test/subtry.cpp" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="4">
+    <option name="width" value="1379" />
+    <option name="height" value="1053" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_transport" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_transport" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_transport" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_conversion" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_transport" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ROS_workspace_1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ROS_workspace_1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="point_cloud_transport" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/point_cloud_transport/src/point_cloud_conversion" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3969babf-0904-4b53-99d3-32b9bbdf4cd3" name="Default Changelist" comment="" />
+      <created>1563538672696</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1563538672696</updated>
+      <workItem from="1563538674896" duration="13223000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="13223000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1379" height="1053" extended-state="4" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.35161534" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="CMake" weight="0.33045357" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.35161534" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="3" />
+      <window_info anchor="bottom" id="CMake" order="4" visible="true" weight="0.33045357" />
+      <window_info anchor="bottom" id="Message" order="5" />
+      <window_info anchor="bottom" id="Find" order="6" />
+      <window_info anchor="bottom" id="Run" order="7" />
+      <window_info anchor="bottom" id="Debug" order="8" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="11" />
+      <window_info anchor="right" id="Database" order="0" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/PC2toDraco.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-45" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="40" column="75" selection-start-line="40" selection-start-column="75" selection-end-line="40" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/src/PC2toDraco.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1755">
+          <caret line="198" column="41" lean-forward="true" selection-start-line="198" selection-start-column="41" selection-end-line="198" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/src/notes">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/include/point_cloud_conversion/DracotoPC2.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="688">
+          <caret line="67" column="27" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/src/DracotoPC2.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="786">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/test/pubtry.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="667">
+          <caret line="130" column="25" selection-start-line="130" selection-start-column="8" selection-end-line="130" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport/test/subtry.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="505">
+          <caret line="108" column="70" selection-start-line="108" selection-start-column="70" selection-end-line="108" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

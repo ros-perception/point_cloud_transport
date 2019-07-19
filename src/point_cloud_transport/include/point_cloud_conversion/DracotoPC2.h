@@ -6,6 +6,8 @@
 #include <sensor_msgs/PointField.h>
 #include <sensor_msgs/PointCloud2.h>
 #include "draco/point_cloud/point_cloud.h"
+#include <memory>
+
 /*
  *
  * Point cloud methods:
@@ -50,7 +52,10 @@
 class DracotoPC2 {
 public:
     //! Constructor.
-    explicit DracotoPC2(std::unique_ptr<draco::PointCloud> pc, sensor_msgs::PointField field[]);
+    explicit DracotoPC2(std::unique_ptr<draco::PointCloud> && pc, sensor_msgs::PointField fields[], uint32_t point_step);
+
+    //! Destructor
+    ~DracotoPC2();
 
     //! Method for converting into sensor_msgs::PointCloud2
     sensor_msgs::PointCloud2 convert();
@@ -60,10 +65,11 @@ private:
     std::unique_ptr<draco::PointCloud> pc_;
 
     //!
-    sensor_msgs::PointField* field_;
+    sensor_msgs::PointField* fields_;
 
-    //! sensor_msgs::PointField::datatype names
-    char *PointFieldDataTypes;
+    //!
+    uint32_t point_step_;
+
 };
 
 

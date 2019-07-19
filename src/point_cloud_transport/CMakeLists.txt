@@ -38,7 +38,7 @@ add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transpor
 # test files -- start
 add_executable(pct_pubtry test/pubtry.cpp src/PC2toDraco.cpp)
 target_link_libraries(pct_pubtry ${catkin_LIBRARIES} libdraco.a)
-add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp)
+add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp)
 target_link_libraries(pct_subtry ${catkin_LIBRARIES} libdraco.a)
 # test files -- end
 
