@@ -1,0 +1,23 @@
+<package format="2">
+  <name>point_cloud_transport</name>
+  <version>0.0.1</version>
+  <description>
+    Publishers and subscribers that use the parameter server, dynamic
+    reconfigure, timers, and custom messages to test google Draco point cloud compression.
+  </description>
+  <author>Jakub Paplham</author>
+  <maintainer email="paplhjak@fel.cvut.cz">Jakub Paplham</maintainer>
+  <license>BSD</license>
+  <url>www.google.com</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <depend>draco</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>roscpp</depend>
+  <depend>rosgraph_msgs</depend>
+  <depend>std_msgs</depend>
+
+</package>
