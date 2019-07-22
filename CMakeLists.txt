@@ -29,11 +29,6 @@ catkin_package(
 include_directories(include include/point_cloud_conversion include/point_cloud_transport ${catkin_INCLUDE_DIRS} ${draco_INCLUDE_DIR}/..)
 link_directories(${draco_LIBRARY_DIR})
 
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-  message(STATUS "dir='${dir}'")
-endforeach()
-
 add_executable(talker_exec src/nodes/talker_node.cpp src/talker.cpp)
 target_link_libraries(talker_exec ${catkin_LIBRARIES} dracoenc)
 add_dependencies(talker_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
