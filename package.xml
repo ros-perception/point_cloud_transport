@@ -19,5 +19,7 @@
   <depend>roscpp</depend>
   <depend>rosgraph_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+
 
 </package>

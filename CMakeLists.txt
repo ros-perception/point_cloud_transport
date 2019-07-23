@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(point_cloud_transport)
 
-find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs std_msgs)
+find_package(catkin REQUIRED COMPONENTS dynamic_reconfigure message_generation roscpp rosgraph_msgs std_msgs sensor_msgs)
 
 find_package(Draco REQUIRED)
 message("${draco_INCLUDE_DIR}")
@@ -10,11 +10,13 @@ message("${draco_LIBRARY_DIR}")
 add_message_files(
   FILES
   PointCloudTransportData.msg
+  InfoPointCloud2.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
+  sensor_msgs
 )
 
 generate_dynamic_reconfigure_options(
@@ -22,7 +24,7 @@ generate_dynamic_reconfigure_options(
 )
 
 catkin_package(
-  CATKIN_DEPENDS dynamic_reconfigure message_runtime roscpp rosgraph_msgs std_msgs
+  CATKIN_DEPENDS dynamic_reconfigure message_runtime roscpp rosgraph_msgs std_msgs sensor_msgs
   DEPENDS draco
 )
 
@@ -41,7 +43,7 @@ add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transpor
 # test files -- start
 add_executable(pct_pubtry test/pubtry.cpp src/PC2toDraco.cpp)
 target_link_libraries(pct_pubtry ${catkin_LIBRARIES} draco)
-add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp)
+add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp test/Repubtry.cpp)
 target_link_libraries(pct_subtry ${catkin_LIBRARIES} draco)
 # test files -- end
 

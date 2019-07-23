@@ -1,14 +1,19 @@
-//
-// Created by paplhjak@fel.cvut.cz on 7/10/19.
-//
+#ifndef POINT_CLOUD_TRANSPORT_PC2TODRACO_H
+#define POINT_CLOUD_TRANSPORT_PC2TODRACO_H
 
-#ifndef PUBVEL_PC2TODRACO_H
-#define PUBVEL_PC2TODRACO_H
-
-#include <map>
-#include <string>
+// ros
+#include <ros/ros.h> //
 #include <sensor_msgs/PointField.h>
 #include <sensor_msgs/PointCloud2.h>
+
+// for enumeration in switch(std::string) ...
+#include <map>
+#include <string>
+
+// for dynamic vector arrays
+#include <vector>
+
+// draco
 #include <draco/point_cloud/point_cloud_builder.h>
 
 
@@ -17,7 +22,10 @@ public:
     //! Constructor.
     explicit PC2toDraco(sensor_msgs::PointCloud2 PC2);
 
-    //! Method for converting into Draco Point Cloud
+    //! Destructor
+    ~PC2toDraco();
+
+    //! Method for converting into Draco pointcloud
     std::unique_ptr<draco::PointCloud> convert();
 
 private:
@@ -44,11 +52,9 @@ private:
 
     std::map<std::string, StringValueFieldName> s_mapStringValues;
 
-    //! initializes enumeration values for detecting GeometryAttribute::Type
+    //! initialize enumeration values for detection of GeometryAttribute::Type
     void Initialize()
     {
-        //!Debug TODO delete
-        std::cout<<"PC2toDraco object Initialize() called"<<std::endl;
 
         s_mapStringValues["x"] =        enumval1;
         s_mapStringValues["y"] =        enumval2;
@@ -62,8 +68,7 @@ private:
         s_mapStringValues["rgb"] =      enumval10;
         s_mapStringValues["rgba"] =     enumval11;
     }
-
 };
 
 
-#endif //PUBVEL_PC2TODRACO_H
+#endif //POINT_CLOUD_TRANSPORT_PC2TODRACO_H
