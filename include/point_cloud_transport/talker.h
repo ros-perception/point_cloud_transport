@@ -1,5 +1,5 @@
-#ifndef POINTCLOUD_TALKER_H
-#define POINTCLOUD_TALKER_H
+#ifndef POINT_CLOUD_TRANSPORT_TALKER_H
+#define POINT_CLOUD_TRANSPORT_TALKER_H
 
 // ROS includes.
 #include <ros/ros.h>
@@ -14,7 +14,7 @@
 #include <draco/compression/encode.h>
 
 // Custom message includes. Auto-generated from msg/ directory.
-#include <point_cloud_transport/PointCloudTransportData.h>
+#include "point_cloud_transport/CompressedPointCloud2.h"
 
 // Dynamic reconfigure includes.
 #include <dynamic_reconfigure/server.h>
@@ -46,8 +46,10 @@ class Talker
   //! ROS node handle.
   ros::NodeHandle nh_;
 
+
   //! The timer variable used to go to callback function at specified rate.
   ros::Timer timer_;
+
 
   //! Message publisher.
   ros::Publisher pub_;
@@ -55,10 +57,15 @@ class Talker
   //! Dynamic reconfigure server.
   dynamic_reconfigure::Server<point_cloud_transport::PointCloudConfig> dr_srv_;
 
-  //! Variables to be sent
+  //!
+    uint8_t encode_speed_;
+    uint8_t decode_speed_;
 
-  std::string teststring_;
-  int testint_;
+    uint8_t POSITION_quantization_in_bits_;
+    uint8_t NORMAL_quantization_in_bits_;
+    uint8_t COLOR_quantization_in_bits_;
+    uint8_t TEX_COORD_quantization_in_bits_;
+    uint8_t GENERIC_quantization_in_bits_;
 
   //! Flag to set whether the node should do any work at all.
   bool enable_;
@@ -66,4 +73,4 @@ class Talker
 };
 }
 
-#endif  // POINTCLOUD_TALKER_H
+#endif  // POINT_CLOUD_TRANSPORT_TALKER_H

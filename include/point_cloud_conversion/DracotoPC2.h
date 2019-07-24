@@ -10,7 +10,7 @@
 #include <draco/point_cloud/point_cloud.h>
 
 // point_cloud_transport
-#include <point_cloud_transport/InfoPointCloud2.h>
+#include "point_cloud_transport/InfoPointCloud2.h"
 
 class DracotoPC2 {
 public:

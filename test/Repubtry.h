@@ -10,6 +10,7 @@
 #include "PC2toDraco.h"
 #include "DracotoPC2.h"
 #include <point_cloud_transport/InfoPointCloud2.h>
+#include <point_cloud_transport/CompressedPointCloud2.h>
 
 // draco
 #include "draco/compression/decode.h"
@@ -27,6 +28,11 @@ public:
 
          //! public publisher of converted PointCloud2
         ros::Publisher pub_;
+
+        //!
+        ros::Publisher pub2_;
+
+
 
 private:
         //! private subscriber to source of PointCloud2 messages

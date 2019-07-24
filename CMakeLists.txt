@@ -9,8 +9,8 @@ message("${draco_LIBRARY_DIR}")
 
 add_message_files(
   FILES
-  PointCloudTransportData.msg
   InfoPointCloud2.msg
+  CompressedPointCloud2.msg
 )
 
 generate_messages(
@@ -35,7 +35,8 @@ add_executable(talker_exec src/nodes/talker_node.cpp src/talker.cpp)
 target_link_libraries(talker_exec ${catkin_LIBRARIES} dracoenc)
 add_dependencies(talker_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 
-add_executable(listener_exec src/listener.cpp src/nodes/listener_node.cpp)
+
+add_executable(listener_exec src/listener.cpp src/nodes/listener_node.cpp src/DracotoPC2.cpp)
 target_link_libraries(listener_exec ${catkin_LIBRARIES} dracodec)
 add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 

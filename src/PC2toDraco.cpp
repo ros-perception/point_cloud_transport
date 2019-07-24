@@ -37,13 +37,13 @@ std::unique_ptr<draco::PointCloud> PC2toDraco::convert()
     // initialize builder object, requires prior knowledge of point cloud size for buffer allocation
     builder.Start(number_of_points);
 
-    // vector to hold IDs of attributes, required by builder object
+    // vector to hold IDs of attributes for builder object
     std::vector<int> att_ids;
 
     // set to 0 if invalid datatype (not in enum) is encountered in PointField
     bool ValidDataType;
 
-    // fill in att_ids with attributes from PointField[] fields - START
+    //! fill in att_ids with attributes from PointField[] fields - START
     for (sensor_msgs::PointField field : PC2_.fields) {
 
         ValidDataType=1;
@@ -98,7 +98,7 @@ std::unique_ptr<draco::PointCloud> PC2toDraco::convert()
 
             case enumval6 : // "r"
             case enumval7 : // "g"
-            case enumval8 : // "n"
+            case enumval8 : // "b"
             case enumval9 : // "a"
             case enumval10 : // "rgb"
             case enumval11 : // "rgba"
@@ -192,7 +192,7 @@ std::unique_ptr<draco::PointCloud> PC2toDraco::convert()
              builder.SetAttributeValuesForAllPoints(int(att_ids.back()), &PC2_.data[0] + field.offset, PC2_.point_step);
             }
     }
-    //! Fill in att_ids with attributes from PointField[] fields - END
+    //! fill in att_ids with attributes from PointField[] fields - END
 
     // finalize point cloud - builder.Finalize(bool deduplicate) -
     std::unique_ptr<draco::PointCloud> pc = builder.Finalize(false);

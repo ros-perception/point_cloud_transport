@@ -18,9 +18,13 @@ int main(int argc, char**argv){
 
     // decompressed and republished PointCloud2
     extern sensor_msgs::PointCloud2 PC2_;
+    extern point_cloud_transport::CompressedPointCloud2 compressed_PC2_;
+
+
 
     while(ros::ok()) {
         repub_object.pub_.publish(PC2_);
+        repub_object.pub2_.publish(compressed_PC2_);
 
         // let ROS take over
         ros::spinOnce();
