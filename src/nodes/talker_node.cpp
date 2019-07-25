@@ -1,6 +1,9 @@
 #include <point_cloud_transport/talker.h>
 
-sensor_msgs::PointCloud2 to_be_sent_PC2;
+
+namespace point_cloud_transport {
+    sensor_msgs::PointCloud2 to_be_sent_PC2;
+}
 
 void MessageReceived(const sensor_msgs::PointCloud2 & msg);
 
@@ -29,5 +32,5 @@ int main(int argc, char **argv)
 
 void MessageReceived(const sensor_msgs::PointCloud2 & msg)
 {
-    to_be_sent_PC2=msg;
+    point_cloud_transport::to_be_sent_PC2 = msg;
 }

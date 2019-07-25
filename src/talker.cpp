@@ -1,5 +1,8 @@
 #include <talker.h>
+#include "debug_msg.h"
 
+// TODO: make sure all data is passed by reference without making copies if possible
+// TODO: rewrite in style of image_transport
 
 namespace point_cloud_transport
 {
@@ -13,7 +16,7 @@ namespace point_cloud_transport
 
 
         // Declare variables that can be modified by launch file or command line.
-        double rate = 10;
+        double rate = 5;
 
 
         // Initialize node parameters from launch file or command line. Use a private node handle so that multiple instances
@@ -59,9 +62,13 @@ void Talker::timerCallback(const ros::TimerEvent &event __attribute__((unused)))
     return;
   }
 
-    extern sensor_msgs::PointCloud2 msg;
+    extern sensor_msgs::PointCloud2 to_be_sent_PC2;
 
-    PC2toDraco converter(msg);
+    PC2toDraco converter(to_be_sent_PC2);
+
+    DBGVAR(std::cout, to_be_sent_PC2.width);
+    DBGVAR(std::cout, to_be_sent_PC2.height);
+    DBGVAR(std::cout, to_be_sent_PC2.header.frame_id);
 
     std::unique_ptr<draco::PointCloud> pc = converter.convert();
 
@@ -87,6 +94,17 @@ void Talker::timerCallback(const ros::TimerEvent &event __attribute__((unused)))
 
     point_cloud_transport::CompressedPointCloud2 compressed_PC2;
 
+    uint32_t compressed_data_size = encode_buffer.size();
+
+    unsigned char* cast_buffer = (unsigned char*)encode_buffer.data();
+
+    std::vector <unsigned char> vec_data(cast_buffer, cast_buffer + compressed_data_size);
+
+    compressed_PC2.compressed_data = vec_data;
+
+    // copy PointCloud2 description (header, width, ...)
+    assign_description_of_PointCloud2(compressed_PC2, to_be_sent_PC2);
+
     pub_.publish(compressed_PC2);
 }
 
@@ -96,6 +114,15 @@ void Talker::configCallback(point_cloud_transport::PointCloudConfig &config, uin
   // Set class variables to new values. They should match what is input at the dynamic reconfigure GUI.
   encode_speed_ = config.encode_speed;
   decode_speed_ = config.decode_speed;
+  POSITION_quantization_in_bits_=config.quantization_POSITION;
+  NORMAL_quantization_in_bits_=config.quantization_NORMAL;
+  COLOR_quantization_in_bits_=config.quantization_COLOR;
+  TEX_COORD_quantization_in_bits_=config.quantization_TEX_COORD;
+  GENERIC_quantization_in_bits_=config.quantization_GENERIC;
+
+
+
+
 
   // Check if we are changing enabled state.
   if (enable_ != config.enable)

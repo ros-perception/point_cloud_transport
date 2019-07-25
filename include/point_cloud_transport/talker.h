@@ -9,6 +9,7 @@
 
 // conversion to Draco point cloud
 #include "PC2toDraco.h"
+#include "conversion_utilities.h"
 
 // draco library
 #include <draco/compression/encode.h>
@@ -26,49 +27,48 @@ namespace point_cloud_transport
 {
 class Talker
 {
- public:
-  //! Constructor.
-  explicit Talker(ros::NodeHandle nh);
+    public:
+    //! Constructor.
+    explicit Talker(ros::NodeHandle nh);
 
- private:
-  //! Callback function for dynamic reconfigure server.
-  void configCallback(point_cloud_transport::PointCloudConfig &config, uint32_t level);
+    private:
+    //! Callback function for dynamic reconfigure server.
+    void configCallback(point_cloud_transport::PointCloudConfig &config, uint32_t level);
 
-  //! Timer callback for publishing message.
-  void timerCallback(const ros::TimerEvent &event);
+    //! Timer callback for publishing message.
+    void timerCallback(const ros::TimerEvent &event);
 
-  //! Turn on publisher.
-  void start();
+    //! Turn on publisher.
+    void start();
 
-  //! Turn off publisher.
-  void stop();
+    //! Turn off publisher.
+    void stop();
 
-  //! ROS node handle.
-  ros::NodeHandle nh_;
+    //! ROS node handle.
+    ros::NodeHandle nh_;
+
+    // TODO: delete -> testing purposes only
+    //! timer variable used to go to callback function at specified rate.
+    ros::Timer timer_;
 
 
-  //! The timer variable used to go to callback function at specified rate.
-  ros::Timer timer_;
+    //! message publisher.
+    ros::Publisher pub_;
 
+    //! dynamic reconfigure server.
+    dynamic_reconfigure::Server<point_cloud_transport::PointCloudConfig> dr_srv_;
 
-  //! Message publisher.
-  ros::Publisher pub_;
+    //! dynamic reconfigure parameters
+    int encode_speed_;
+    int decode_speed_;
+    int POSITION_quantization_in_bits_;
+    int NORMAL_quantization_in_bits_;
+    int COLOR_quantization_in_bits_;
+    int TEX_COORD_quantization_in_bits_;
+    int GENERIC_quantization_in_bits_;
 
-  //! Dynamic reconfigure server.
-  dynamic_reconfigure::Server<point_cloud_transport::PointCloudConfig> dr_srv_;
-
-  //!
-    uint8_t encode_speed_;
-    uint8_t decode_speed_;
-
-    uint8_t POSITION_quantization_in_bits_;
-    uint8_t NORMAL_quantization_in_bits_;
-    uint8_t COLOR_quantization_in_bits_;
-    uint8_t TEX_COORD_quantization_in_bits_;
-    uint8_t GENERIC_quantization_in_bits_;
-
-  //! Flag to set whether the node should do any work at all.
-  bool enable_;
+    //! Flag for enabling/disabling node
+    bool enable_;
 
 };
 }

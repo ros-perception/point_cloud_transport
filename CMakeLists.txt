@@ -31,20 +31,20 @@ catkin_package(
 include_directories(include include/point_cloud_conversion include/point_cloud_transport ${catkin_INCLUDE_DIRS} ${draco_INCLUDE_DIR}/..)
 link_directories(${draco_LIBRARY_DIR})
 
-add_executable(talker_exec src/nodes/talker_node.cpp src/talker.cpp)
+add_executable(talker_exec src/nodes/talker_node.cpp src/talker.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
 target_link_libraries(talker_exec ${catkin_LIBRARIES} dracoenc)
 add_dependencies(talker_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 
 
-add_executable(listener_exec src/listener.cpp src/nodes/listener_node.cpp src/DracotoPC2.cpp)
+add_executable(listener_exec src/listener.cpp src/nodes/listener_node.cpp src/DracotoPC2.cpp src/conversion_utilities.cpp)
 target_link_libraries(listener_exec ${catkin_LIBRARIES} dracodec)
 add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 
 
 # test files -- start
-add_executable(pct_pubtry test/pubtry.cpp src/PC2toDraco.cpp)
+add_executable(pct_pubtry test/pubtry.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
 target_link_libraries(pct_pubtry ${catkin_LIBRARIES} draco)
-add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp test/Repubtry.cpp)
+add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp test/Repubtry.cpp src/conversion_utilities.cpp)
 target_link_libraries(pct_subtry ${catkin_LIBRARIES} draco)
 # test files -- end
 
