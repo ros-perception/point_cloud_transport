@@ -13,10 +13,10 @@ Draco 3D data compression\
 https://github.com/google/draco \
 PCL (better to avoid as dependency in final package) compression tutorial\
 http://pointclouds.org/documentation/tutorials/compression.php \
-(Open 3D Graphics Compression (Open3DGC), for reference\ 
+(Open 3D Graphics Compression (Open3DGC), for reference\
 https://github.com/amd/rest3d/tree/master/server/o3dgc, https://github.com/KhronosGroup/glTF/wiki/Open-3D-Graphics-Compression) 
 ### ROS
-ROS message type definition\ 
+ROS message type definition\
 http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html \
 Image and PointCloud2 performance issue on ROS2 python\
 https://discourse.ros.org/t/image-and-pointcloud2-performance-issue-on-ros2-python/5391
