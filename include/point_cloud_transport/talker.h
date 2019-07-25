@@ -51,7 +51,6 @@ class Talker
     //! timer variable used to go to callback function at specified rate.
     ros::Timer timer_;
 
-
     //! message publisher.
     ros::Publisher pub_;
 
