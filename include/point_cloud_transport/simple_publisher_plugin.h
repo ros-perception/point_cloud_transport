@@ -80,7 +80,7 @@ namespace point_cloud_transport {
         typedef boost::function<void(const M&)> PublishFn;
 
         /**
-         * Publish an image using the specified publish function. Must be implemented by
+         * Publish a point cloud using the specified publish function. Must be implemented by
          * the subclass.
          *
          * The PublishFn publishes the transport-specific message type. This indirection allows

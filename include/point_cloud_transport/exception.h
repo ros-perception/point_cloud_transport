@@ -16,7 +16,7 @@ namespace point_cloud_transport {
         Exception(const std::string& message) : std::runtime_error(message) {}
     };
 
-    //! An exception class thrown when image_transport is unable to load a requested transport.
+    //! An exception class thrown when point_cloud_transport is unable to load a requested transport.
     class TransportLoadException : public Exception
     {
     public:

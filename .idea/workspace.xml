@@ -10,30 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b01b009d-8c1e-4d6a-adff-b58875d0d2e5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/exception.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/loader_fwds.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/publisher.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/raw_subscriber.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/simple_subscriber_plugin.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/single_subscriber_publisher.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/subscriber.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/subscriber_filter.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/list_transports.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/manifest.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/point_cloud_transport.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/publisher.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/raw_publisher.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/republish.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/single_subscriber_publisher.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/subscriber.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/default_plugins.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/talker.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/talker.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/exception.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/exception.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/publisher.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/publisher.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/package.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/point_cloud_transport.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/point_cloud_transport.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raw_publisher.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/raw_publisher.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,11 +38,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/subscriber.cpp">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/republish.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="97" column="29" lean-forward="true" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
+            <state relative-caret-position="75">
+              <caret line="5" column="44" selection-start-line="5" selection-end-line="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="29" column="14" lean-forward="true" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/single_subscriber_publisher.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="34" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/point_cloud_transport.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="60" column="5" lean-forward="true" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="57" column="78" lean-forward="true" selection-start-line="57" selection-start-column="78" selection-end-line="57" selection-end-column="78" />
             </state>
           </provider>
         </entry>
@@ -63,6 +90,10 @@
       <find>True)#</find>
       <find>info</find>
       <find>getPublisher</find>
+      <find>Image</find>
+      <find>#include &quot;point cloud&quot;</find>
+      <find>#include &quot;point cloud</find>
+      <find>#include &quot;point</find>
       <find>it</find>
     </findStrings>
     <replaceStrings>
@@ -78,41 +109,50 @@
         <option value="$PROJECT_DIR$/src/nodes/talker_node.cpp" />
         <option value="$PROJECT_DIR$/cfg/PointCloud.cfg" />
         <option value="$PROJECT_DIR$/include/point_cloud_conversion/DracotoPC2.h" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/src/conversion_utilities.cpp" />
         <option value="$PROJECT_DIR$/src/talker.cpp" />
         <option value="$PROJECT_DIR$/src/listener.cpp" />
         <option value="$PROJECT_DIR$/include/point_cloud_conversion/conversion_utilities.h" />
         <option value="$PROJECT_DIR$/src/DracotoPC2.cpp" />
-        <option value="$PROJECT_DIR$/src/point_cloud_transport.cpp" />
         <option value="$PROJECT_DIR$/src/publisher.cpp" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/single_subscriber_publisher.h" />
         <option value="$PROJECT_DIR$/src/single_subscriber_publisher.cpp" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/exception.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/loader_fwds.h" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/publisher.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/talker.h" />
-        <option value="$PROJECT_DIR$/src/raw_publisher.cpp" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h" />
-        <option value="$PROJECT_DIR$/src/list_transports.cpp" />
         <option value="$PROJECT_DIR$/src/manifest.cpp" />
         <option value="$PROJECT_DIR$/src/republish.cpp" />
         <option value="$PROJECT_DIR$/tutorial/src/manifest.cpp" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/raw_subscriber.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/simple_subscriber_plugin.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/subscriber.h" />
         <option value="$PROJECT_DIR$/include/point_cloud_transport/subscriber_filter.h" />
-        <option value="$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h" />
         <option value="$PROJECT_DIR$/src/subscriber.cpp" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/default_plugins.xml" />
+        <option value="$PROJECT_DIR$/package.xml" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/exception.h" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/publisher.h" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h" />
+        <option value="$PROJECT_DIR$/src/list_transports.cpp" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h" />
+        <option value="$PROJECT_DIR$/src/raw_publisher.cpp" />
+        <option value="$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/point_cloud_transport.cpp" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="width" value="960" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="width" value="979" />
     <option name="height" value="1053" />
   </component>
   <component name="ProjectView">
@@ -196,12 +236,13 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1564038769323</updated>
-      <workItem from="1564038774729" duration="27095000" />
+      <workItem from="1564038774729" duration="27425000" />
+      <workItem from="1564129399234" duration="7915000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="27095000" />
+    <option name="totallyTimeSpent" value="35340000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -216,25 +257,25 @@
     <frame x="-1" y="-1" width="1922" height="1057" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12540022" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20490928" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="CMake" weight="0.35591397" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.18172044" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.18142548" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.06803456" />
-      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Database Changes" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="CMake" order="11" visible="true" weight="0.16774194" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,16 +289,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/msg/PointCloudTransportData.msg">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/conversion_utilities.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/msg/PointCloudTransportData.msg" />
     <entry file="file://$PROJECT_DIR$/include/point_cloud_conversion/conversion_utilities.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -269,13 +301,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="44" selection-start-line="4" selection-start-column="44" selection-end-line="4" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
         </state>
       </provider>
     </entry>
@@ -300,120 +325,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/publisher_plugin.cpp">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/talker.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="3" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="29" column="93" lean-forward="true" selection-start-line="29" selection-start-column="93" selection-end-line="29" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tutorial/msg/ResizedImage.msg">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tutorial/src/manifest.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="86">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2910">
-          <caret line="194" column="10" lean-forward="true" selection-start-line="194" selection-start-column="10" selection-end-line="194" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/single_subscriber_publisher.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/talker.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/publisher.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/loader_fwds.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/listener.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/exception.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/list_transports.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="35" lean-forward="true" selection-start-line="8" selection-start-column="35" selection-end-line="8" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/listener.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/manifest.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/publisher_plugin.cpp" />
+    <entry file="file://$PROJECT_DIR$/tutorial/msg/ResizedImage.msg" />
+    <entry file="file://$PROJECT_DIR$/tutorial/src/manifest.cpp" />
     <entry file="file://$PROJECT_DIR$/src/PC2toDraco.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1375">
@@ -421,45 +335,97 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport.cpp">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        <state relative-caret-position="60">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/publisher.cpp">
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/talker.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        <state relative-caret-position="283">
+          <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/raw_publisher.cpp">
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="5" lean-forward="true" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
+        <state relative-caret-position="1425">
+          <caret line="95" column="9" lean-forward="true" selection-start-line="95" selection-start-column="9" selection-end-line="95" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/republish.cpp">
+    <entry file="file://$PROJECT_DIR$/src/talker.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="23" lean-forward="true" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
+        <state relative-caret-position="60">
+          <caret line="4" column="34" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/single_subscriber_publisher.cpp">
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/listener.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+        <state relative-caret-position="290">
+          <caret line="33" column="29" selection-start-line="33" selection-start-column="29" selection-end-line="33" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/conversion_utilities.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/listener.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-12">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/exception.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="7" column="9" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/loader_fwds.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="40" lean-forward="true" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/publisher.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/publisher_plugin.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/raw_subscriber.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
+        <state relative-caret-position="231">
           <caret line="19" column="11" lean-forward="true" selection-start-line="19" selection-start-column="11" selection-end-line="19" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/simple_publisher_plugin.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="56" column="9" lean-forward="true" selection-start-line="56" selection-start-column="9" selection-end-line="56" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -467,9 +433,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1545">
           <caret line="103" column="10" lean-forward="true" selection-start-line="103" selection-start-column="10" selection-end-line="103" selection-end-column="10" />
-          <folding>
-            <element signature="e#1057#1066#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -482,25 +445,120 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/subscriber_filter.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
+        <state relative-caret-position="1950">
           <caret line="130" column="5" selection-start-line="130" selection-start-column="5" selection-end-line="130" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugins.h">
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/subscriber_plugin.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="108" column="35" selection-start-line="108" selection-start-column="35" selection-end-line="108" selection-end-column="35" />
-          <folding>
-            <element signature="e#1761#1770#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1485">
+          <caret line="99" column="14" lean-forward="true" selection-start-line="99" selection-start-column="14" selection-end-line="99" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/transport_hints.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="2" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/list_transports.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/manifest.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/publisher.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/single_subscriber_publisher.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="501">
+          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/subscriber.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
+        <state relative-caret-position="1455">
           <caret line="97" column="29" lean-forward="true" selection-start-line="97" selection-start-column="29" selection-end-line="97" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/raw_publisher.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="102" column="9" selection-start-line="102" selection-start-column="9" selection-end-line="102" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/raw_publisher.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="8" lean-forward="true" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/flow/dom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2760">
+          <caret line="1176" column="2" selection-start-line="1176" selection-start-column="2" selection-end-line="1176" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/default_plugins.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/point_cloud_transport.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="57" column="78" lean-forward="true" selection-start-line="57" selection-start-column="78" selection-end-line="57" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/republish.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="44" selection-start-line="5" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="29" column="14" lean-forward="true" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/point_cloud_transport/single_subscriber_publisher.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="34" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/point_cloud_transport.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="60" column="5" lean-forward="true" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
         </state>
       </provider>
     </entry>

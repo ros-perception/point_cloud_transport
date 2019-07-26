@@ -8,7 +8,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 
-#include "image_transport/single_subscriber_publisher.h"
+#include "point_cloud_transport/single_subscriber_publisher.h"
 
 namespace point_cloud_transport {
 
@@ -47,10 +47,10 @@ namespace point_cloud_transport {
         //! Returns the topic that this PublisherPlugin will publish on.
         virtual std::string getTopic() const = 0;
 
-        //! Publish an image using the transport associated with this PublisherPlugin.
+        //! Publish a point cloud using the transport associated with this PublisherPlugin.
         virtual void publish(const sensor_msgs::PointCloud2& message) const = 0;
 
-        //! Publish an image using the transport associated with this PublisherPlugin.
+        //! Publish a point cloud using the transport associated with this PublisherPlugin.
         virtual void publish(const sensor_msgs::PointCloud2ConstPtr& message) const
         {
             publish(*message);
@@ -58,14 +58,14 @@ namespace point_cloud_transport {
 
 
         /**
-         * Publish an image using the transport associated with this PublisherPlugin.
+         * Publish a point cloud using the transport associated with this PublisherPlugin.
          * This version of the function can be used to optimize cases where you don't want to
          * fill a ROS message first to avoid useless copies.
          *
          * @param message a point cloud message to use information from (but not data)
          * @param data a pointer to the point cloud data to use to fill the PointCloud2 message
          */
-        virtual void publish(const sensor_msgs::Image& message, const uint8_t* data) const
+        virtual void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const
         {
             sensor_msgs::PointCloud2 msg;
 

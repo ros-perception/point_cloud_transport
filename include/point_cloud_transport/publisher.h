@@ -24,12 +24,12 @@ namespace point_cloud_transport {
         //! get base topic of this Publisher
         std::string getTopic() const;
 
-        //! Publish an image on the topics associated with this Publisher.
+        //! Publish a point cloud on the topics associated with this Publisher.
         void publish(const sensor_msgs::PointCloud2& message) const;
 
 
         // ConstPtr types are typedef(s) for boost::shared_ptr
-        //! Publish an image on the topics associated with this Publisher.
+        //! Publish a point cloud on the topics associated with this Publisher.
         void publish(const sensor_msgs::PointCloud2ConstPtr& message) const;
 
 

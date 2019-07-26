@@ -51,7 +51,7 @@ namespace point_cloud_transport {
         }
 
         /**
-         * Subscribe to an image topic, version for class member function with bare pointer.
+         * Subscribe to a point cloud topic, version for class member function with bare pointer.
          */
         template<class T>
         void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
@@ -62,7 +62,7 @@ namespace point_cloud_transport {
         }
 
         /**
-         * Subscribe to an image topic, version for class member function with shared_ptr.
+         * Subscribe to a point cloud topic, version for class member function with shared_ptr.
          */
         template<class T>
         void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
@@ -99,7 +99,7 @@ namespace point_cloud_transport {
 
     protected:
         /**
-         * Subscribe to an image transport topic. Must be implemented by the subclass.
+         * Subscribe to a point cloud transport topic. Must be implemented by the subclass.
          */
         virtual void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                                    const Callback& callback, const ros::VoidPtr& tracked_object,

@@ -1,7 +1,7 @@
 //
 // Created by jakub on 7/25/19.
 //
-// TODO: does point_cloud_transport use this?
+//
 
 
 #ifndef POINT_CLOUD_TRANSPORT_TRANSPORT_HINTS_H

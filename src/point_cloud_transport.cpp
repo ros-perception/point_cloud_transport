@@ -3,8 +3,8 @@
 //
 
 #include "point_cloud_transport/point_cloud_transport.h"
-
 #include "point_cloud_transport/publisher_plugin.h"
+#include "point_cloud_transport/subscriber_plugin.h"
 
 #include <pluginlib/class_loader.h>
 #include <boost/make_shared.hpp>
@@ -17,13 +17,12 @@ namespace point_cloud_transport {
     {
         ros::NodeHandle nh_;
         PubLoaderPtr pub_loader_;
-        //SubLoaderPtr sub_loader_;
+        SubLoaderPtr sub_loader_;
 
         Impl(const ros::NodeHandle& nh)
                 : nh_(nh),
                   pub_loader_( boost::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin") ),
-
-                  //sub_loader_( boost::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin") )
+                  sub_loader_( boost::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin") )
         {
         }
     };
@@ -35,7 +34,7 @@ namespace point_cloud_transport {
     }
 
     //! Destructor
-    PointCloudTransport::~PointCloudTransport(const ros::NodeHandle& nh)
+    PointCloudTransport::~PointCloudTransport()
     {
     }
 
@@ -54,6 +53,15 @@ namespace point_cloud_transport {
     {
         return Publisher(impl_->nh_, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch, impl_->pub_loader_);
     }
+
+    //!
+    Subscriber PointCloudTransport::subscribe(const std::string& base_topic, uint32_t queue_size,
+                                         const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
+                                         const ros::VoidPtr& tracked_object, const TransportHints& transport_hints)
+    {
+        return Subscriber(impl_->nh_, base_topic, queue_size, callback, tracked_object, transport_hints, impl_->sub_loader_);
+    }
+
 
     //!
     std::vector<std::string> PointCloudTransport::getDeclaredTransports() const

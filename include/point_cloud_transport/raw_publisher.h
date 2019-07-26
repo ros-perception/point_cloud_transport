@@ -5,7 +5,7 @@
 #ifndef POINT_CLOUD_TRANSPORT_RAW_PUBLISHER_H
 #define POINT_CLOUD_TRANSPORT_RAW_PUBLISHER_H
 
-#include "image_transport/simple_publisher_plugin.h"
+#include "point_cloud_transport/simple_publisher_plugin.h"
 
 namespace point_cloud_transport {
 
@@ -27,8 +27,10 @@ namespace point_cloud_transport {
             getPublisher().publish(message);
         }
 
-        // Override the default implementation to not copy data to a sensor_msgs::Image first
+
+        // Override the default implementation to not copy data to a sensor_msgs::PointCloud2 first
         virtual void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const;
+
 
     protected:
         virtual void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const

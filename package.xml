@@ -8,18 +8,37 @@
   <author>Jakub Paplham</author>
   <maintainer email="paplhjak@fel.cvut.cz">Jakub Paplham</maintainer>
   <license>BSD</license>
+
   <url>www.google.com</url>
 
+  <export>
+    <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
+  </export>
+
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_filters</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   <build_depend>message_generation</build_depend>
+
+  <exec_depend>message_filters</exec_depend>
+  <exec_depend>pluginlib</exec_depend>
+  <exec_depend>rosconsole</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>roslib</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
 
   <depend>draco</depend>
   <depend>dynamic_reconfigure</depend>
-  <depend>roscpp</depend>
+
   <depend>rosgraph_msgs</depend>
   <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
+
 
 
 </package>
