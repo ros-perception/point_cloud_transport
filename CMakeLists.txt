@@ -99,12 +99,12 @@ add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transpor
 
 
 # test files -- start
-add_executable(pct_pubtry test/pubtry.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
+add_executable(pct_pubtry point_cloud_transport_test/pubtry.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
 target_link_libraries(pct_pubtry ${catkin_LIBRARIES} draco)
 add_dependencies(pct_pubtry point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 
 
-add_executable(pct_subtry test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp test/Repubtry.cpp src/conversion_utilities.cpp)
+add_executable(pct_subtry point_cloud_transport_test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp point_cloud_transport_test/Repubtry.cpp src/conversion_utilities.cpp)
 target_link_libraries(pct_subtry ${catkin_LIBRARIES} draco)
 add_dependencies(pct_subtry point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
 # test files -- end
