@@ -11,6 +11,8 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <map>
 
+#include "debug_msg.h"
+
 using namespace point_cloud_transport;
 using namespace pluginlib;
 
@@ -39,6 +41,9 @@ int main(int argc, char** argv)
     StatusMap transports;
 
     BOOST_FOREACH(const std::string& lookup_name, pub_loader.getDeclaredClasses()) {
+
+        DBGVAR(std::cout, lookup_name);
+
         std::string transport_name = boost::erase_last_copy(lookup_name, "_pub");
         transports[transport_name].pub_name = lookup_name;
         transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
@@ -47,14 +52,19 @@ int main(int argc, char** argv)
             transports[transport_name].pub_status = SUCCESS;
         }
         catch (const LibraryLoadException& e) {
+            DBGVAR(std::cout, lookup_name);
             transports[transport_name].pub_status = LIB_LOAD_FAILURE;
         }
         catch (const CreateClassException& e) {
+            DBGVAR(std::cout, lookup_name);
             transports[transport_name].pub_status = CREATE_FAILURE;
         }
     }
 
     BOOST_FOREACH(const std::string& lookup_name, sub_loader.getDeclaredClasses()) {
+
+        DBGVAR(std::cout, lookup_name);
+
         std::string transport_name = boost::erase_last_copy(lookup_name, "_sub");
         transports[transport_name].sub_name = lookup_name;
         transports[transport_name].package_name = sub_loader.getClassPackage(lookup_name);
@@ -63,9 +73,11 @@ int main(int argc, char** argv)
             transports[transport_name].sub_status = SUCCESS;
         }
         catch (const LibraryLoadException& e) {
+            DBGVAR(std::cout, lookup_name);
             transports[transport_name].sub_status = LIB_LOAD_FAILURE;
         }
         catch (const CreateClassException& e) {
+            DBGVAR(std::cout, lookup_name);
             transports[transport_name].sub_status = CREATE_FAILURE;
         }
     }
@@ -77,12 +89,12 @@ int main(int argc, char** argv)
         printf("%s", value.first.c_str());
         if ((td.pub_status == CREATE_FAILURE || td.pub_status == LIB_LOAD_FAILURE) ||
             (td.sub_status == CREATE_FAILURE || td.sub_status == LIB_LOAD_FAILURE)) {
-            printf(" (*): Not available. Try 'catkin_make_isolated --pkg %s'.", td.package_name.c_str());
+            printf(" (*): Not available. Try 'catkin_make --pkg %s'.", td.package_name.c_str());
             problem_package = true;
         }
         printf("\n");
     }
-#if 0
+#if 1
     if (problem_package)
     printf("(*) \n");
 #endif

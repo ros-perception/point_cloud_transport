@@ -5,14 +5,12 @@ find_package(catkin REQUIRED
         COMPONENTS
         dynamic_reconfigure
         message_filters
-        message_generation
         pluginlib
         rosconsole
         roscpp
         roslib
-        rosgraph_msgs
-        std_msgs
-        sensor_msgs)
+        sensor_msgs
+        rosgraph_msgs)
 
 find_package(Draco REQUIRED)
 message("${draco_INCLUDE_DIR}")
@@ -20,17 +18,6 @@ message("${draco_LIBRARY_DIR}")
 
 find_package(Boost REQUIRED)
 
-add_message_files(
-  FILES
-  InfoPointCloud2.msg
-  CompressedPointCloud2.msg
-)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  sensor_msgs
-)
 
 generate_dynamic_reconfigure_options(
   cfg/PointCloud.cfg
@@ -39,7 +26,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS dynamic_reconfigure message_runtime message_filters pluginlib rosconsole roscpp roslib rosgraph_msgs std_msgs sensor_msgs
+  CATKIN_DEPENDS dynamic_reconfigure message_runtime message_filters pluginlib rosconsole roscpp roslib rosgraph_msgs sensor_msgs std_msgs
   DEPENDS draco
 )
 
@@ -88,37 +75,9 @@ install(FILES default_plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
 
-add_executable(talker_exec src/nodes/talker_node.cpp src/talker.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
-target_link_libraries(talker_exec ${catkin_LIBRARIES} dracoenc)
-add_dependencies(talker_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
-
-
-add_executable(listener_exec src/listener.cpp src/nodes/listener_node.cpp src/DracotoPC2.cpp src/conversion_utilities.cpp)
-target_link_libraries(listener_exec ${catkin_LIBRARIES} dracodec)
-add_dependencies(listener_exec point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
-
-
-# test files -- start
-add_executable(pct_pubtry point_cloud_transport_test/pubtry.cpp src/PC2toDraco.cpp src/conversion_utilities.cpp)
-target_link_libraries(pct_pubtry ${catkin_LIBRARIES} draco)
-add_dependencies(pct_pubtry point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
-
-
-add_executable(pct_subtry point_cloud_transport_test/subtry.cpp src/PC2toDraco.cpp src/DracotoPC2.cpp point_cloud_transport_test/Repubtry.cpp src/conversion_utilities.cpp)
-target_link_libraries(pct_subtry ${catkin_LIBRARIES} draco)
-add_dependencies(pct_subtry point_cloud_transport_gencfg point_cloud_transport_generate_messages_cpp)
-# test files -- end
-
-
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
-)
-
-install(TARGETS listener_exec talker_exec
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
 install(DIRECTORY launch
