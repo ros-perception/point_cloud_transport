@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_RAW_SUBSCRIBER_H
 #define POINT_CLOUD_TRANSPORT_RAW_SUBSCRIBER_H
 

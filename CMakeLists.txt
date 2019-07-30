@@ -12,10 +12,6 @@ find_package(catkin REQUIRED
         sensor_msgs
         rosgraph_msgs)
 
-find_package(Draco REQUIRED)
-message("${draco_INCLUDE_DIR}")
-message("${draco_LIBRARY_DIR}")
-
 find_package(Boost REQUIRED)
 
 
@@ -27,7 +23,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS dynamic_reconfigure message_runtime message_filters pluginlib rosconsole roscpp roslib rosgraph_msgs sensor_msgs std_msgs
-  DEPENDS draco
 )
 
 include_directories(include include/point_cloud_conversion include/point_cloud_transport ${catkin_INCLUDE_DIRS} ${draco_INCLUDE_DIR}/..)

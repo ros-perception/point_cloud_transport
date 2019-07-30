@@ -1,9 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
-// TODO: recreate point_cloud_common ala image_common
-
 #include "point_cloud_transport/publisher_plugin.h"
 #include "point_cloud_transport/subscriber_plugin.h"
 #include <pluginlib/class_loader.h>
@@ -11,6 +5,8 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <map>
 
+
+// TODO: delete DBGVARs and this include before final release
 #include "debug_msg.h"
 
 using namespace point_cloud_transport;

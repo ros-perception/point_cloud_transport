@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_SIMPLE_SUBSCRIBER_PLUGIN_H
 #define POINT_CLOUD_TRANSPORT_SIMPLE_SUBSCRIBER_PLUGIN_H
 
@@ -54,9 +50,6 @@ namespace point_cloud_transport {
     protected:
         /**
          * Process a message. Must be implemented by the subclass.
-         *
-         * @param message A message from the PublisherPlugin.
-         * @param user_cb The user PointCloud2 callback to invoke, if appropriate.
          */
         virtual void internalCallback(const typename M::ConstPtr& message, const Callback& user_cb) = 0;
 

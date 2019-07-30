@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_SUBSCRIBER_FILTER_H
 #define POINT_CLOUD_TRANSPORT_SUBSCRIBER_FILTER_H
 
@@ -27,9 +23,6 @@ namespace point_cloud_transport {
  *
  * The output connection for the SubscriberFilter object is the same signature as for roscpp
  * subscription callbacks, ie.
-\verbatim
-void callback(const boost::shared_ptr<const sensor_msgs::PointCloud2>&);
-\endverbatim
  */
     class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::PointCloud2>
     {

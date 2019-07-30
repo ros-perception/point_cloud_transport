@@ -1,11 +1,5 @@
-//
-// Created by jakub on 7/25/19.
-// THIS FILE ATTEMPTS TO COPY THE PLUGIN INTERFACE OF IMAGE_TRANSPORT
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_POINT_CLOUD_TRANSPORT_H
 #define POINT_CLOUD_TRANSPORT_POINT_CLOUD_TRANSPORT_H
-
 
 #include "point_cloud_transport/publisher.h"
 #include "point_cloud_transport/subscriber.h"
@@ -28,11 +22,9 @@ public:
     //! Destructor
     ~PointCloudTransport();
 
-    // TODO: 1)
     //! Advertise a PointCloud2 topic, simple version.
     Publisher advertise(const std::string& base_topic, uint32_t queue_size, bool latch = false);
 
-    // TODO: 2)
     //! Advertise an PointCloud2 topic with subcriber status callbacks.
     Publisher advertise(const std::string& base_topic, uint32_t queue_size,
                         const SubscriberStatusCallback& connect_cb,

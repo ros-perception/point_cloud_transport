@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #include "point_cloud_transport/single_subscriber_publisher.h"
 #include "point_cloud_transport/publisher.h"
 

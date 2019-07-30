@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #include "point_cloud_transport/subscriber.h"
 #include "point_cloud_transport/subscriber_plugin.h"
 #include <ros/names.h>

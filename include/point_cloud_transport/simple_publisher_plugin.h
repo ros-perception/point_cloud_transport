@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_SIMPLE_PUBLISHER_PLUGIN_H
 #define POINT_CLOUD_TRANSPORT_SIMPLE_PUBLISHER_PLUGIN_H
 
@@ -121,8 +117,6 @@ namespace point_cloud_transport {
 
         /**
          * Returns the internal ros::Publisher.
-         *
-         * TODO: is point_cloud_transport RawPublisher using this?
          * This really only exists so RawPublisher can implement no-copy intraprocess message
          * passing easily.
          */

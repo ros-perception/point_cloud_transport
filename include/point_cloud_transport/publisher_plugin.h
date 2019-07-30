@@ -1,7 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
 #ifndef POINT_CLOUD_TRANSPORT_PUBLISHER_PLUGIN_H
 #define POINT_CLOUD_TRANSPORT_PUBLISHER_PLUGIN_H
 
@@ -61,9 +57,6 @@ namespace point_cloud_transport {
          * Publish a point cloud using the transport associated with this PublisherPlugin.
          * This version of the function can be used to optimize cases where you don't want to
          * fill a ROS message first to avoid useless copies.
-         *
-         * @param message a point cloud message to use information from (but not data)
-         * @param data a pointer to the point cloud data to use to fill the PointCloud2 message
          */
         virtual void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const
         {

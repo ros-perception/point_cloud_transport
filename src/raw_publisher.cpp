@@ -1,9 +1,3 @@
-//
-// Created by jakub on 7/25/19.
-//
-
-// TODO: compilation errors might come from here -> differs from imǵ_tport
-
 #include <point_cloud_transport/raw_publisher.h>
 #include <ros/static_assert.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -15,12 +9,12 @@ public:
     const uint8_t* data_;           //!< Image data for use with OpenCV
 
     /**
-     * \brief Empty constructor.
+     Empty constructor.
      */
     PointCloudTransportPointCloud() {}
 
     /**
-     * \brief Constructor.
+     Constructor.
      */
     PointCloudTransportPointCloud(const sensor_msgs::PointCloud2& point_cloud, const uint8_t* data)
             : PC2_(point_cloud), data_(data)
@@ -66,7 +60,6 @@ namespace ros {
 
         template<> struct Serializer<PointCloudTransportPointCloud>
         {
-            /// @todo Still ignoring endianness...
 
             template<typename Stream>
             inline static void write(Stream& stream, const PointCloudTransportPointCloud& m)
@@ -89,6 +82,7 @@ namespace ros {
             inline static uint32_t serializedLength(const PointCloudTransportPointCloud& m)
             {
                 size_t data_size = m.PC2_.point_step*m.PC2_.height*m.PC2_.width;
+                // TODO: make sure serialization is working properly under all circumstances
                 return serializationLength(m.PC2_.header) + serializationLength(m.PC2_.fields) + 18 + data_size;
             }
         };
