@@ -6,7 +6,7 @@ class PointCloudTransportPointCloud
 {
 public:
     sensor_msgs::PointCloud2 PC2_; //!< ROS header
-    const uint8_t* data_;           //!< Image data for use with OpenCV
+    const uint8_t* data_;           //!< Data
 
     /**
      Empty constructor.
@@ -72,7 +72,7 @@ namespace ros {
                 stream.next(is_bigendian);
                 stream.next((uint32_t)m.PC2_.point_step);
                 stream.next((uint32_t)m.PC2_.row_step);
-                size_t data_size = m.PC2_.point_step*m.PC2_.height*m.PC2_.width;
+                size_t data_size = (m.PC2_.point_step*m.PC2_.height*m.PC2_.width);
                 stream.next((uint32_t)data_size);
                 if (data_size > 0)
                     memcpy(stream.advance(data_size), m.data_, data_size);
@@ -82,8 +82,8 @@ namespace ros {
             inline static uint32_t serializedLength(const PointCloudTransportPointCloud& m)
             {
                 size_t data_size = m.PC2_.point_step*m.PC2_.height*m.PC2_.width;
-                // TODO: make sure serialization is working properly under all circumstances
-                return serializationLength(m.PC2_.header) + serializationLength(m.PC2_.fields) + 18 + data_size;
+                // bool serialized in uint8_t => 5*uint32_t + 2*uint8_t = 5*4 + 2*1
+                return serializationLength(m.PC2_.header) + 4 + 4 + serializationLength(m.PC2_.fields) + 1 + 4 + 4 + 4 + data_size + 1;
             }
         };
 

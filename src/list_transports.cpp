@@ -5,10 +5,6 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <map>
 
-
-// TODO: delete DBGVARs and this include before final release
-#include "debug_msg.h"
-
 using namespace point_cloud_transport;
 using namespace pluginlib;
 
@@ -38,8 +34,6 @@ int main(int argc, char** argv)
 
     BOOST_FOREACH(const std::string& lookup_name, pub_loader.getDeclaredClasses()) {
 
-        DBGVAR(std::cout, lookup_name);
-
         std::string transport_name = boost::erase_last_copy(lookup_name, "_pub");
         transports[transport_name].pub_name = lookup_name;
         transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
@@ -48,18 +42,14 @@ int main(int argc, char** argv)
             transports[transport_name].pub_status = SUCCESS;
         }
         catch (const LibraryLoadException& e) {
-            DBGVAR(std::cout, lookup_name);
             transports[transport_name].pub_status = LIB_LOAD_FAILURE;
         }
         catch (const CreateClassException& e) {
-            DBGVAR(std::cout, lookup_name);
             transports[transport_name].pub_status = CREATE_FAILURE;
         }
     }
 
     BOOST_FOREACH(const std::string& lookup_name, sub_loader.getDeclaredClasses()) {
-
-        DBGVAR(std::cout, lookup_name);
 
         std::string transport_name = boost::erase_last_copy(lookup_name, "_sub");
         transports[transport_name].sub_name = lookup_name;
@@ -69,11 +59,9 @@ int main(int argc, char** argv)
             transports[transport_name].sub_status = SUCCESS;
         }
         catch (const LibraryLoadException& e) {
-            DBGVAR(std::cout, lookup_name);
             transports[transport_name].sub_status = LIB_LOAD_FAILURE;
         }
         catch (const CreateClassException& e) {
-            DBGVAR(std::cout, lookup_name);
             transports[transport_name].sub_status = CREATE_FAILURE;
         }
     }
