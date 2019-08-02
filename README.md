@@ -1,33 +1,141 @@
-# ASSIGNMENT
-# Requirements
-Implement and evaluate practical point cloud compression for ROS, with C++ and Python API.\
-Use plugin interface ala http://wiki.ros.org/image_transport or at least a compatible API for possible later extensions.\
-All work needed should be using dedicated publishers or subscribers from interface package "point_cloud_transport", with optional configuration.
+# \<POINT CLOUD TRANSPORT>
+ **v0.1.**
 
-By default, apply the common ROS tweaks for float32 "rgb" and "rgba" fields as described in RViz documentation and source code. For sake of compression, interpret such fields as three/four separate uint8 channels and reconstruct single float32 after decompression.
-If time permits, implement converting republishers as in image_transport (raw / compressed / theora) to accommodate plain point cloud subscribers / publishers.
+_**Contents**_
 
-# References
-### SW
-Draco 3D data compression\
-https://github.com/google/draco \
-PCL (better to avoid as dependency in final package) compression tutorial\
-http://pointclouds.org/documentation/tutorials/compression.php \
-(Open 3D Graphics Compression (Open3DGC), for reference\
-https://github.com/amd/rest3d/tree/master/server/o3dgc, https://github.com/KhronosGroup/glTF/wiki/Open-3D-Graphics-Compression) 
-### ROS
-ROS message type definition\
-http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html \
-Image and PointCloud2 performance issue on ROS2 python\
-https://discourse.ros.org/t/image-and-pointcloud2-performance-issue-on-ros2-python/5391
-### Papers
-Zhang (2014): Point cloud attribute compression with graph transform\
-https://ieeexplore.ieee.org/abstract/document/7025414 \
-Kammerl (2012): Real-time compression of point cloud streams\
-https://ieeexplore.ieee.org/abstract/document/6224647 \
-Schnabel (2006): Octree-based Point-cloud Compression\
-http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.71.5637&rep=rep1&type=pdf \
-Gumhold (2005): Predictive Point-Cloud Compression\
-http://www.cs.technion.ac.il/~zachik/publications/2005_pccomp-ik.pdf
-### Data (bag files)
-https://google-cartographer-ros.readthedocs.io/en/latest/demos.html
+  * [Description](#description)
+  * [Getting Started](#getting-started)
+    * [Installation](#installation)
+      * [Prerequisites](#prerequisites)
+      * [Setting up ROS workspace](#setting-up-ros-workspace)
+      * [Building project](#building-project)
+    * [Dependencies](#dependencies)
+  * [Usage](#usage)
+  * [Additional Information](#additional-information)
+    * [Authors](#authors)
+    * [License](#license)
+    * [Acknowledgments](#acknowledgments)
+  
+    
+
+
+Description
+===========
+
+[<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) is a [ROS](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html) messages. It provides support for transporting point clouds in low-bandwidth environment using [Draco](https://github.com/google/draco) compression library.
+
+[<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) is released as C++ source code.
+
+Getting Started
+===========
+
+## Installation
+
+### Prerequisites
+- The Robot Operating System ( [ROS](https://www.ros.org/) ) \
+http://wiki.ros.org/melodic/Installation
+
+- Catkin Command Line Tools ( *optional* ) \
+https://catkin-tools.readthedocs.io/en/latest/installing.html
+
+
+
+### Setting up ROS workspace
+Commands for creating workspace directory and cloning all necessary repositories:
+~~~~~ bash
+$ mkdir -p point_cloud_transport_ws/src
+$ cd point_cloud_transport_ws/src
+$ git clone https://github.com/paplhjak/draco.git
+$ git clone https://github.com/paplhjak/point_cloud_transport.git
+$ git clone https://github.com/paplhjak/draco_point_cloud_transport.git
+$ git clone https://github.com/paplhjak/point_cloud_transport_plugins.git
+~~~~~
+### Building project
+Commands for setting up catkin workspace and building the project:
+~~~~~ bash
+$ cd ..
+$ catkin init
+$ catkin config --extend /opt/ros/melodic
+$ catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release
+$ catkin build
+~~~~~
+To build the project without [Catkin Command Line Tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) use the following command in the root of the workspace:
+~~~~~ bash
+$ catkin_make_isolated
+~~~~~
+
+## Dependencies
+
+* [ROS](https://www.ros.org/) - Framework
+* [Draco](https://github.com/google/draco) - Compression library
+* [Catkin tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) - Command line tools for working with the catkin meta-buildsystem and catkin workspaces
+
+Usage
+======
+[<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) can be used to publish and subscribe to [PointCloud2](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html) messages. At this level of usage, it is similar to using ROS Publishers and Subscribers. Using [<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) instead of the ROS primitives, however, gives the user much greater flexibility in how point clouds are communicated between nodes.
+
+For complete examples of publishing and subscribing to point clouds using [<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport) , see [Tutorial](https://github.com/paplhjak/point_cloud_transport_tutorial). 
+
+## C++
+Communicating PointCloud2 messages using base [ROS](https://www.ros.org/)
+publishers and subscribers:
+```cpp
+#include <ros/ros.h>
+
+void Callback(const sensor_msgs::PointCloud2ConstPtr& msg)
+{
+  // ... process the message
+}
+
+ros::NodeHandle nh;
+ros::Subscriber sub = nh.subscribe("in_point_cloud_topic", 1, Callback);
+ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2>("out_point_cloud_topic", 1);
+```
+
+Communicating PointCloud2 messages using [<point_cloud_transport>](https://github.com/paplhjak/point_cloud_transport):
+```cpp
+#include <ros/ros.h>
+#include <point_cloud_transport/point_cloud_transport.h>
+
+void Callback(const sensor_msgs::PointCloud2ConstPtr& msg)
+{
+  // ... process the message
+}
+
+ros::NodeHandle nh;
+point_cloud_transport::PointCloudTransport pct(nh);
+point_cloud_transport::Subscriber sub = pct.subscribe("in_point_cloud_base_topic", 1, Callback);
+point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic", 1);
+```
+
+
+Additional Information
+======
+
+## Authors
+
+* **Jakub Paplhám** - *Initial work* - [paplhjak](https://github.com/paplhjak)
+* **tpet** - *Supervisor* - [tpet](https://github.com/tpet)
+
+See also the list of [contributors](https://github.com/users/paplhjak/projects/1/contributors).
+
+## License
+
+This project is licensed under the BSD License - see the [LICENSE.md](https://github.com/paplhjak/point_cloud_transport/blob/master/LICENSE) file for details.
+
+## Acknowledgments
+
+* [<image_transport>](http://wiki.ros.org/image_transport) - Provided template of plugin interface
+* [Draco](https://github.com/google/draco) - Provided compression functionality
+
+Support
+=======
+
+For questions/comments please email <paplhjak@fel.cvut.cz>
+
+If you have found an error in this package, please file an issue at: \
+<https://github.com/paplhjak/point_cloud_transport/issues>
+
+Patches are encouraged, and may be submitted by forking this project and
+submitting a pull request through GitHub.
+

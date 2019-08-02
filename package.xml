@@ -2,14 +2,13 @@
   <name>point_cloud_transport</name>
   <version>0.0.1</version>
   <description>
-    Publishers and subscribers that use the parameter server, dynamic
-    reconfigure, timers, and custom messages to test google Draco point cloud compression.
+    Plugin interface for implementing PointCloud2 transports.
   </description>
   <author>Jakub Paplham</author>
   <maintainer email="paplhjak@fel.cvut.cz">Jakub Paplham</maintainer>
-  <license>BSD</license>
+  <license> BSD 3-Clause License </license>
 
-  <url>www.google.com</url>
+  <url>https://github.com/paplhjak/point_cloud_transport</url>
 
   <export>
     <point_cloud_transport plugin="${prefix}/default_plugins.xml" />

@@ -14,11 +14,6 @@ find_package(catkin REQUIRED
 
 find_package(Boost REQUIRED)
 
-
-generate_dynamic_reconfigure_options(
-  cfg/PointCloud.cfg
-)
-
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
