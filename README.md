@@ -121,7 +121,7 @@ See also the list of [contributors](https://github.com/users/paplhjak/projects/1
 
 ## License
 
-This project is licensed under the BSD License - see the [LICENSE.md](https://github.com/users/paplhjak/point_cloud_transport/LICENSE.md) file for details.
+This project is licensed under the BSD License - see the [LICENSE.md](https://github.com/paplhjak/point_cloud_transport/blob/master/LICENSE) file for details.
 
 ## Acknowledgments
 
