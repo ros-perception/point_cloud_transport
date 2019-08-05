@@ -11,7 +11,7 @@ _**Contents**_
       * [Building project](#building-project)
     * [Dependencies](#dependencies)
   * [Usage](#usage)
-   * [C++](#c)
+    * [C++](#c)
   * [Additional Information](#additional-information)
     * [Authors](#authors)
     * [License](#license)
