@@ -1,14 +1,14 @@
 <package format="2">
   <name>point_cloud_transport</name>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>
-    Plugin interface for implementing PointCloud2 transports.
+    point_cloud_transport provides support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
   </description>
   <author>Jakub Paplham</author>
   <maintainer email="paplhjak@fel.cvut.cz">Jakub Paplham</maintainer>
-  <license> BSD 3-Clause License </license>
+  <license> BSD </license>
 
-  <url>https://github.com/paplhjak/point_cloud_transport</url>
+  <url type="repository">https://github.com/paplhjak/point_cloud_transport</url>
 
   <export>
     <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
