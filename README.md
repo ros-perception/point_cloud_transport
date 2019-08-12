@@ -1,5 +1,5 @@
 # \<POINT CLOUD TRANSPORT>
- **v0.1.**
+ **v0.1.** 1st BETA release version
 
 _**Contents**_
 
