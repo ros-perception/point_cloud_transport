@@ -67,8 +67,8 @@ $ catkin_make_isolated
 
 ## Dependencies
 
-* [ROS](https://www.ros.org/) - Framework
-* [Draco](https://github.com/google/draco) - Compression library
+* [ROS](https://www.ros.org/) Melodic Morenia - Framework
+* [Draco](https://github.com/google/draco) 1.3.5 - Compression library
 * [Catkin tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) - Command line tools for working with the catkin meta-buildsystem and catkin workspaces
 
 Usage
