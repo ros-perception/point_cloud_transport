@@ -1,5 +1,5 @@
 # \<POINT CLOUD TRANSPORT>
- **v0.1.**
+ **v0.1.** 1st BETA release version
 
 _**Contents**_
 
@@ -67,8 +67,8 @@ $ catkin_make_isolated
 
 ## Dependencies
 
-* [ROS](https://www.ros.org/) - Framework
-* [Draco](https://github.com/google/draco) - Compression library
+* [ROS](https://www.ros.org/) Melodic Morenia - Framework
+* [Draco](https://github.com/google/draco) 1.3.5 - Compression library
 * [Catkin tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) - Command line tools for working with the catkin meta-buildsystem and catkin workspaces
 
 Usage
@@ -116,7 +116,7 @@ Additional Information
 ## Authors
 
 * **Jakub Paplhám** - *Initial work* - [paplhjak](https://github.com/paplhjak)
-* **tpet** - *Supervisor* - [tpet](https://github.com/tpet)
+* **Ing. Tomáš Petříček, Ph.D.** - *Supervisor* - [tpet](https://github.com/tpet)
 
 See also the list of [contributors](https://github.com/users/paplhjak/projects/1/contributors).
 
@@ -138,5 +138,5 @@ If you have found an error in this package, please file an issue at: \
 <https://github.com/paplhjak/point_cloud_transport/issues>
 
 Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub.
+submitting a pull request through GitHub. Any help is further development of the project is much appreciated.
 
