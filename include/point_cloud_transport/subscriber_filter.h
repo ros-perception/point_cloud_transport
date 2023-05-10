@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,15 +38,21 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_SUBSCRIBER_FILTER_H
-#define POINT_CLOUD_TRANSPORT_SUBSCRIBER_FILTER_H
+#pragma once
 
-#include <ros/ros.h>
+#include <string>
+
+#include <boost/bind.hpp>
+#include <boost/bind/placeholders.hpp>
+
 #include <message_filters/simple_filter.h>
+#include <sensor_msgs/PointCloud2.h>
 
-#include "point_cloud_transport/point_cloud_transport.h"
+#include <point_cloud_transport/point_cloud_transport.h>
+#include <point_cloud_transport/transport_hints.h>
 
-namespace point_cloud_transport {
+namespace point_cloud_transport
+{
 
 /**
  * PointCloud2 subscription filter.
@@ -60,103 +70,97 @@ namespace point_cloud_transport {
  * The output connection for the SubscriberFilter object is the same signature as for roscpp
  * subscription callbacks, ie.
  */
-    class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::PointCloud2>
-    {
-    public:
-        /**
-         * Constructor
-         *
-         * See the ros::NodeHandle::subscribe() variants for more information on the parameters
-         *
-         * nh The ros::NodeHandle to use to subscribe.
-         * base_topic The topic to subscribe to.
-         * queue_size The subscription queue size
-         * transport_hints The transport hints to pass along
-         */
-        SubscriberFilter(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
-                         const TransportHints& transport_hints = TransportHints())
-        {
-            subscribe(pct, base_topic, queue_size, transport_hints);
-        }
+class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::PointCloud2>
+{
+public:
+  /**
+   * Constructor
+   *
+   * \param pct The transport to use.
+   * \param base_topic The topic to subscribe to.
+   * \param queue_size The subscription queue size
+   * \param transport_hints The transport hints to pass along
+   */
+  SubscriberFilter(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
+                   const point_cloud_transport::TransportHints& transport_hints = {})
+  {
+    subscribe(pct, base_topic, queue_size, transport_hints);
+  }
 
-        /**
-         * Empty constructor, use subscribe() to subscribe to a topic
-         */
-        SubscriberFilter()
-        {
-        }
+  /**
+   * Empty constructor, use subscribe() to subscribe to a topic
+   */
+  SubscriberFilter()
+  {
+  }
 
-        ~SubscriberFilter()
-        {
-            unsubscribe();
-        }
+  ~SubscriberFilter()
+  {
+    unsubscribe();
+  }
 
-        /**
-         * Subscribe to a topic.
-         *
-         * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
-         *
-         * nh The ros::NodeHandle to use to subscribe.
-         * base_topic The topic to subscribe to.
-         * queue_size The subscription queue size
-         * transport_hints The transport hints to pass along
-         */
-        void subscribe(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
-                       const TransportHints& transport_hints = TransportHints())
-        {
-            unsubscribe();
+  /**
+   * Subscribe to a topic.
+   *
+   * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
+   *
+   * \param pct The transport to use.
+   * \param base_topic The topic to subscribe to.
+   * \param queue_size The subscription queue size
+   * \param transport_hints The transport hints to pass along
+   */
+  void subscribe(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
+                 const point_cloud_transport::TransportHints& transport_hints = {})
+  {
+    unsubscribe();
 
-            sub_ = pct.subscribe(base_topic, queue_size, boost::bind(&SubscriberFilter::cb, this, _1),
-                                ros::VoidPtr(), transport_hints);
-        }
+    sub_ = pct.subscribe(base_topic, queue_size, boost::bind(&SubscriberFilter::cb, this, _1), {}, transport_hints);
+  }
 
-        /**
-         * Force immediate unsubscription of this subscriber from its topic
-         */
-        void unsubscribe()
-        {
-            sub_.shutdown();
-        }
+  /**
+   * Force immediate unsubscription of this subscriber from its topic
+   */
+  void unsubscribe()
+  {
+    sub_.shutdown();
+  }
 
-        std::string getTopic() const
-        {
-            return sub_.getTopic();
-        }
+  std::string getTopic() const
+  {
+    return sub_.getTopic();
+  }
 
-        /**
-         * Returns the number of publishers this subscriber is connected to.
-         */
-        uint32_t getNumPublishers() const
-        {
-            return sub_.getNumPublishers();
-        }
+  /**
+   * Returns the number of publishers this subscriber is connected to.
+   */
+  uint32_t getNumPublishers() const
+  {
+    return sub_.getNumPublishers();
+  }
 
-        /**
-         * Returns the name of the transport being used.
-         */
-        std::string getTransport() const
-        {
-            return sub_.getTransport();
-        }
+  /**
+   * Returns the name of the transport being used.
+   */
+  std::string getTransport() const
+  {
+    return sub_.getTransport();
+  }
 
-        /**
-         * Returns the internal point_cloud_transport::Subscriber object.
-         */
-        const Subscriber& getSubscriber() const
-        {
-            return sub_;
-        }
+  /**
+   * Returns the internal point_cloud_transport::Subscriber object.
+   */
+  const Subscriber& getSubscriber() const
+  {
+    return sub_;
+  }
 
-    private:
+private:
+  void cb(const sensor_msgs::PointCloud2ConstPtr& m)
+  {
+    signalMessage(m);
+  }
 
-        void cb(const sensor_msgs::PointCloud2ConstPtr& m)
-        {
-            signalMessage(m);
-        }
+  Subscriber sub_;
+};
 
-        Subscriber sub_;
-    };
-
-} // namespace point_cloud_transport
-
-#endif //POINT_CLOUD_TRANSPORT_SUBSCRIBER_FILTER_H
+}

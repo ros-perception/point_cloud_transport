@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,13 +38,22 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_SIMPLE_SUBSCRIBER_PLUGIN_H
-#define POINT_CLOUD_TRANSPORT_SIMPLE_SUBSCRIBER_PLUGIN_H
+#pragma once
 
-#include "point_cloud_transport/subscriber_plugin.h"
-#include <boost/scoped_ptr.hpp>
+#include <memory>
+#include <string>
 
-namespace point_cloud_transport {
+#include <boost/bind.hpp>
+#include <boost/bind/placeholders.hpp>
+
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
+#include <ros/subscriber.h>
+
+#include <point_cloud_transport/subscriber_plugin.h>
+
+namespace point_cloud_transport
+{
 
 /**
  * Base class to simplify implementing most plugins to Subscriber.
@@ -60,81 +73,83 @@ namespace point_cloud_transport {
  * getTopicToSubscribe() controls the name of the internal communication topic. It
  * defaults to \<base topic\>/\<transport name\>.
  */
-    template <class M>
-    class SimpleSubscriberPlugin : public SubscriberPlugin
+template<class M>
+class SimpleSubscriberPlugin : public SubscriberPlugin
+{
+public:
+  virtual ~SimpleSubscriberPlugin()
+  {
+  }
+
+  std::string getTopic() const override
+  {
+    if (simple_impl_)
+      return simple_impl_->sub_.getTopic();
+    return {};
+  }
+
+  uint32_t getNumPublishers() const override
+  {
+    if (simple_impl_)
+      return simple_impl_->sub_.getNumPublishers();
+    return 0;
+  }
+
+  void shutdown() override
+  {
+    if (simple_impl_) simple_impl_->sub_.shutdown();
+  }
+
+protected:
+  /**
+   * Process a message. Must be implemented by the subclass.
+   */
+  virtual void internalCallback(const typename M::ConstPtr& message, const Callback& user_cb) = 0;
+
+  /**
+   * Return the communication topic name for a given base topic.
+   *
+   * Defaults to \<base topic\>/\<transport name\>.
+   */
+  virtual std::string getTopicToSubscribe(const std::string& base_topic) const
+  {
+    return base_topic + "/" + getTransportName();
+  }
+
+  void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
+                     const Callback& callback, const ros::VoidPtr& tracked_object,
+                     const point_cloud_transport::TransportHints& transport_hints) override
+  {
+    // Push each group of transport-specific parameters into a separate sub-namespace
+    ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
+    simple_impl_ = std::make_unique<SimpleSubscriberPluginImpl>(param_nh);
+
+    simple_impl_->sub_ = nh.subscribe<M>(getTopicToSubscribe(base_topic), queue_size,
+                                         boost::bind(&SimpleSubscriberPlugin::internalCallback, this, _1, callback),
+                                         tracked_object, transport_hints.getRosHints());
+  }
+
+  /**
+   * Returns the ros::NodeHandle to be used for parameter lookup.
+   */
+  const ros::NodeHandle& nh() const
+  {
+    return simple_impl_->param_nh_;
+  }
+
+private:
+  struct SimpleSubscriberPluginImpl
+  {
+    explicit SimpleSubscriberPluginImpl(const ros::NodeHandle& nh)
+        : param_nh_(nh)
     {
-    public:
-        virtual ~SimpleSubscriberPlugin() {}
+    }
 
-        virtual std::string getTopic() const
-        {
-            if (simple_impl_) return simple_impl_->sub_.getTopic();
-            return std::string();
-        }
+    const ros::NodeHandle param_nh_;
+    ros::Subscriber sub_;
+  };
 
-        virtual uint32_t getNumPublishers() const
-        {
-            if (simple_impl_) return simple_impl_->sub_.getNumPublishers();
-            return 0;
-        }
+  std::unique_ptr<SimpleSubscriberPluginImpl> simple_impl_;
+};
 
-        virtual void shutdown()
-        {
-            if (simple_impl_) simple_impl_->sub_.shutdown();
-        }
-
-    protected:
-        /**
-         * Process a message. Must be implemented by the subclass.
-         */
-        virtual void internalCallback(const typename M::ConstPtr& message, const Callback& user_cb) = 0;
-
-        /**
-         * Return the communication topic name for a given base topic.
-         *
-         * Defaults to \<base topic\>/\<transport name\>.
-         */
-        virtual std::string getTopicToSubscribe(const std::string& base_topic) const
-        {
-            return base_topic + "/" + getTransportName();
-        }
-
-        virtual void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                                   const Callback& callback, const ros::VoidPtr& tracked_object,
-                                   const TransportHints& transport_hints)
-        {
-            // Push each group of transport-specific parameters into a separate sub-namespace
-            ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
-            simple_impl_.reset(new SimpleSubscriberPluginImpl(param_nh));
-
-            simple_impl_->sub_ = nh.subscribe<M>(getTopicToSubscribe(base_topic), queue_size,
-                                                 boost::bind(&SimpleSubscriberPlugin::internalCallback, this, _1, callback),
-                                                 tracked_object, transport_hints.getRosHints());
-        }
-
-        /**
-         * Returns the ros::NodeHandle to be used for parameter lookup.
-         */
-        const ros::NodeHandle& nh() const
-        {
-            return simple_impl_->param_nh_;
-        }
-
-    private:
-        struct SimpleSubscriberPluginImpl
-        {
-            SimpleSubscriberPluginImpl(const ros::NodeHandle& nh)
-                    : param_nh_(nh)
-            {
-            }
-
-            const ros::NodeHandle param_nh_;
-            ros::Subscriber sub_;
-        };
-
-        boost::scoped_ptr<SimpleSubscriberPluginImpl> simple_impl_;
-    };
-
-} //namespace point_cloud_transport
-
-#endif //POINT_CLOUD_TRANSPORT_SIMPLE_SUBSCRIBER_PLUGIN_H
+}

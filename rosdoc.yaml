@@ -1,0 +1,4 @@
+- builder: doxygen
+  file_patterns: '*.h *.hpp *.hh *.dox'
+  exclude_patterns: '*/cmake-build-*/*'
+  required: True

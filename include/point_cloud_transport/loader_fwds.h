@@ -1,7 +1,12 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
+ * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
  *        All rights reserved.
@@ -33,25 +38,26 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_LOADER_FWDS_H
-#define POINT_CLOUD_TRANSPORT_LOADER_FWDS_H
+#pragma once
+
+#include <boost/shared_ptr.hpp>
 
 // Forward-declare some classes most users shouldn't care about so that
 // point_cloud_transport.h doesn't bring them in.
 
-namespace pluginlib {
-    template<class T> class ClassLoader;
+namespace pluginlib
+{
+template<class T> class ClassLoader;
 }
 
-namespace point_cloud_transport {
-    class PublisherPlugin;
-    class SubscriberPlugin;
+namespace point_cloud_transport
+{
+class PublisherPlugin;
+class SubscriberPlugin;
 
-    typedef pluginlib::ClassLoader<PublisherPlugin> PubLoader;
-    typedef boost::shared_ptr<PubLoader> PubLoaderPtr;
+typedef pluginlib::ClassLoader<PublisherPlugin> PubLoader;
+typedef boost::shared_ptr<PubLoader> PubLoaderPtr;
 
-    typedef pluginlib::ClassLoader<SubscriberPlugin> SubLoader;
-    typedef boost::shared_ptr<SubLoader> SubLoaderPtr;
+typedef pluginlib::ClassLoader<SubscriberPlugin> SubLoader;
+typedef boost::shared_ptr<SubLoader> SubLoaderPtr;
 }
-
-#endif //POINT_CLOUD_TRANSPORT_LOADER_FWDS_H

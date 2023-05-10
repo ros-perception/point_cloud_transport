@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,67 +38,82 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_PUBLISHER_H
-#define POINT_CLOUD_TRANSPORT_PUBLISHER_H
+#pragma once
 
-#include <ros/ros.h>
+#include <string>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
-#include "point_cloud_transport/single_subscriber_publisher.h"
-#include "point_cloud_transport/exception.h"
-#include "point_cloud_transport/loader_fwds.h"
 
-namespace point_cloud_transport {
+#include <point_cloud_transport/loader_fwds.h>
+#include <point_cloud_transport/single_subscriber_publisher.h>
 
-    class Publisher {
-    public:
-        //! Constructor
-        Publisher() {}
+namespace point_cloud_transport
+{
 
-        //! get total number of subscribers to all advertised topics.
-        uint32_t getNumSubscribers() const;
+class Publisher
+{
+public:
+  //! Constructor
+  Publisher();
 
-        //! get base topic of this Publisher
-        std::string getTopic() const;
+  //! get total number of subscribers to all advertised topics.
+  uint32_t getNumSubscribers() const;
 
-        //! Publish a point cloud on the topics associated with this Publisher.
-        void publish(const sensor_msgs::PointCloud2& message) const;
+  //! get base topic of this Publisher
+  std::string getTopic() const;
 
+  //! Publish a point cloud on the topics associated with this Publisher.
+  void publish(const sensor_msgs::PointCloud2& message) const;
 
-        //! Publish a point cloud on the topics associated with this Publisher.
-        void publish(const sensor_msgs::PointCloud2ConstPtr& message) const;
+  //! Publish a point cloud on the topics associated with this Publisher.
+  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const;
 
+  //! Shutdown the advertisements associated with this Publisher.
+  void shutdown();
 
-        //! Shutdown the advertisements associated with this Publisher.
-        void shutdown();
+  operator void*() const;
 
-        operator void*() const;
-        bool operator< (const Publisher& rhs) const { return impl_ <  rhs.impl_; }
-        bool operator!=(const Publisher& rhs) const { return impl_ != rhs.impl_; }
-        bool operator==(const Publisher& rhs) const { return impl_ == rhs.impl_; }
+  bool operator<(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ < rhs.impl_;
+  }
 
-    private:
-        Publisher(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                  const SubscriberStatusCallback& connect_cb,
-                  const SubscriberStatusCallback& disconnect_cb,
-                  const ros::VoidPtr& tracked_object, bool latch,
-                  const PubLoaderPtr& loader);
+  bool operator!=(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ != rhs.impl_;
+  }
 
-        struct Impl;
-        typedef boost::shared_ptr<Impl> ImplPtr;
-        typedef boost::weak_ptr<Impl> ImplWPtr;
+  bool operator==(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ == rhs.impl_;
+  }
 
+private:
+  Publisher(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
+            const point_cloud_transport::SubscriberStatusCallback& connect_cb,
+            const point_cloud_transport::SubscriberStatusCallback& disconnect_cb,
+            const ros::VoidPtr& tracked_object, bool latch,
+            const point_cloud_transport::PubLoaderPtr& loader);
 
-        ImplPtr impl_;
+  struct Impl;
+  typedef boost::shared_ptr<Impl> ImplPtr;
+  typedef boost::weak_ptr<Impl> ImplWPtr;
 
-        static void weakSubscriberCb(const ImplWPtr& impl_wptr,
-                                     const SingleSubscriberPublisher& plugin_pub,
-                                     const SubscriberStatusCallback& user_cb);
+  ImplPtr impl_;
 
-        SubscriberStatusCallback rebindCB(const SubscriberStatusCallback& user_cb);
+  static void weakSubscriberCb(const ImplWPtr& impl_wptr,
+                               const point_cloud_transport::SingleSubscriberPublisher& plugin_pub,
+                               const point_cloud_transport::SubscriberStatusCallback& user_cb);
 
-        friend class PointCloudTransport;
-    };
+  point_cloud_transport::SubscriberStatusCallback rebindCB(
+      const point_cloud_transport::SubscriberStatusCallback& user_cb);
 
-} // namespace point_cloud_transport
+  friend class PointCloudTransport;
+};
 
-#endif //POINT_CLOUD_TRANSPORT_PUBLISHER_H
+}

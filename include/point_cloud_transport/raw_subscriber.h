@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,12 +38,16 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_RAW_SUBSCRIBER_H
-#define POINT_CLOUD_TRANSPORT_RAW_SUBSCRIBER_H
+#pragma once
 
-#include "point_cloud_transport/simple_subscriber_plugin.h"
+#include <string>
 
-namespace point_cloud_transport {
+#include <sensor_msgs/PointCloud2.h>
+
+#include <point_cloud_transport/simple_subscriber_plugin.h>
+
+namespace point_cloud_transport
+{
 
 /**
  * The default SubscriberPlugin.
@@ -47,29 +55,24 @@ namespace point_cloud_transport {
  * RawSubscriber is a simple wrapper for ros::Subscriber which listens for PointCloud2 messages
  * and passes them through to the callback.
  */
-    class RawSubscriber : public SimpleSubscriberPlugin<sensor_msgs::PointCloud2>
-    {
-    public:
-        virtual ~RawSubscriber() {}
+class RawSubscriber : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::PointCloud2>
+{
+public:
+  std::string getTransportName() const override
+  {
+    return "raw";
+  }
 
-        virtual std::string getTransportName() const
-        {
-            return "raw";
-        }
+protected:
+  void internalCallback(const sensor_msgs::PointCloud2ConstPtr& message, const Callback& user_cb) override
+  {
+    user_cb(message);
+  }
 
-    protected:
-        virtual void internalCallback(const sensor_msgs::PointCloud2ConstPtr& message, const Callback& user_cb)
-        {
-            user_cb(message);
-        }
+  std::string getTopicToSubscribe(const std::string& base_topic) const override
+  {
+    return base_topic;
+  }
+};
 
-        virtual std::string getTopicToSubscribe(const std::string& base_topic) const
-        {
-            return base_topic;
-        }
-    };
-
-} //namespace point_cloud_transport
-
-
-#endif //POINT_CLOUD_TRANSPORT_RAW_SUBSCRIBER_H
+}

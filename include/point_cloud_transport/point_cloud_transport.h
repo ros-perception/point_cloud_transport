@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,11 +38,25 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_POINT_CLOUD_TRANSPORT_H
-#define POINT_CLOUD_TRANSPORT_POINT_CLOUD_TRANSPORT_H
+#pragma once
 
-#include "point_cloud_transport/publisher.h"
-#include "point_cloud_transport/subscriber.h"
+#include <string>
+#include <vector>
+
+#include <boost/bind.hpp>
+#include <boost/bind/placeholders.hpp>
+#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <point_cloud_transport/publisher.h>
+#include <point_cloud_transport/single_subscriber_publisher.h>
+#include <point_cloud_transport/subscriber.h>
+#include <point_cloud_transport/transport_hints.h>
 
 
 namespace point_cloud_transport {
@@ -50,83 +68,70 @@ namespace point_cloud_transport {
 * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
 */
 
-class PointCloudTransport {
+class PointCloudTransport
+{
 public:
-    //! Constructor
-    explicit PointCloudTransport(const ros::NodeHandle& nh);
+  //! Constructor
+  explicit PointCloudTransport(const ros::NodeHandle& nh);
 
-    //! Destructor
-    ~PointCloudTransport();
+  //! Advertise a PointCloud2 topic, simple version.
+  point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size, bool latch = false);
 
-    //! Advertise a PointCloud2 topic, simple version.
-    Publisher advertise(const std::string& base_topic, uint32_t queue_size, bool latch = false);
+  //! Advertise an PointCloud2 topic with subscriber status callbacks.
+  point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size,
+                                             const point_cloud_transport::SubscriberStatusCallback& connect_cb,
+                                             const point_cloud_transport::SubscriberStatusCallback& disconnect_cb = {},
+                                             const ros::VoidPtr& tracked_object = {}, bool latch = false);
 
-    //! Advertise an PointCloud2 topic with subcriber status callbacks.
-    Publisher advertise(const std::string& base_topic, uint32_t queue_size,
-                        const SubscriberStatusCallback& connect_cb,
-                        const SubscriberStatusCallback& disconnect_cb = SubscriberStatusCallback(),
-                        const ros::VoidPtr& tracked_object = ros::VoidPtr(), bool latch = false);
+  //! Subscribe to a point cloud topic, version for arbitrary boost::function object.
+  point_cloud_transport::Subscriber subscribe(
+      const std::string& base_topic, uint32_t queue_size,
+      const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
+      const ros::VoidPtr& tracked_object = {},
+      const point_cloud_transport::TransportHints& transport_hints = {});
 
+  //! Subscribe to a point cloud topic, version for bare function.
+  point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
+                                              void(* fp)(const sensor_msgs::PointCloud2ConstPtr&),
+                                              const point_cloud_transport::TransportHints& transport_hints = {})
+  {
+    return subscribe(base_topic, queue_size,
+                     boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>(fp),
+                     ros::VoidPtr(), transport_hints);
+  }
 
+  //! Subscribe to a point cloud topic, version for class member function with bare pointer.
+  template<class T>
+  point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
+                                              void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&), T* obj,
+                                              const point_cloud_transport::TransportHints& transport_hints = {})
+  {
+    return subscribe(base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints);
+  }
 
+  //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
+  template<class T>
+  point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
+                                              void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&),
+                                              const boost::shared_ptr<T>& obj,
+                                              const point_cloud_transport::TransportHints& transport_hints = {})
+  {
+    return subscribe(base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints);
+  }
 
-    //! Subscribe to a point cloud topic, version for arbitrary boost::function object.
-    Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                         const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-                         const ros::VoidPtr& tracked_object = ros::VoidPtr(),
-                         const TransportHints& transport_hints = TransportHints());
+  //! Returns the names of all transports declared in the system. Declared
+  //! transports are not necessarily built or loadable.
+  std::vector<std::string> getDeclaredTransports() const;
 
-
-    //! Subscribe to a point cloud topic, version for bare function.
-    Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                         void(*fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                         const TransportHints& transport_hints = TransportHints())
-    {
-        return subscribe(base_topic, queue_size,
-                         boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>(fp),
-                ros::VoidPtr(), transport_hints);
-    }
-
-
-
-    //! Subscribe to a point cloud topic, version for class member function with bare pointer.
-
-    template<class T>
-    Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                         void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&), T* obj,
-                         const TransportHints& transport_hints = TransportHints())
-    {
-        return subscribe(base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints);
-    }
-
-
-    //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
-
-    template<class T>
-    Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                         void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                         const boost::shared_ptr<T>& obj,
-                         const TransportHints& transport_hints = TransportHints())
-    {
-        return subscribe(base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints);
-    }
-
-
-    //! Returns the names of all transports declared in the system. Declared
-    //! transports are not necessarily built or loadable.
-    std::vector<std::string> getDeclaredTransports() const;
-
-    //! Returns the names of all transports that are loadable in the system.
-    std::vector<std::string> getLoadableTransports() const;
+  //! Returns the names of all transports that are loadable in the system.
+  std::vector<std::string> getLoadableTransports() const;
 
 private:
-    struct Impl;
-    typedef boost::shared_ptr<Impl> ImplPtr;
-    typedef boost::weak_ptr<Impl> ImplWPtr;
+  struct Impl;
+  typedef boost::shared_ptr<Impl> ImplPtr;
+  typedef boost::weak_ptr<Impl> ImplWPtr;
 
-    ImplPtr impl_;
+  ImplPtr impl_;
 };
 
-} // namespace point_cloud_transport
-
-#endif //POINT_CLOUD_TRANSPORT_POINT_CLOUD_TRANSPORT_H
+}

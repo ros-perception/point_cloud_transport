@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,49 +38,47 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_RAW_PUBLISHER_H
-#define POINT_CLOUD_TRANSPORT_RAW_PUBLISHER_H
+#pragma once
 
-#include "point_cloud_transport/simple_publisher_plugin.h"
+#include <string>
 
-namespace point_cloud_transport {
+#include <sensor_msgs/PointCloud2.h>
 
-    //! RawPublisher is a simple wrapper for ros::Publisher, publishing unaltered PointCloud2 messages on the base topic.
-    class RawPublisher : public SimplePublisherPlugin<sensor_msgs::PointCloud2>
-    {
-    public:
-        virtual ~RawPublisher() {}
+#include <point_cloud_transport/simple_publisher_plugin.h>
 
-        virtual std::string getTransportName() const
-        {
-            return "raw";
-        }
+namespace point_cloud_transport
+{
 
-        // Override the default implementation because publishing the message pointer allows
-        // the no-copy intraprocess optimization.
-        virtual void publish(const sensor_msgs::PointCloud2ConstPtr& message) const
-        {
-            getPublisher().publish(message);
-        }
+//! RawPublisher is a simple wrapper for ros::Publisher,
+//! publishing unaltered PointCloud2 messages on the base topic.
+class RawPublisher : public point_cloud_transport::SimplePublisherPlugin<sensor_msgs::PointCloud2>
+{
+public:
+  std::string getTransportName() const override
+  {
+    return "raw";
+  }
 
+  // Override the default implementation because publishing the message pointer allows
+  // the no-copy intraprocess optimization.
+  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const override
+  {
+    getPublisher().publish(message);
+  }
 
-        // Override the default implementation to not copy data to a sensor_msgs::PointCloud2 first
-        virtual void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const;
+  // Override the default implementation to not copy data to a sensor_msgs::PointCloud2 first
+  void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const override;
 
+protected:
+  void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const override
+  {
+    publish_fn(message);
+  }
 
-    protected:
-        virtual void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const
-        {
-            publish_fn(message);
-        }
+  std::string getTopicToAdvertise(const std::string& base_topic) const override
+  {
+    return base_topic;
+  }
+};
 
-        virtual std::string getTopicToAdvertise(const std::string& base_topic) const
-        {
-            return base_topic;
-        }
-    };
-
-} //namespace point_cloud_transport
-
-
-#endif //POINT_CLOUD_TRANSPORT_RAW_PUBLISHER_H
+}

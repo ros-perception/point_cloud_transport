@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,13 +38,27 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_SIMPLE_PUBLISHER_PLUGIN_H
-#define POINT_CLOUD_TRANSPORT_SIMPLE_PUBLISHER_PLUGIN_H
+#pragma once
 
-#include "point_cloud_transport/publisher_plugin.h"
-#include <boost/scoped_ptr.hpp>
+#include <memory>
+#include <string>
 
-namespace point_cloud_transport {
+#include <boost/bind.hpp>
+#include <boost/bind/placeholders.hpp>
+#include <boost/function.hpp>
+
+#include <ros/assert.h>
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+#include <ros/single_subscriber_publisher.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <point_cloud_transport/publisher_plugin.h>
+#include <point_cloud_transport/single_subscriber_publisher.h>
+
+namespace point_cloud_transport
+{
 
 /**
  * Base class to simplify implementing most plugins to Publisher.
@@ -60,182 +78,194 @@ namespace point_cloud_transport {
  * It defaults to \<base topic\>/\<transport name\>.
  *
  */
-    template <class M>
-    class SimplePublisherPlugin : public PublisherPlugin
+template<class M>
+class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
+{
+public:
+  ~SimplePublisherPlugin() override
+  {
+  }
+
+  uint32_t getNumSubscribers() const override
+  {
+    if (simple_impl_)
+      return simple_impl_->pub_.getNumSubscribers();
+    return 0;
+  }
+
+  std::string getTopic() const override
+  {
+    if (simple_impl_)
+      return simple_impl_->pub_.getTopic();
+    return {};
+  }
+
+  void publish(const sensor_msgs::PointCloud2& message) const override
+  {
+    if (!simple_impl_ || !simple_impl_->pub_)
     {
-    public:
-        virtual ~SimplePublisherPlugin() {}
+      ROS_ASSERT_MSG(false, "Call to publish() on an invalid point_cloud_transport::SimplePublisherPlugin");
+      return;
+    }
 
-        virtual uint32_t getNumSubscribers() const
-        {
-            if (simple_impl_) return simple_impl_->pub_.getNumSubscribers();
-            return 0;
-        }
+    publish(message, bindInternalPublisher(simple_impl_->pub_));
+  }
 
-        virtual std::string getTopic() const
-        {
-            if (simple_impl_) return simple_impl_->pub_.getTopic();
-            return std::string();
-        }
+  void shutdown() override
+  {
+    if (simple_impl_)
+      simple_impl_->pub_.shutdown();
+  }
 
-        virtual void publish(const sensor_msgs::PointCloud2& message) const
-        {
-            if (!simple_impl_ || !simple_impl_->pub_) {
-                ROS_ASSERT_MSG(false, "Call to publish() on an invalid point_cloud_transport::SimplePublisherPlugin");
-                return;
-            }
+protected:
+  void advertiseImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
+                     const point_cloud_transport::SubscriberStatusCallback& user_connect_cb,
+                     const point_cloud_transport::SubscriberStatusCallback& user_disconnect_cb,
+                     const ros::VoidPtr& tracked_object, bool latch) override
+  {
+    std::string transport_topic = getTopicToAdvertise(base_topic);
+    ros::NodeHandle param_nh(transport_topic);
+    simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(param_nh);
+    simple_impl_->pub_ = nh.advertise<M>(transport_topic, queue_size,
+                                         bindCB(user_connect_cb, &SimplePublisherPlugin::connectCallback),
+                                         bindCB(user_disconnect_cb, &SimplePublisherPlugin::disconnectCallback),
+                                         tracked_object, latch);
+  }
 
-            publish(message, bindInternalPublisher(simple_impl_->pub_));
-        }
+  //! Generic function for publishing the internal message type.
+  typedef boost::function<void(const M&)> PublishFn;
 
-        virtual void shutdown()
-        {
-            if (simple_impl_) simple_impl_->pub_.shutdown();
-        }
+  /**
+   * Publish a point cloud using the specified publish function. Must be implemented by
+   * the subclass.
+   *
+   * The PublishFn publishes the transport-specific message type. This indirection allows
+   * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
+   * single subscriber publishing (in subscription callbacks).
+   */
+  virtual void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const = 0;
 
-    protected:
-        virtual void advertiseImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                                   const SubscriberStatusCallback& user_connect_cb,
-                                   const SubscriberStatusCallback& user_disconnect_cb,
-                                   const ros::VoidPtr& tracked_object, bool latch)
-        {
-            std::string transport_topic = getTopicToAdvertise(base_topic);
-            ros::NodeHandle param_nh(transport_topic);
-            simple_impl_.reset(new SimplePublisherPluginImpl(param_nh));
-            simple_impl_->pub_ = nh.advertise<M>(transport_topic, queue_size,
-                                                 bindCB(user_connect_cb, &SimplePublisherPlugin::connectCallback),
-                                                 bindCB(user_disconnect_cb, &SimplePublisherPlugin::disconnectCallback),
-                                                 tracked_object, latch);
-        }
+  /**
+   * Return the communication topic name for a given base topic.
+   *
+   * Defaults to \<base topic\>/\<transport name\>.
+   */
+  virtual std::string getTopicToAdvertise(const std::string& base_topic) const
+  {
+    return base_topic + "/" + getTransportName();
+  }
 
-        //! Generic function for publishing the internal message type.
-        typedef boost::function<void(const M&)> PublishFn;
+  /**
+   * Function called when a subscriber connects to the internal publisher.
+   *
+   * Defaults to noop.
+   */
+  virtual void connectCallback(const ros::SingleSubscriberPublisher& pub)
+  {
+  }
 
-        /**
-         * Publish a point cloud using the specified publish function. Must be implemented by
-         * the subclass.
-         *
-         * The PublishFn publishes the transport-specific message type. This indirection allows
-         * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
-         * single subscriber publishing (in subscription callbacks).
-         */
-        virtual void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const = 0;
+  /**
+   * Function called when a subscriber disconnects from the internal publisher.
+   *
+   * Defaults to noop.
+   */
+  virtual void disconnectCallback(const ros::SingleSubscriberPublisher& pub)
+  {
+  }
 
-        /**
-         * Return the communication topic name for a given base topic.
-         *
-         * Defaults to \<base topic\>/\<transport name\>.
-         */
-        virtual std::string getTopicToAdvertise(const std::string& base_topic) const
-        {
-            return base_topic + "/" + getTransportName();
-        }
+  //! Returns the ros::NodeHandle to be used for parameter lookup.
+  const ros::NodeHandle& nh() const
+  {
+    ROS_ASSERT(simple_impl_);
+    return simple_impl_->param_nh_;
+  }
 
-        /**
-         * Function called when a subscriber connects to the internal publisher.
-         *
-         * Defaults to noop.
-         */
-        virtual void connectCallback(const ros::SingleSubscriberPublisher& pub) {}
+  /**
+   * Returns the internal ros::Publisher.
+   * This really only exists so RawPublisher can implement no-copy intraprocess message
+   * passing easily.
+   */
+  const ros::Publisher& getPublisher() const
+  {
+    ROS_ASSERT(simple_impl_);
+    return simple_impl_->pub_;
+  }
 
-        /**
-         * Function called when a subscriber disconnects from the internal publisher.
-         *
-         * Defaults to noop.
-         */
-        virtual void disconnectCallback(const ros::SingleSubscriberPublisher& pub) {}
+private:
+  struct SimplePublisherPluginImpl
+  {
+    explicit SimplePublisherPluginImpl(const ros::NodeHandle& nh)
+        : param_nh_(nh)
+    {
+    }
 
-        //! Returns the ros::NodeHandle to be used for parameter lookup.
-        const ros::NodeHandle& nh() const
-        {
-            return simple_impl_->param_nh_;
-        }
+    const ros::NodeHandle param_nh_;
+    ros::Publisher pub_;
+  };
 
-        /**
-         * Returns the internal ros::Publisher.
-         * This really only exists so RawPublisher can implement no-copy intraprocess message
-         * passing easily.
-         */
-        const ros::Publisher& getPublisher() const
-        {
-            ROS_ASSERT(simple_impl_);
-            return simple_impl_->pub_;
-        }
+  std::unique_ptr<SimplePublisherPluginImpl> simple_impl_;
 
-    private:
-        struct SimplePublisherPluginImpl
-        {
-            SimplePublisherPluginImpl(const ros::NodeHandle& nh)
-                    : param_nh_(nh)
-            {
-            }
+  typedef void (SimplePublisherPlugin::*SubscriberStatusMemFn)(const ros::SingleSubscriberPublisher& pub);
 
-            const ros::NodeHandle param_nh_;
-            ros::Publisher pub_;
-        };
+  /**
+   * Binds the user callback to subscriberCB(), which acts as an intermediary to expose
+   * a publish(PointCloud2) interface to the user while publishing to an internal topic.
+   */
+  ros::SubscriberStatusCallback bindCB(const point_cloud_transport::SubscriberStatusCallback& user_cb,
+                                       SubscriberStatusMemFn internal_cb_fn)
+  {
+    ros::SubscriberStatusCallback internal_cb = boost::bind(internal_cb_fn, this, _1);
+    if (user_cb)
+    {
+      return boost::bind(&SimplePublisherPlugin::subscriberCB, this, _1, user_cb, internal_cb);
+    }
+    else
+    {
+      return internal_cb;
+    }
+  }
 
-        boost::scoped_ptr<SimplePublisherPluginImpl> simple_impl_;
+  /**
+   * Forms the ros::SingleSubscriberPublisher for the internal communication topic into
+   * a point_cloud_transport::SingleSubscriberPublisher for PointCloud2 messages and passes it
+   * to the user subscriber status callback.
+   */
+  void subscriberCB(const ros::SingleSubscriberPublisher& ros_ssp,
+                    const point_cloud_transport::SubscriberStatusCallback& user_cb,
+                    const ros::SubscriberStatusCallback& internal_cb)
+  {
+    // First call the internal callback (for sending setup headers, etc.)
+    internal_cb(ros_ssp);
 
-        typedef void (SimplePublisherPlugin::*SubscriberStatusMemFn)(const ros::SingleSubscriberPublisher& pub);
+    // Construct a function object for publishing sensor_msgs::PointCloud2 through the
+    // subclass-implemented publish() using the ros::SingleSubscriberPublisher to send
+    // messages of the transport-specific type.
+    typedef void (SimplePublisherPlugin::*PublishMemFn)(const sensor_msgs::PointCloud2&, const PublishFn&) const;
+    PublishMemFn pub_mem_fn = &SimplePublisherPlugin::publish;
+    PointCloud2PublishFn point_cloud_publish_fn = boost::bind(pub_mem_fn, this, _1, bindInternalPublisher(ros_ssp));
 
-        /**
-         * Binds the user callback to subscriberCB(), which acts as an intermediary to expose
-         * a publish(PointCloud2) interface to the user while publishing to an internal topic.
-         */
-        ros::SubscriberStatusCallback bindCB(const SubscriberStatusCallback& user_cb,
-                                             SubscriberStatusMemFn internal_cb_fn)
-        {
-            ros::SubscriberStatusCallback internal_cb = boost::bind(internal_cb_fn, this, _1);
-            if (user_cb)
-                return boost::bind(&SimplePublisherPlugin::subscriberCB, this, _1, user_cb, internal_cb);
-            else
-                return internal_cb;
-        }
+    SingleSubscriberPublisher ssp(ros_ssp.getSubscriberName(), getTopic(),
+                                  boost::bind(&SimplePublisherPlugin::getNumSubscribers, this),
+                                  point_cloud_publish_fn);
+    user_cb(ssp);
+  }
 
-        /**
-         * Forms the ros::SingleSubscriberPublisher for the internal communication topic into
-         * a point_cloud_transport::SingleSubscriberPublisher for PointCloud2 messages and passes it
-         * to the user subscriber status callback.
-         */
-        void subscriberCB(const ros::SingleSubscriberPublisher& ros_ssp,
-                          const SubscriberStatusCallback& user_cb,
-                          const ros::SubscriberStatusCallback& internal_cb)
-        {
-            // First call the internal callback (for sending setup headers, etc.)
-            internal_cb(ros_ssp);
+  typedef boost::function<void(const sensor_msgs::PointCloud2&)> PointCloud2PublishFn;
 
-            // Construct a function object for publishing sensor_msgs::PointCloud2 through the
-            // subclass-implemented publish() using the ros::SingleSubscriberPublisher to send
-            // messages of the transport-specific type.
-            typedef void (SimplePublisherPlugin::*PublishMemFn)(const sensor_msgs::PointCloud2&, const PublishFn&) const;
-            PublishMemFn pub_mem_fn = &SimplePublisherPlugin::publish;
-            PointCloud2PublishFn point_cloud_publish_fn = boost::bind(pub_mem_fn, this, _1, bindInternalPublisher(ros_ssp));
+  /**
+   * Returns a function object for publishing the transport-specific message type
+   * through some ROS publisher type.
+   *
+   * @param pub An object with method void publish(const M&)
+   */
+  template<class PubT>
+  PublishFn bindInternalPublisher(const PubT& pub) const
+  {
+    // Bind PubT::publish(const Message&) as PublishFn
+    typedef void (PubT::*InternalPublishMemFn)(const M&) const;
+    InternalPublishMemFn internal_pub_mem_fn = &PubT::publish;
+    return boost::bind(internal_pub_mem_fn, &pub, _1);
+  }
+};
 
-            SingleSubscriberPublisher ssp(ros_ssp.getSubscriberName(), getTopic(),
-                                          boost::bind(&SimplePublisherPlugin::getNumSubscribers, this),
-                                          point_cloud_publish_fn);
-            user_cb(ssp);
-        }
-
-        typedef boost::function<void(const sensor_msgs::PointCloud2&)> PointCloud2PublishFn;
-
-        /**
-         * Returns a function object for publishing the transport-specific message type
-         * through some ROS publisher type.
-         *
-         * @param pub An object with method void publish(const M&)
-         */
-        template <class PubT>
-        PublishFn bindInternalPublisher(const PubT& pub) const
-        {
-            // Bind PubT::publish(const Message&) as PublishFn
-            typedef void (PubT::*InternalPublishMemFn)(const M&) const;
-            InternalPublishMemFn internal_pub_mem_fn = &PubT::publish;
-            return boost::bind(internal_pub_mem_fn, &pub, _1);
-        }
-    };
-
-} //namespace point_cloud_transport
-
-
-#endif //POINT_CLOUD_TRANSPORT_SIMPLE_PUBLISHER_PLUGIN_H
+}

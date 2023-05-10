@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,14 +38,20 @@
  *
  */
 
-#ifndef POINT_CLOUD_TRANSPORT_SUBSCRIBER_H
-#define POINT_CLOUD_TRANSPORT_SUBSCRIBER_H
+#pragma once
 
-#include <ros/ros.h>
+#include <string>
+
+#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
-#include "point_cloud_transport/transport_hints.h"
-#include "point_cloud_transport/exception.h"
-#include "point_cloud_transport/loader_fwds.h"
+
+#include <point_cloud_transport/loader_fwds.h>
+#include <point_cloud_transport/transport_hints.h>
 
 namespace point_cloud_transport {
 
@@ -60,54 +70,64 @@ namespace point_cloud_transport {
  * associated with that handle will stop being called. Once all Subscriber for a given
  * topic go out of scope the topic will be unsubscribed.
  */
-    class Subscriber
-    {
-    public:
-        Subscriber() {}
+class Subscriber
+{
+public:
+  Subscriber();
 
-        /**
-         * Returns the base point cloud topic.
-         *
-         * The Subscriber may actually be subscribed to some transport-specific topic that
-         * differs from the base topic.
-         */
-        std::string getTopic() const;
+  /**
+   * Returns the base point cloud topic.
+   *
+   * The Subscriber may actually be subscribed to some transport-specific topic that
+   * differs from the base topic.
+   */
+  std::string getTopic() const;
 
-        /**
-         * Returns the number of publishers this subscriber is connected to.
-         */
-        uint32_t getNumPublishers() const;
+  /**
+   * Returns the number of publishers this subscriber is connected to.
+   */
+  uint32_t getNumPublishers() const;
 
-        /**
-         * Returns the name of the transport being used.
-         */
-        std::string getTransport() const;
+  /**
+   * Returns the name of the transport being used.
+   */
+  std::string getTransport() const;
 
-        /**
-         * Unsubscribe the callback associated with this Subscriber.
-         */
-        void shutdown();
+  /**
+   * Unsubscribe the callback associated with this Subscriber.
+   */
+  void shutdown();
 
-        operator void*() const;
-        bool operator< (const Subscriber& rhs) const { return impl_ <  rhs.impl_; }
-        bool operator!=(const Subscriber& rhs) const { return impl_ != rhs.impl_; }
-        bool operator==(const Subscriber& rhs) const { return impl_ == rhs.impl_; }
+  operator void*() const;
 
-    private:
-        Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                   const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-                   const ros::VoidPtr& tracked_object, const TransportHints& transport_hints,
-                   const SubLoaderPtr& loader);
+  bool operator<(const point_cloud_transport::Subscriber& rhs) const
+  {
+    return impl_ < rhs.impl_;
+  }
 
-        struct Impl;
-        typedef boost::shared_ptr<Impl> ImplPtr;
-        typedef boost::weak_ptr<Impl> ImplWPtr;
+  bool operator!=(const point_cloud_transport::Subscriber& rhs) const
+  {
+    return impl_ != rhs.impl_;
+  }
 
-        ImplPtr impl_;
+  bool operator==(const point_cloud_transport::Subscriber& rhs) const
+  {
+    return impl_ == rhs.impl_;
+  }
 
-        friend class PointCloudTransport;
-    };
+private:
+  Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
+             const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
+             const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
+             const point_cloud_transport::SubLoaderPtr& loader);
 
-} //namespace point_cloud_transport
+  struct Impl;
+  typedef boost::shared_ptr<Impl> ImplPtr;
+  typedef boost::weak_ptr<Impl> ImplWPtr;
 
-#endif //POINT_CLOUD_TRANSPORT_SUBSCRIBER_H
+  ImplPtr impl_;
+
+  friend class PointCloudTransport;
+};
+
+}

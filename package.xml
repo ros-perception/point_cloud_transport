@@ -1,43 +1,37 @@
-<package format="2">
+<package format="3">
   <name>point_cloud_transport</name>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <description>
-    point_cloud_transport provides support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
+    Support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
   </description>
   <author>Jakub Paplham</author>
-  <maintainer email="paplhjak@fel.cvut.cz">Jakub Paplham</maintainer>
+  <maintainer email="peckama2@fel.cvut.cz">Martin Pecka</maintainer>
   <license> BSD </license>
 
-  <url type="repository">https://github.com/paplhjak/point_cloud_transport</url>
-
-  <export>
-    <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
-  </export>
+  <url type="repository">https://github.com/ctu-vras/point_cloud_transport</url>
+  <url type="website">https://github.com/ctu-vras/point_cloud_transport</url>
+  <url type="bugtracker">https://github.com/ctu-vras/point_cloud_transport/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>message_filters</build_depend>
   <build_depend>pluginlib</build_depend>
-  <build_depend>rosconsole</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>roslib</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
 
-  <exec_depend>message_filters</exec_depend>
+  <build_export_depend>message_filters</build_export_depend>
+
   <exec_depend>pluginlib</exec_depend>
-  <exec_depend>rosconsole</exec_depend>
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>roslib</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>message_runtime</exec_depend>
 
-  <depend>draco</depend>
-  <depend>dynamic_reconfigure</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
 
-  <depend>rosgraph_msgs</depend>
-  <depend>std_msgs</depend>
+  <test_depend condition="$ROS_PYTHON_VERSION == 2">python-catkin-lint</test_depend>
+  <test_depend condition="$ROS_PYTHON_VERSION == 3">python3-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 
+  <doc_depend>rosdoc_lite</doc_depend>
 
+  <export>
+    <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
+    <rosdoc config="rosdoc.yaml"/>
+  </export>
 
 </package>

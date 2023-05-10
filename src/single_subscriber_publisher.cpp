@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
+
 /*
  *
  * BSD 3-Clause License
  *
+ * Copyright (c) Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
  *
@@ -34,43 +38,46 @@
  *
  */
 
-#include "point_cloud_transport/single_subscriber_publisher.h"
-#include "point_cloud_transport/publisher.h"
+#include <string>
 
-namespace point_cloud_transport {
+#include <sensor_msgs/PointCloud2.h>
 
-    SingleSubscriberPublisher::SingleSubscriberPublisher(const std::string& caller_id, const std::string& topic,
-                                                         const GetNumSubscribersFn& num_subscribers_fn,
-                                                         const PublishFn& publish_fn)
-            : caller_id_(caller_id), topic_(topic),
-              num_subscribers_fn_(num_subscribers_fn),
-              publish_fn_(publish_fn)
-    {
-    }
+#include <point_cloud_transport/publisher.h>
+#include <point_cloud_transport/single_subscriber_publisher.h>
 
-    std::string SingleSubscriberPublisher::getSubscriberName() const
-    {
-        return caller_id_;
-    }
+namespace point_cloud_transport
+{
 
-    std::string SingleSubscriberPublisher::getTopic() const
-    {
-        return topic_;
-    }
+SingleSubscriberPublisher::SingleSubscriberPublisher(
+    const std::string& caller_id, const std::string& topic, const GetNumSubscribersFn& num_subscribers_fn,
+    const PublishFn& publish_fn)
+    : caller_id_(caller_id), topic_(topic), num_subscribers_fn_(num_subscribers_fn), publish_fn_(publish_fn)
+{
+}
 
-    uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-    {
-        return num_subscribers_fn_();
-    }
+std::string SingleSubscriberPublisher::getSubscriberName() const
+{
+  return caller_id_;
+}
 
-    void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2& message) const
-    {
-        publish_fn_(message);
-    }
+std::string SingleSubscriberPublisher::getTopic() const
+{
+  return topic_;
+}
 
-    void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
-    {
-        publish_fn_(*message);
-    }
+uint32_t SingleSubscriberPublisher::getNumSubscribers() const
+{
+  return num_subscribers_fn_();
+}
 
-} // namespace point_cloud_transport
+void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2& message) const
+{
+  publish_fn_(message);
+}
+
+void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
+{
+  publish_fn_(*message);
+}
+
+}
