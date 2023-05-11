@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.2 (2023-05-11)
+------------------
 * Added possibility to report log messages.
 * Contributors: Martin Pecka
 
