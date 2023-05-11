@@ -44,6 +44,7 @@
 
 #include <sensor_msgs/PointCloud2.h>
 
+#include <point_cloud_transport/NoConfigConfig.h>
 #include <point_cloud_transport/simple_publisher_plugin.h>
 
 namespace point_cloud_transport
@@ -54,31 +55,21 @@ namespace point_cloud_transport
 class RawPublisher : public point_cloud_transport::SimplePublisherPlugin<sensor_msgs::PointCloud2>
 {
 public:
-  std::string getTransportName() const override
-  {
-    return "raw";
-  }
+  std::string getTransportName() const override;
+
+  TypedEncodeResult encodeTyped(
+      const sensor_msgs::PointCloud2& raw, const point_cloud_transport::NoConfigConfig& config) const override;
 
   // Override the default implementation because publishing the message pointer allows
   // the no-copy intraprocess optimization.
-  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const override
-  {
-    getPublisher().publish(message);
-  }
+  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const override;
 
-  // Override the default implementation to not copy data to a sensor_msgs::PointCloud2 first
-  void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const override;
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
 
 protected:
-  void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const override
-  {
-    publish_fn(message);
-  }
+  void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const override;
 
-  std::string getTopicToAdvertise(const std::string& base_topic) const override
-  {
-    return base_topic;
-  }
+  std::string getTopicToAdvertise(const std::string& base_topic) const override;
 };
 
 }

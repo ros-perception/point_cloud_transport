@@ -58,21 +58,18 @@ namespace point_cloud_transport
 class RawSubscriber : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::PointCloud2>
 {
 public:
-  std::string getTransportName() const override
-  {
-    return "raw";
-  }
+  std::string getTransportName() const override;
+
+  DecodeResult decodeTyped(const sensor_msgs::PointCloud2& compressed, const NoConfigConfig& config) const override;
+  DecodeResult decodeTyped(const sensor_msgs::PointCloud2ConstPtr& compressed,
+                           const NoConfigConfig& config) const override;
+
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
 
 protected:
-  void internalCallback(const sensor_msgs::PointCloud2ConstPtr& message, const Callback& user_cb) override
-  {
-    user_cb(message);
-  }
+  void callback(const sensor_msgs::PointCloud2ConstPtr& message, const Callback& user_cb) override;
 
-  std::string getTopicToSubscribe(const std::string& base_topic) const override
-  {
-    return base_topic;
-  }
+  std::string getTopicToSubscribe(const std::string& base_topic) const override;
 };
 
 }

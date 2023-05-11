@@ -38,45 +38,59 @@
  *
  */
 
+#include <list>
 #include <string>
 
+#include <cras_cpp_common/expected.hpp>
+#include <cras_cpp_common/xmlrpc_value_utils.hpp>
+#include <dynamic_reconfigure/Config.h>
+#include <ros/forwards.h>
+#include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <XmlRpcValue.h>
 
-#include <point_cloud_transport/NoConfigConfig.h>
-#include <point_cloud_transport/raw_publisher.h>
+#include <point_cloud_transport/publisher_plugin.h>
+#include <point_cloud_transport/single_subscriber_publisher.h>
 
 namespace point_cloud_transport
 {
 
-RawPublisher::TypedEncodeResult RawPublisher::encodeTyped(
-    const sensor_msgs::PointCloud2& raw, const point_cloud_transport::NoConfigConfig&) const
+PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::PointCloud2& raw) const
 {
-  return raw;
+  return this->encode(raw, dynamic_reconfigure::Config());
 }
 
-std::string RawPublisher::getTransportName() const
+PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::PointCloud2& raw,
+                                                      const XmlRpc::XmlRpcValue& config) const
 {
-  return "raw";
+  dynamic_reconfigure::Config configMsg;
+  std::list<std::string> errors;
+  if (!cras::convert(config, configMsg, true, &errors))
+    return cras::make_unexpected("Invalid encoder config: " + cras::join(errors, " "));
+  return this->encode(raw, configMsg);
 }
 
-void RawPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
+void PublisherPlugin::advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size, bool latch)
 {
-  getPublisher().publish(message);
+  advertiseImpl(nh, base_topic, queue_size, {}, {}, {}, latch);
 }
 
-void RawPublisher::publish(const sensor_msgs::PointCloud2& message, const RawPublisher::PublishFn& publish_fn) const
+void PublisherPlugin::advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
+                                const point_cloud_transport::SubscriberStatusCallback& connect_cb,
+                                const point_cloud_transport::SubscriberStatusCallback& disconnect_cb,
+                                const ros::VoidPtr& tracked_object, bool latch)
 {
-  publish_fn(message);
+  advertiseImpl(nh, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch);
 }
 
-std::string RawPublisher::getTopicToAdvertise(const std::string& base_topic) const
+void PublisherPlugin::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
 {
-  return base_topic;
+  publish(*message);
 }
 
-bool RawPublisher::matchesTopic(const std::string& topic, const std::string& datatype) const
+std::string PublisherPlugin::getLookupName(const std::string& transport_name)
 {
-  return datatype == ros::message_traits::DataType<sensor_msgs::PointCloud2>::value();
+  return "point_cloud_transport/" + transport_name + "_pub";
 }
 
 }

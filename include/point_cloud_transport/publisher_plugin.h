@@ -41,13 +41,17 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <boost/noncopyable.hpp>
 
+#include <cras_cpp_common/expected.hpp>
+#include <cras_cpp_common/optional.hpp>
+#include <cras_topic_tools/shape_shifter.h>
+#include <dynamic_reconfigure/Config.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <XmlRpcValue.h>
 
 #include <point_cloud_transport/single_subscriber_publisher.h>
 
@@ -58,25 +62,67 @@ namespace point_cloud_transport
 class PublisherPlugin : boost::noncopyable
 {
 public:
+  // There has to be cras::ShapeShifter instead of topic_tools::ShapeShifter to avoid Melodic memory corruption issues.
+  //! \brief Result of cloud encoding. Either a shapeshifter holding the compressed cloud, empty value or error message.
+  typedef cras::expected<cras::optional<cras::ShapeShifter>, std::string> EncodeResult;
+
   virtual ~PublisherPlugin() = default;
 
   //! Get a string identifier for the transport provided by this plugin
   virtual std::string getTransportName() const = 0;
 
-  //! Advertise a topic, simple version.
-  void advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size, bool latch = true)
+  /**
+   * Whether the given topic and datatype match this transport.
+   */
+  virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
+
+  /**
+   * \brief Encode the given raw pointcloud into the given shapeshifter object.
+   * \param[in] raw The input raw pointcloud.
+   * \param[in] config Config of the compression (if it has any parameters).
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  virtual EncodeResult encode(const sensor_msgs::PointCloud2& raw, const dynamic_reconfigure::Config& config) const = 0;
+
+  /**
+   * \brief Encode the given raw pointcloud into the given shapeshifter object using default configuration.
+   * \param[in] raw The input raw pointcloud.
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  EncodeResult encode(const sensor_msgs::PointCloud2& raw) const;
+
+  /**
+ * \brief Encode the given raw pointcloud into the given shapeshifter object.
+ * \param[in] raw The input raw pointcloud.
+ * \param[in] config Config of the compression (if it has any parameters). Pass a XmlRpc dict.
+ * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+ */
+  EncodeResult encode(const sensor_msgs::PointCloud2& raw, const XmlRpc::XmlRpcValue& config) const;
+
+  /**
+   * \brief Encode the given raw pointcloud into the given shapeshifter object.
+   * \tparam Config Type of the config object. This should be the generated dynamic_reconfigure interface of the
+   *                corresponding point_cloud_transport publisher.
+   * \param[in] raw The input raw pointcloud.
+   * \param[in] config Config of the compression (if it has any parameters).
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  template<typename Config>
+  EncodeResult encode(const sensor_msgs::PointCloud2& raw, const Config& config) const
   {
-    advertiseImpl(nh, base_topic, queue_size, {}, {}, {}, latch);
+    dynamic_reconfigure::Config configMsg;
+    config.__toMessage__(configMsg);
+    return this->encode(raw, configMsg);
   }
+
+  //! Advertise a topic, simple version.
+  void advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size, bool latch = true);
 
   //! Advertise a topic with subscriber status callbacks.
   void advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                  const point_cloud_transport::SubscriberStatusCallback& connect_cb,
                  const point_cloud_transport::SubscriberStatusCallback& disconnect_cb = {},
-                 const ros::VoidPtr& tracked_object = {}, bool latch = true)
-  {
-    advertiseImpl(nh, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch);
-  }
+                 const ros::VoidPtr& tracked_object = {}, bool latch = true);
 
   //! Returns the number of subscribers that are currently connected to this PublisherPlugin
   virtual uint32_t getNumSubscribers() const = 0;
@@ -88,42 +134,13 @@ public:
   virtual void publish(const sensor_msgs::PointCloud2& message) const = 0;
 
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
-  virtual void publish(const sensor_msgs::PointCloud2ConstPtr& message) const
-  {
-    publish(*message);
-  }
-
-  /**
-   * Publish a point cloud using the transport associated with this PublisherPlugin.
-   * This version of the function can be used to optimize cases where you don't want to
-   * fill a ROS message first to avoid useless copies.
-   */
-  virtual void publish(const sensor_msgs::PointCloud2& message, const uint8_t* data) const
-  {
-    sensor_msgs::PointCloud2 msg;
-
-    msg.header = message.header;
-    msg.height = message.height;
-    msg.width = message.width;
-    msg.fields = message.fields;
-    msg.is_bigendian = message.is_bigendian;
-    msg.point_step = message.point_step;
-    msg.row_step = message.row_step;
-    msg.is_dense = message.is_dense;
-
-    msg.data = std::vector<uint8_t>(data, data + msg.point_step * msg.height * msg.width);
-
-    publish(msg);
-  }
+  virtual void publish(const sensor_msgs::PointCloud2ConstPtr& message) const;
 
   //! Shutdown any advertisements associated with this PublisherPlugin.
   virtual void shutdown() = 0;
 
   //! Return the lookup name of the PublisherPlugin associated with a specific transport identifier.
-  static std::string getLookupName(const std::string& transport_name)
-  {
-    return "point_cloud_transport/" + transport_name + "_pub";
-  }
+  static std::string getLookupName(const std::string& transport_name);
 
 protected:
   //! Advertise a topic. Must be implemented by the subclass.

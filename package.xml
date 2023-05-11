@@ -6,22 +6,29 @@
   </description>
   <author>Jakub Paplham</author>
   <maintainer email="peckama2@fel.cvut.cz">Martin Pecka</maintainer>
-  <license> BSD </license>
+  <license>BSD</license>
 
   <url type="repository">https://github.com/ctu-vras/point_cloud_transport</url>
-  <url type="website">https://github.com/ctu-vras/point_cloud_transport</url>
+  <url type="website">https://wiki.ros.org/point_cloud_transport</url>
   <url type="bugtracker">https://github.com/ctu-vras/point_cloud_transport/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>message_generation</build_depend>
   <build_depend>pluginlib</build_depend>
 
   <build_export_depend>message_filters</build_export_depend>
+  <build_export_depend>message_runtime</build_export_depend>
 
+  <exec_depend>message_runtime</exec_depend>
   <exec_depend>pluginlib</exec_depend>
 
+  <depend>cras_cpp_common</depend>
+  <depend>cras_topic_tools</depend>
+  <depend>dynamic_reconfigure</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
+  <depend>topic_tools</depend>
 
   <test_depend condition="$ROS_PYTHON_VERSION == 2">python-catkin-lint</test_depend>
   <test_depend condition="$ROS_PYTHON_VERSION == 3">python3-catkin-lint</test_depend>

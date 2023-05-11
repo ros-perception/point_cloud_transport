@@ -40,6 +40,7 @@
 
 #pragma once
 
+#include <list>
 #include <string>
 
 #include <boost/bind.hpp>
@@ -47,13 +48,21 @@
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
+#include <cras_cpp_common/expected.hpp>
+#include <cras_cpp_common/optional.hpp>
+#include <cras_cpp_common/string_utils.hpp>
+#include <cras_cpp_common/xmlrpc_value_utils.hpp>
+#include <dynamic_reconfigure/Config.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <topic_tools/shape_shifter.h>
+#include <XmlRpcValue.h>
 
 #include <point_cloud_transport/transport_hints.h>
 
-namespace point_cloud_transport {
+namespace point_cloud_transport
+{
 
 /**
  * Base class for plugins to Subscriber.
@@ -63,6 +72,10 @@ class SubscriberPlugin : boost::noncopyable
 public:
   typedef boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> Callback;
 
+  //! \brief Result of cloud decoding. Either a `sensor_msgs::PointCloud2` holding the raw message, empty value or
+  //! error message.
+  typedef cras::expected<cras::optional<sensor_msgs::PointCloud2ConstPtr>, std::string> DecodeResult;
+
   virtual ~SubscriberPlugin() = default;
 
   /**
@@ -70,6 +83,63 @@ public:
    * this plugin.
    */
   virtual std::string getTransportName() const = 0;
+
+  /**
+   * Whether the given topic and datatype match this transport.
+   */
+  virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud.
+   * \param[in] compressed The shapeshifter of the compressed pointcloud to be decoded.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  virtual DecodeResult decode(const topic_tools::ShapeShifter& compressed,
+                              const dynamic_reconfigure::Config& config) const = 0;
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud using default config.
+   * \param[in] compressed The shapeshifter of the compressed pointcloud to be decoded.
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  DecodeResult decode(const topic_tools::ShapeShifter& compressed) const
+  {
+    return this->decode(compressed, dynamic_reconfigure::Config());
+  }
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud.
+   * \param[in] compressed The shapeshifter of the compressed pointcloud to be decoded.
+   * \param[in] config Config of the decompression (if it has any parameters). Pass a XmlRpc dict.
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  DecodeResult decode(const topic_tools::ShapeShifter& compressed, const XmlRpc::XmlRpcValue& config) const
+  {
+    dynamic_reconfigure::Config configMsg;
+    std::list<std::string> errors;
+    if (!cras::convert(config, configMsg, true, &errors))
+    {
+      return cras::make_unexpected("Invalid decoder config: " + cras::join(errors, " "));
+    }
+    return this->decode(compressed, configMsg);
+  }
+
+  /**
+   * \brief Encode the given raw pointcloud into the given shapeshifter object.
+   * \tparam Config Type of the config object. This should be the generated dynamic_reconfigure interface of the
+   *                corresponding point_cloud_transport subscriber.
+   * \param[in] compressed The shapeshifter of the compressed pointcloud to be decoded.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  template<typename Config>
+  DecodeResult decode(const topic_tools::ShapeShifter& compressed, const Config& config) const
+  {
+    dynamic_reconfigure::Config configMsg;
+    config.__toMessage__(configMsg);
+    return this->decode(compressed, configMsg);
+  }
 
   /**
    * Subscribe to a point cloud topic, version for arbitrary boost::function object.

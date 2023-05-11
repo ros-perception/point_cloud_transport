@@ -42,14 +42,19 @@
 
 #include <memory>
 #include <string>
+#include <type_traits>
 
 #include <boost/bind.hpp>
 #include <boost/bind/placeholders.hpp>
 
+#include <cras_cpp_common/string_utils.hpp>
+#include <dynamic_reconfigure/Config.h>
+#include <dynamic_reconfigure/server.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
 #include <ros/subscriber.h>
 
+#include <point_cloud_transport/NoConfigConfig.h>
 #include <point_cloud_transport/subscriber_plugin.h>
 
 namespace point_cloud_transport
@@ -73,7 +78,7 @@ namespace point_cloud_transport
  * getTopicToSubscribe() controls the name of the internal communication topic. It
  * defaults to \<base topic\>/\<transport name\>.
  */
-template<class M>
+template<class M, class Config = point_cloud_transport::NoConfigConfig>
 class SimpleSubscriberPlugin : public SubscriberPlugin
 {
 public:
@@ -84,27 +89,135 @@ public:
   std::string getTopic() const override
   {
     if (simple_impl_)
+    {
       return simple_impl_->sub_.getTopic();
+    }
     return {};
+  }
+
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override
+  {
+    return datatype == ros::message_traits::DataType<M>::value() &&
+        cras::endsWith(topic, std::string("/" + getTransportName()));
   }
 
   uint32_t getNumPublishers() const override
   {
     if (simple_impl_)
+    {
       return simple_impl_->sub_.getNumPublishers();
+    }
     return 0;
   }
 
   void shutdown() override
   {
-    if (simple_impl_) simple_impl_->sub_.shutdown();
+    reconfigure_server_.reset();
+    if (simple_impl_)
+    {
+      simple_impl_->sub_.shutdown();
+    }
+  }
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw message.
+   * \param[in] compressed The input compressed pointcloud.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The raw cloud message (if encoding succeeds), or an error message.
+   */
+  virtual DecodeResult decodeTyped(const M& compressed, const Config& config) const = 0;
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw message.
+   * \param[in] compressed The input compressed pointcloud.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The raw cloud message (if encoding succeeds), or an error message.
+   */
+  virtual DecodeResult decodeTyped(const typename M::ConstPtr& compressed, const Config& config) const
+  {
+    return this->decodeTyped(*compressed, config);
+  }
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw message with default configuration.
+   * \param[in] compressed The input compressed pointcloud.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The raw cloud message (if encoding succeeds), or an error message.
+   */
+  virtual DecodeResult decodeTyped(const M& compressed) const
+  {
+    return this->decodeTyped(compressed, Config::__getDefault__());
+  }
+
+  DecodeResult decode(const topic_tools::ShapeShifter& compressed,
+                      const dynamic_reconfigure::Config& configMsg) const override
+  {
+    Config config = Config::__getDefault__();
+    // dynamic_reconfigure has a bug and generates __fromMessage__ with non-const message arg, although it is only read
+    if (!config.__fromMessage__(const_cast<dynamic_reconfigure::Config&>(configMsg)))
+    {
+      return cras::make_unexpected(
+          std::string("Wrong configuration options given to " + this->getTransportName() + " transport decoder."));
+    }
+
+    typename M::ConstPtr msg;
+    try
+    {
+      msg = compressed.instantiate<M>();
+    }
+    catch (const ros::Exception& e)
+    {
+      return cras::make_unexpected(cras::format("Invalid shapeshifter passed to transport decoder: %s.", e.what()));
+    }
+
+    return this->decodeTyped(msg, config);
   }
 
 protected:
+  std::string base_topic_;
+  typedef dynamic_reconfigure::Server<Config> ReconfigureServer;
+  boost::shared_ptr<ReconfigureServer> reconfigure_server_;
+  Config config_{Config::__getDefault__()};
+
+  virtual void configCb(Config& config, uint32_t level)
+  {
+    config_ = config;
+  }
+
+  template<typename C, std::enable_if_t<!std::is_same<C, NoConfigConfig>::value, int> = 0>
+  void _startDynamicReconfigureServer()
+  {
+    this->startDynamicReconfigureServer();
+  }
+
+  template<typename C, std::enable_if_t<std::is_same<C, NoConfigConfig>::value, int> = 0>
+  void _startDynamicReconfigureServer()
+  {
+    // Do not start reconfigure server if there are no configuration options.
+  }
+
+  virtual void startDynamicReconfigureServer()
+  {
+    // Set up reconfigure server for this topic
+    reconfigure_server_ = boost::make_shared<ReconfigureServer>(this->nh());
+    typename ReconfigureServer::CallbackType f =
+        boost::bind(&SimpleSubscriberPlugin<M, Config>::configCb, this, _1, _2);
+    reconfigure_server_->setCallback(f);
+  }
+
   /**
    * Process a message. Must be implemented by the subclass.
    */
-  virtual void internalCallback(const typename M::ConstPtr& message, const Callback& user_cb) = 0;
+  virtual void callback(const typename M::ConstPtr& message, const Callback& user_cb)
+  {
+    DecodeResult res = this->decodeTyped(message, config_);
+    if (!res)
+      ROS_ERROR("Error decoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
+    if (res.value())
+    {
+      user_cb(res.value().value());
+    }
+  }
 
   /**
    * Return the communication topic name for a given base topic.
@@ -125,8 +238,10 @@ protected:
     simple_impl_ = std::make_unique<SimpleSubscriberPluginImpl>(param_nh);
 
     simple_impl_->sub_ = nh.subscribe<M>(getTopicToSubscribe(base_topic), queue_size,
-                                         boost::bind(&SimpleSubscriberPlugin::internalCallback, this, _1, callback),
+                                         boost::bind(&SimpleSubscriberPlugin::callback, this, _1, callback),
                                          tracked_object, transport_hints.getRosHints());
+
+    this->_startDynamicReconfigureServer<Config>();
   }
 
   /**

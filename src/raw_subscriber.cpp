@@ -42,39 +42,41 @@
 
 #include <sensor_msgs/PointCloud2.h>
 
-#include <point_cloud_transport/NoConfigConfig.h>
-#include <point_cloud_transport/raw_publisher.h>
+#include <point_cloud_transport/raw_subscriber.h>
 
 namespace point_cloud_transport
 {
 
-RawPublisher::TypedEncodeResult RawPublisher::encodeTyped(
-    const sensor_msgs::PointCloud2& raw, const point_cloud_transport::NoConfigConfig&) const
-{
-  return raw;
-}
-
-std::string RawPublisher::getTransportName() const
+std::string RawSubscriber::getTransportName() const
 {
   return "raw";
 }
 
-void RawPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
-{
-  getPublisher().publish(message);
-}
-
-void RawPublisher::publish(const sensor_msgs::PointCloud2& message, const RawPublisher::PublishFn& publish_fn) const
-{
-  publish_fn(message);
-}
-
-std::string RawPublisher::getTopicToAdvertise(const std::string& base_topic) const
+std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) const
 {
   return base_topic;
 }
 
-bool RawPublisher::matchesTopic(const std::string& topic, const std::string& datatype) const
+void RawSubscriber::callback(const sensor_msgs::PointCloud2ConstPtr& message, const SubscriberPlugin::Callback& user_cb)
+{
+  user_cb(message);
+}
+
+SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::PointCloud2ConstPtr& compressed,
+                                                          const NoConfigConfig&) const
+{
+  return compressed;
+}
+
+SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::PointCloud2& compressed,
+                                                          const NoConfigConfig& config) const
+{
+  sensor_msgs::PointCloud2Ptr compressedPtr(new sensor_msgs::PointCloud2);
+  *compressedPtr = compressed;
+  return this->decodeTyped(compressedPtr, config);
+}
+
+bool RawSubscriber::matchesTopic(const std::string& topic, const std::string& datatype) const
 {
   return datatype == ros::message_traits::DataType<sensor_msgs::PointCloud2>::value();
 }
