@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added Python API for encode()/decode().
+* Contributors: Martin Pecka
+
 1.0.2 (2023-05-11)
 ------------------
 * Added possibility to report log messages.
