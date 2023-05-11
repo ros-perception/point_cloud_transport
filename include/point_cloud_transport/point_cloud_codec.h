@@ -40,6 +40,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -50,6 +51,8 @@
 #include <boost/weak_ptr.hpp>
 
 #include <cras_cpp_common/c_api.h>
+#include <cras_cpp_common/log_utils.h>
+#include <cras_cpp_common/log_utils/node.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -67,11 +70,11 @@ namespace point_cloud_transport
 * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
 */
 
-class PointCloudCodec
+class PointCloudCodec : public cras::HasLogger
 {
 public:
   //! Constructor
-  PointCloudCodec();
+  explicit PointCloudCodec(const cras::LogHelperPtr& log = std::make_shared<cras::NodeLogHelper>());
 
   boost::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string& name) const;
 
@@ -113,7 +116,8 @@ bool pointCloudTransportCodecsEncode(
     cras::allocator_t compressedDataAllocator,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator
+    cras::allocator_t errorStringAllocator,
+    cras::allocator_t logMessagesAllocator
 );
 
 bool pointCloudTransportCodecsDecode(
@@ -136,5 +140,6 @@ bool pointCloudTransportCodecsDecode(
     sensor_msgs::PointCloud2::_is_dense_type& rawIsDense,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator
+    cras::allocator_t errorStringAllocator,
+    cras::allocator_t logMessagesAllocator
 );

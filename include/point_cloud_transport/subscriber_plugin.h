@@ -41,6 +41,7 @@
 #pragma once
 
 #include <list>
+#include <memory>
 #include <string>
 
 #include <boost/bind.hpp>
@@ -49,6 +50,8 @@
 #include <boost/noncopyable.hpp>
 
 #include <cras_cpp_common/expected.hpp>
+#include <cras_cpp_common/log_utils.h>
+#include <cras_cpp_common/log_utils/node.h>
 #include <cras_cpp_common/optional.hpp>
 #include <cras_cpp_common/string_utils.hpp>
 #include <cras_cpp_common/xmlrpc_value_utils.hpp>
@@ -67,7 +70,7 @@ namespace point_cloud_transport
 /**
  * Base class for plugins to Subscriber.
  */
-class SubscriberPlugin : boost::noncopyable
+class SubscriberPlugin : public cras::HasLogger, boost::noncopyable
 {
 public:
   typedef boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> Callback;
@@ -76,6 +79,11 @@ public:
   //! error message.
   typedef cras::expected<cras::optional<sensor_msgs::PointCloud2ConstPtr>, std::string> DecodeResult;
 
+  explicit SubscriberPlugin(const cras::LogHelperPtr& log = std::make_shared<cras::NodeLogHelper>()) :
+    cras::HasLogger(log)
+  {
+  }
+  
   virtual ~SubscriberPlugin() = default;
 
   /**

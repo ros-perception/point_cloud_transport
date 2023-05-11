@@ -45,6 +45,8 @@
 #include <boost/noncopyable.hpp>
 
 #include <cras_cpp_common/expected.hpp>
+#include <cras_cpp_common/log_utils.h>
+#include <cras_cpp_common/log_utils/node.h>
 #include <cras_cpp_common/optional.hpp>
 #include <cras_topic_tools/shape_shifter.h>
 #include <dynamic_reconfigure/Config.h>
@@ -59,13 +61,18 @@ namespace point_cloud_transport
 {
 
 //! Base class for plugins to Publisher.
-class PublisherPlugin : boost::noncopyable
+class PublisherPlugin : public cras::HasLogger, boost::noncopyable
 {
 public:
   // There has to be cras::ShapeShifter instead of topic_tools::ShapeShifter to avoid Melodic memory corruption issues.
   //! \brief Result of cloud encoding. Either a shapeshifter holding the compressed cloud, empty value or error message.
   typedef cras::expected<cras::optional<cras::ShapeShifter>, std::string> EncodeResult;
 
+  explicit PublisherPlugin(const cras::LogHelperPtr& log = std::make_shared<cras::NodeLogHelper>()) :
+      cras::HasLogger(log)
+  {
+  }
+  
   virtual ~PublisherPlugin() = default;
 
   //! Get a string identifier for the transport provided by this plugin

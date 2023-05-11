@@ -45,6 +45,8 @@
 #include <boost/make_shared.hpp>
 
 #include <cras_cpp_common/c_api.h>
+#include <cras_cpp_common/log_utils.h>
+#include <cras_cpp_common/log_utils/memory.h>
 #include <pluginlib/class_loader.h>
 #include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -71,7 +73,7 @@ struct PointCloudCodec::Impl
   }
 };
 
-PointCloudCodec::PointCloudCodec() : impl_(new Impl)
+PointCloudCodec::PointCloudCodec(const cras::LogHelperPtr& log) : cras::HasLogger(log), impl_(new Impl)
 {
 }
 
@@ -101,7 +103,9 @@ boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEn
   {
     if (transportNameMatches(lookup_name, name, "_pub"))
     {
-      return impl_->enc_loader_->createInstance(lookup_name);
+      auto encoder = impl_->enc_loader_->createInstance(lookup_name);
+      encoder->setCrasLogger(this->log);
+      return encoder;
     }
   }
 
@@ -114,7 +118,9 @@ boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEn
 {
   if (impl_->encoders_for_topics_.find(topic) != impl_->encoders_for_topics_.end())
   {
-    return impl_->enc_loader_->createInstance(impl_->encoders_for_topics_[topic]);
+    auto encoder = impl_->enc_loader_->createInstance(impl_->encoders_for_topics_[topic]);
+    encoder->setCrasLogger(this->log);
+    return encoder;
   }
 
   for (const auto& lookup_name : impl_->enc_loader_->getDeclaredClasses())
@@ -127,6 +133,7 @@ boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEn
     if (encoder->matchesTopic(topic, datatype))
     {
       impl_->encoders_for_topics_[topic] = lookup_name;
+      encoder->setCrasLogger(this->log);
       return encoder;
     }
   }
@@ -142,7 +149,9 @@ boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getD
   {
     if (transportNameMatches(lookup_name, name, "_sub"))
     {
-      return impl_->dec_loader_->createInstance(lookup_name);
+      auto decoder = impl_->dec_loader_->createInstance(lookup_name);
+      decoder->setCrasLogger(this->log);
+      return decoder;
     }
   }
 
@@ -155,7 +164,9 @@ boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getD
 {
   if (impl_->decoders_for_topics_.find(topic) != impl_->decoders_for_topics_.end())
   {
-    return impl_->dec_loader_->createInstance(impl_->decoders_for_topics_[topic]);
+    auto decoder = impl_->dec_loader_->createInstance(impl_->decoders_for_topics_[topic]);
+    decoder->setCrasLogger(this->log);
+    return decoder;
   }
 
   for (const auto& lookup_name : impl_->dec_loader_->getDeclaredClasses())
@@ -168,6 +179,7 @@ boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getD
     if (decoder->matchesTopic(topic, datatype))
     {
       impl_->decoders_for_topics_[topic] = lookup_name;
+      decoder->setCrasLogger(this->log);
       return decoder;
     }
   }
@@ -176,7 +188,8 @@ boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getD
   return nullptr;
 }
 
-thread_local PointCloudCodec point_cloud_transport_codec_instance;
+thread_local auto globalLogger = std::make_shared<cras::MemoryLogHelper>();
+thread_local PointCloudCodec point_cloud_transport_codec_instance(globalLogger);
 
 }
 
@@ -200,7 +213,8 @@ bool pointCloudTransportCodecsEncode(
     cras::allocator_t compressedDataAllocator,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator
+    cras::allocator_t errorStringAllocator,
+    cras::allocator_t logMessagesAllocator
 )
 {
   dynamic_reconfigure::Config config;
@@ -236,6 +250,8 @@ bool pointCloudTransportCodecsEncode(
   memcpy(raw.data.data(), rawData, rawDataLength);
   raw.is_dense = rawIsDense;
 
+  point_cloud_transport::globalLogger->clear();
+  
   auto encoder = point_cloud_transport::point_cloud_transport_codec_instance.getEncoderByName(codec);
   if (!encoder)
   {
@@ -244,6 +260,11 @@ bool pointCloudTransportCodecsEncode(
   }
 
   const auto compressed = encoder->encode(raw, config);
+
+  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
+    cras::outputRosMessage(logMessagesAllocator, msg);
+  point_cloud_transport::globalLogger->clear();
+  
   if (!compressed)
   {
     cras::outputString(errorStringAllocator, compressed.error());
@@ -280,7 +301,8 @@ bool pointCloudTransportCodecsDecode(
     sensor_msgs::PointCloud2::_is_dense_type& rawIsDense,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator
+    cras::allocator_t errorStringAllocator,
+    cras::allocator_t logMessagesAllocator
 )
 {
   dynamic_reconfigure::Config config;
@@ -303,6 +325,8 @@ bool pointCloudTransportCodecsDecode(
   cras::resizeBuffer(compressed, compressedDataLength);
   memcpy(cras::getBuffer(compressed), compressedData, compressedDataLength);
 
+  point_cloud_transport::globalLogger->clear();
+  
   auto decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByTopic(
       topicOrCodec, compressedType);
   if (!decoder)
@@ -316,6 +340,11 @@ bool pointCloudTransportCodecsDecode(
   }
 
   const auto res = decoder->decode(compressed, config);
+
+  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
+    cras::outputRosMessage(logMessagesAllocator, msg);
+  point_cloud_transport::globalLogger->clear();
+  
   if (!res)
   {
     cras::outputString(errorStringAllocator, res.error());
