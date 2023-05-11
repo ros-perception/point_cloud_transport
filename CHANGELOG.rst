@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2023-05-11)
+------------------
 * Reworked the idea to include direct encoders/decoders and not only publishers/subscribers.
 * Initial cleanup before releasing. No substantial changes made.
 * Forked from https://github.com/paplhjak/point_cloud_transport
