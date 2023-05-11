@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added possibility to report log messages.
+* Contributors: Martin Pecka
+
 1.0.1 (2023-05-11)
 ------------------
 * Reworked the idea to include direct encoders/decoders and not only publishers/subscribers.
