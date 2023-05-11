@@ -83,7 +83,7 @@ public:
     cras::HasLogger(log)
   {
   }
-  
+
   virtual ~SubscriberPlugin() = default;
 
   /**

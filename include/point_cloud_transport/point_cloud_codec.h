@@ -96,7 +96,7 @@ private:
 
 }
 
-bool pointCloudTransportCodecsEncode(
+extern "C" bool pointCloudTransportCodecsEncode(
     const char* codec,
     sensor_msgs::PointCloud2::_height_type rawHeight,
     sensor_msgs::PointCloud2::_width_type rawWidth,
@@ -120,7 +120,7 @@ bool pointCloudTransportCodecsEncode(
     cras::allocator_t logMessagesAllocator
 );
 
-bool pointCloudTransportCodecsDecode(
+extern "C" bool pointCloudTransportCodecsDecode(
     const char* topicOrCodec,
     const char* compressedType,
     const char* compressedMd5sum,

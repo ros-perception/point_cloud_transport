@@ -1,4 +1,10 @@
 - builder: doxygen
   file_patterns: '*.h *.hpp *.hh *.dox'
   exclude_patterns: '*/cmake-build-*/*'
+  output_dir: c++
+  required: True
+- builder: sphinx
+  name: Python API
+  output_dir: python
+  sphinx_root_dir: doc
   required: True

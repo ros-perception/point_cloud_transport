@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Boost REQUIRED)
 
+catkin_python_setup()
+
 generate_dynamic_reconfigure_options(cfg/NoConfig.cfg)
 
 catkin_package(
@@ -102,6 +104,12 @@ if (CATKIN_ENABLE_TESTING)
     -build/header_guard,-readability/namespace,-whitespace/braces,-runtime/references,\
     -build/c++11,-readability/nolint,-readability/todo,-legal/copyright,-build/namespaces")
   roslint_cpp(${ROSLINT_INCLUDE} ${ROSLINT_SRC})
+  
+  # Roslint Python
+
+  # Run roslint on Python sources
+  file(GLOB_RECURSE python_files src/*.py)
+  roslint_python("${python_files}")
 
   roslint_add_test()
 endif()

@@ -38,6 +38,7 @@
  *
  */
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -251,7 +252,7 @@ bool pointCloudTransportCodecsEncode(
   raw.is_dense = rawIsDense;
 
   point_cloud_transport::globalLogger->clear();
-  
+
   auto encoder = point_cloud_transport::point_cloud_transport_codec_instance.getEncoderByName(codec);
   if (!encoder)
   {
@@ -264,7 +265,7 @@ bool pointCloudTransportCodecsEncode(
   for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
     cras::outputRosMessage(logMessagesAllocator, msg);
   point_cloud_transport::globalLogger->clear();
-  
+
   if (!compressed)
   {
     cras::outputString(errorStringAllocator, compressed.error());
@@ -326,7 +327,7 @@ bool pointCloudTransportCodecsDecode(
   memcpy(cras::getBuffer(compressed), compressedData, compressedDataLength);
 
   point_cloud_transport::globalLogger->clear();
-  
+
   auto decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByTopic(
       topicOrCodec, compressedType);
   if (!decoder)
@@ -344,7 +345,7 @@ bool pointCloudTransportCodecsDecode(
   for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
     cras::outputRosMessage(logMessagesAllocator, msg);
   point_cloud_transport::globalLogger->clear();
-  
+
   if (!res)
   {
     cras::outputString(errorStringAllocator, res.error());

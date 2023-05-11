@@ -40,6 +40,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <boost/noncopyable.hpp>
@@ -72,7 +73,7 @@ public:
       cras::HasLogger(log)
   {
   }
-  
+
   virtual ~PublisherPlugin() = default;
 
   //! Get a string identifier for the transport provided by this plugin
