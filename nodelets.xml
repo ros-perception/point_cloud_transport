@@ -1,0 +1,7 @@
+<library path="lib/libpoint_cloud_transport_republish">
+    <class name="point_cloud_transport/republish" type="point_cloud_transport::RepublishNodelet" base_class_type="nodelet::Nodelet">
+        <description>
+            Nodelet for republishing a point cloud from one transport to other transport(s).
+        </description>
+    </class>
+</library>

@@ -151,7 +151,7 @@ Publisher::Publisher(ros::NodeHandle& nh, const std::string& base_topic, uint32_
     }
     catch (const std::runtime_error& e)
     {
-      ROS_DEBUG("Failed to load plugin %s, error string: %s", lookup_name.c_str(), e.what());
+      ROS_ERROR("Failed to load plugin %s, error string: %s", lookup_name.c_str(), e.what());
     }
   }
 

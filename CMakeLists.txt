@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   cras_topic_tools
   dynamic_reconfigure
   message_generation
+  nodelet
   pluginlib
   roscpp
   sensor_msgs
@@ -21,7 +22,7 @@ generate_dynamic_reconfigure_options(cfg/NoConfig.cfg)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME} raw_${PROJECT_NAME}
-  CATKIN_DEPENDS cras_cpp_common cras_topic_tools dynamic_reconfigure message_filters message_runtime roscpp sensor_msgs topic_tools
+  CATKIN_DEPENDS cras_cpp_common cras_topic_tools dynamic_reconfigure message_filters message_runtime nodelet roscpp sensor_msgs topic_tools
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -51,13 +52,14 @@ target_link_libraries(${PROJECT_NAME}_plugins ${PROJECT_NAME})
 add_dependencies(${PROJECT_NAME}_plugins ${${PROJECT_NAME}_EXPORTED_TARGETS})
 class_loader_hide_library_symbols(${PROJECT_NAME}_plugins)
 
-add_executable(republish src/republish.cpp)
-target_link_libraries(republish ${PROJECT_NAME})
+add_library(${PROJECT_NAME}_republish src/republish.cpp)
+target_link_libraries(${PROJECT_NAME}_republish ${PROJECT_NAME})
+cras_node_from_nodelet(${PROJECT_NAME}_republish "${PROJECT_NAME}/republish.h" ${PROJECT_NAME}::RepublishNodelet OUTPUT_NAME republish ANONYMOUS)
 
 add_executable(list_transports src/list_transports.cpp)
 target_link_libraries(list_transports ${PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins raw_${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins ${PROJECT_NAME}_republish raw_${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
@@ -67,11 +69,11 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(TARGETS list_transports republish
+install(TARGETS list_transports
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES default_plugins.xml
+install(FILES default_plugins.xml nodelets.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

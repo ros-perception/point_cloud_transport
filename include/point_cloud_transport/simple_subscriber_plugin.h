@@ -231,15 +231,21 @@ protected:
 
   void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                      const Callback& callback, const ros::VoidPtr& tracked_object,
-                     const point_cloud_transport::TransportHints& transport_hints) override
+                     const point_cloud_transport::TransportHints& transport_hints,
+                     bool allow_concurrent_callbacks) override
   {
     // Push each group of transport-specific parameters into a separate sub-namespace
     ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
     simple_impl_ = std::make_unique<SimpleSubscriberPluginImpl>(param_nh);
 
-    simple_impl_->sub_ = nh.subscribe<M>(getTopicToSubscribe(base_topic), queue_size,
-                                         boost::bind(&SimpleSubscriberPlugin::callback, this, _1, callback),
-                                         tracked_object, transport_hints.getRosHints());
+    ros::SubscribeOptions ops;
+    ops.init<M>(getTopicToSubscribe(base_topic), queue_size,
+                boost::bind(&SimpleSubscriberPlugin::callback, this, _1, callback));
+    ops.tracked_object = tracked_object;
+    ops.transport_hints = transport_hints.getRosHints();
+    ops.allow_concurrent_callbacks = allow_concurrent_callbacks;
+
+    simple_impl_->sub_ = nh.subscribe(ops);
 
     this->_startDynamicReconfigureServer<Config>();
   }

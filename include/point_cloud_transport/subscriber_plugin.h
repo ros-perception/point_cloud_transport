@@ -154,9 +154,11 @@ public:
    */
   void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                  const Callback& callback, const ros::VoidPtr& tracked_object = {},
-                 const point_cloud_transport::TransportHints& transport_hints = {})
+                 const point_cloud_transport::TransportHints& transport_hints = {},
+                 bool allow_concurrent_callbacks = false)
   {
-    return subscribeImpl(nh, base_topic, queue_size, callback, tracked_object, transport_hints);
+    return subscribeImpl(nh, base_topic, queue_size, callback, tracked_object, transport_hints,
+                         allow_concurrent_callbacks);
   }
 
   /**
@@ -164,11 +166,12 @@ public:
    */
   void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                  void(* fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                 const point_cloud_transport::TransportHints& transport_hints = {})
+                 const point_cloud_transport::TransportHints& transport_hints = {},
+                 bool allow_concurrent_callbacks = false)
   {
     return subscribe(nh, base_topic, queue_size,
                      boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>(fp),
-                     ros::VoidPtr(), transport_hints);
+                     ros::VoidPtr(), transport_hints, allow_concurrent_callbacks);
   }
 
   /**
@@ -177,9 +180,11 @@ public:
   template<class T>
   void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                  void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&), T* obj,
-                 const point_cloud_transport::TransportHints& transport_hints = {})
+                 const point_cloud_transport::TransportHints& transport_hints = {},
+                 bool allow_concurrent_callbacks = false)
   {
-    return subscribe(nh, base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints);
+    return subscribe(nh, base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints,
+                     allow_concurrent_callbacks);
   }
 
   /**
@@ -189,9 +194,11 @@ public:
   void subscribe(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                  void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&),
                  const boost::shared_ptr<T>& obj,
-                 const point_cloud_transport::TransportHints& transport_hints = {})
+                 const point_cloud_transport::TransportHints& transport_hints = {},
+                 bool allow_concurrent_callbacks = false)
   {
-    return subscribe(nh, base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints);
+    return subscribe(nh, base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints,
+                     allow_concurrent_callbacks);
   }
 
   /**
@@ -224,7 +231,8 @@ protected:
    */
   virtual void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                              const Callback& callback, const ros::VoidPtr& tracked_object,
-                             const point_cloud_transport::TransportHints& transport_hints) = 0;
+                             const point_cloud_transport::TransportHints& transport_hints,
+                             bool allow_concurrent_callbacks) = 0;
 };
 
 }

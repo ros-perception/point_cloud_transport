@@ -97,7 +97,7 @@ Subscriber::Subscriber() = default;
 Subscriber::Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
                        const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
                        const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
-                       const point_cloud_transport::SubLoaderPtr& loader)
+                       bool allow_concurrent_callbacks, const point_cloud_transport::SubLoaderPtr& loader)
     : impl_(new Impl)
 {
   // Load the plugin for the chosen transport.
@@ -130,7 +130,8 @@ Subscriber::Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint3
   }
 
   // Tell plugin to subscribe.
-  impl_->subscriber_->subscribe(nh, base_topic, queue_size, callback, tracked_object, transport_hints);
+  impl_->subscriber_->subscribe(nh, base_topic, queue_size, callback, tracked_object, transport_hints,
+                                allow_concurrent_callbacks);
 }
 
 std::string Subscriber::getTopic() const

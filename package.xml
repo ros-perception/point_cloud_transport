@@ -29,6 +29,7 @@
   <depend>cras_cpp_common</depend>
   <depend>cras_topic_tools</depend>
   <depend>dynamic_reconfigure</depend>
+  <depend>nodelet</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>topic_tools</depend>
@@ -42,6 +43,7 @@
 
   <export>
     <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
+    <nodelet plugin="${prefix}/nodelets.xml" />
     <rosdoc config="rosdoc.yaml"/>
   </export>
 

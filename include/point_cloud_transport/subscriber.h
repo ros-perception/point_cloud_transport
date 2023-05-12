@@ -119,7 +119,7 @@ private:
   Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
              const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
              const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
-             const point_cloud_transport::SubLoaderPtr& loader);
+             bool allow_concurrent_callbacks, const point_cloud_transport::SubLoaderPtr& loader);
 
   struct Impl;
   typedef boost::shared_ptr<Impl> ImplPtr;

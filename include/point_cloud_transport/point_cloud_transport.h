@@ -88,25 +88,29 @@ public:
       const std::string& base_topic, uint32_t queue_size,
       const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
       const ros::VoidPtr& tracked_object = {},
-      const point_cloud_transport::TransportHints& transport_hints = {});
+      const point_cloud_transport::TransportHints& transport_hints = {},
+      bool allow_concurrent_callbacks = false);
 
   //! Subscribe to a point cloud topic, version for bare function.
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
                                               void(* fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                                              const point_cloud_transport::TransportHints& transport_hints = {})
+                                              const point_cloud_transport::TransportHints& transport_hints = {},
+                                              bool allow_concurrent_callbacks = false)
   {
     return subscribe(base_topic, queue_size,
                      boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>(fp),
-                     ros::VoidPtr(), transport_hints);
+                     ros::VoidPtr(), transport_hints, allow_concurrent_callbacks);
   }
 
   //! Subscribe to a point cloud topic, version for class member function with bare pointer.
   template<class T>
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
                                               void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&), T* obj,
-                                              const point_cloud_transport::TransportHints& transport_hints = {})
+                                              const point_cloud_transport::TransportHints& transport_hints = {},
+                                              bool allow_concurrent_callbacks = false)
   {
-    return subscribe(base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints);
+    return subscribe(base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints,
+                     allow_concurrent_callbacks);
   }
 
   //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
@@ -114,9 +118,11 @@ public:
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
                                               void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&),
                                               const boost::shared_ptr<T>& obj,
-                                              const point_cloud_transport::TransportHints& transport_hints = {})
+                                              const point_cloud_transport::TransportHints& transport_hints = {},
+                                              bool allow_concurrent_callbacks = false)
   {
-    return subscribe(base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints);
+    return subscribe(base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints,
+                     allow_concurrent_callbacks);
   }
 
   //! Returns the names of all transports declared in the system. Declared
@@ -125,6 +131,12 @@ public:
 
   //! Returns the names of all transports that are loadable in the system.
   std::vector<std::string> getLoadableTransports() const;
+
+  //! The loader that can load publisher plugins.
+  PubLoaderPtr getPublisherLoader() const;
+
+  //! The loader that can load subscriber plugins.
+  SubLoaderPtr getSubscriberLoader() const;
 
 private:
   struct Impl;

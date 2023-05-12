@@ -95,9 +95,11 @@ Publisher PointCloudTransport::advertise(const std::string& base_topic, uint32_t
 Subscriber PointCloudTransport::subscribe(
     const std::string& base_topic, uint32_t queue_size,
     const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-    const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints)
+    const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
+    bool allow_concurrent_callbacks)
 {
-  return {impl_->nh_, base_topic, queue_size, callback, tracked_object, transport_hints, impl_->sub_loader_};
+  return {impl_->nh_, base_topic, queue_size, callback, tracked_object, transport_hints, allow_concurrent_callbacks,
+          impl_->sub_loader_};
 }
 
 std::vector<std::string> PointCloudTransport::getDeclaredTransports() const
@@ -135,6 +137,16 @@ std::vector<std::string> PointCloudTransport::getLoadableTransports() const
   }
 
   return loadableTransports;
+}
+
+PubLoaderPtr PointCloudTransport::getPublisherLoader() const
+{
+  return impl_->pub_loader_;
+}
+
+SubLoaderPtr PointCloudTransport::getSubscriberLoader() const
+{
+  return impl_->sub_loader_;
 }
 
 }

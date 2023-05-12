@@ -38,71 +38,81 @@
  *
  */
 
+#include <memory>
 #include <string>
 
 #include <boost/bind.hpp>
 #include <boost/bind/placeholders.hpp>
 
 #include <pluginlib/class_loader.h>
-#include <ros/forwards.h>
-#include <ros/init.h>
-#include <ros/node_handle.h>
+#include <pluginlib/class_list_macros.hpp>
 #include <sensor_msgs/PointCloud2.h>
 
 #include <point_cloud_transport/point_cloud_transport.h>
 #include <point_cloud_transport/publisher.h>
 #include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/single_subscriber_publisher.h>
+#include <point_cloud_transport/republish.h>
 #include <point_cloud_transport/subscriber.h>
+#include <point_cloud_transport/exception.h>
 
-int main(int argc, char** argv)
+namespace point_cloud_transport
 {
-  ros::init(argc, argv, "point_cloud_republisher", ros::init_options::AnonymousName);
-  if (argc < 2)
+
+void RepublishNodelet::onInit()
+{
+  if (this->getMyArgv().empty())
   {
-    printf("Usage: %s in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>\n", argv[0]);
-    return 0;
+    throw std::runtime_error("Usage: republish in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>");
   }
-  ros::NodeHandle nh;
-  std::string in_topic = nh.resolveName("in");
-  std::string in_transport = argv[1];
-  std::string out_topic = nh.resolveName("out");
 
-  point_cloud_transport::PointCloudTransport pct(nh);
-  point_cloud_transport::Subscriber sub;
+  std::string in_transport = this->getMyArgv()[0];
+  std::string in_topic = this->getNodeHandle().resolveName("in");
+  std::string out_topic = this->getNodeHandle().resolveName("out");
 
-  if (argc < 3)
+  const auto params = this->params(this->getPrivateNodeHandle());
+  const auto in_queue_size = params->getParam("in_queue_size", 10_sz, "messages");
+  const auto out_queue_size = params->getParam("out_queue_size", in_queue_size, "messages");
+
+  this->pct = std::make_unique<PointCloudTransport>(this->getMTNodeHandle());
+  point_cloud_transport::TransportHints hints(in_transport, {}, this->getPrivateNodeHandle());
+
+  // There might be exceptions thrown by the loaders. We want the propagate so that the nodelet loading fails.
+
+  if (this->getMyArgv().size() < 2)
   {
     // Use all available transports for output
-    point_cloud_transport::Publisher pub = pct.advertise(out_topic, 1);
+    this->pub.reset(new point_cloud_transport::Publisher);
+    *this->pub = this->pct->advertise(out_topic, out_queue_size);
 
     // Use Publisher::publish as the subscriber callback
     typedef void (point_cloud_transport::Publisher::*PublishMemFn)(const sensor_msgs::PointCloud2ConstPtr&) const;
     PublishMemFn pub_mem_fn = &point_cloud_transport::Publisher::publish;
-    sub = pct.subscribe(in_topic, 1, boost::bind(pub_mem_fn, &pub, _1), ros::VoidPtr(), in_transport);
 
-    ros::spin();
+    this->sub = this->pct->subscribe(in_topic, in_queue_size, boost::bind(pub_mem_fn, this->pub.get(), _1), this->pub,
+                                     hints);
   }
   else
   {
     // Use one specific transport for output
-    std::string out_transport = argv[2];
+    std::string out_transport = this->getMyArgv()[1];
 
     // Load transport plugin
     typedef point_cloud_transport::PublisherPlugin Plugin;
-    pluginlib::ClassLoader<Plugin> loader("point_cloud_transport", "point_cloud_transport::PublisherPlugin");
+    auto loader = this->pct->getPublisherLoader();
     std::string lookup_name = Plugin::getLookupName(out_transport);
-    boost::shared_ptr<Plugin> pub(loader.createInstance(lookup_name));
-    pub->advertise(nh, out_topic, 1, point_cloud_transport::SubscriberStatusCallback(),
-                   point_cloud_transport::SubscriberStatusCallback(), ros::VoidPtr(), false);
+    this->pubPlugin = loader->createInstance(lookup_name);
+
+    this->pubPlugin->advertise(this->getMTNodeHandle(), out_topic, out_queue_size, {}, {}, this->pubPlugin, false);
 
     // Use PublisherPlugin::publish as the subscriber callback
     typedef void (Plugin::*PublishMemFn)(const sensor_msgs::PointCloud2ConstPtr&) const;
     PublishMemFn pub_mem_fn = &Plugin::publish;
-    sub = pct.subscribe(in_topic, 1, boost::bind(pub_mem_fn, pub.get(), _1), pub, in_transport);
 
-    ros::spin();
+    this->sub = this->pct->subscribe(in_topic, in_queue_size, boost::bind(pub_mem_fn, this->pubPlugin.get(), _1),
+                                     this->pubPlugin, in_transport);
   }
-
-  return 0;
 }
+
+}
+
+PLUGINLIB_EXPORT_CLASS(point_cloud_transport::RepublishNodelet, nodelet::Nodelet)
