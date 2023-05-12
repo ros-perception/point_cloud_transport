@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.4 (2023-05-12)
+------------------
 * Turned republish into a nodelet (but kept its node version).
 * Contributors: Martin Pecka
 
