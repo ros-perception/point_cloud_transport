@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed bug in republish. Plugin blacklist was acting exactly the opposite way.
+* Contributors: Martin Pecka
+
 1.0.4 (2023-05-12)
 ------------------
 * Turned republish into a nodelet (but kept its node version).
