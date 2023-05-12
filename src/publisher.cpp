@@ -139,7 +139,7 @@ Publisher::Publisher(ros::NodeHandle& nh, const std::string& base_topic, uint32_
   for (const auto& lookup_name : loader->getDeclaredClasses())
   {
     const std::string transport_name = boost::erase_last_copy(lookup_name, "_pub");
-    if (blacklist.find(transport_name) == blacklist.end())
+    if (blacklist.find(transport_name) != blacklist.end())
       continue;
 
     try
