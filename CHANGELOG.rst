@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Turned republish into a nodelet (but kept its node version).
+* Contributors: Martin Pecka
+
 1.0.3 (2023-05-11)
 ------------------
 * Added Python API for encode()/decode().
