@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.7 (2023-05-15)
+------------------
 * Upstreamed Python support functions to cras_py_common v 2.2.1.
 * Contributors: Martin Pecka
 
