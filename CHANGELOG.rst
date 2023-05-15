@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Split Python API into several files.
+* Improved Python API to allow the pub/sub-like usage.
+* Contributors: Martin Pecka
+
 1.0.5 (2023-05-12)
 ------------------
 * Fixed bug in republish. Plugin blacklist was acting exactly the opposite way.
