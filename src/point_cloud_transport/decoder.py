@@ -7,7 +7,8 @@ from ctypes import c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER, byref
 
 from sensor_msgs.msg import PointCloud2, PointField
 
-from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, get_ro_c_buffer
+from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, ScalarAllocator, \
+    get_ro_c_buffer
 from cras.message_utils import dict_to_dynamic_config_msg
 from cras.string_utils import BufferStringIO
 
@@ -34,29 +35,6 @@ def _get_library():
     return library
 
 
-class _NumberAllocator(Allocator):
-    """ctypes allocator suitable for allocating numbers. The returned value is a number."""
-
-    def __init__(self, c_type):
-        super(_NumberAllocator, self).__init__()
-        self._c_type = c_type
-
-    def _alloc(self, size):
-        if size != sizeof(self._c_type):
-            raise RuntimeError("NumberAllocator can only handle size 1 allocations.")
-        return (self._c_type * 1)()
-
-    @property
-    def value(self):
-        if len(self.allocated) == 0:
-            return None
-        return self.allocated[0][0]
-
-    @property
-    def values(self):
-        return [a[0] for a in self.allocated]
-
-
 def decode(compressed, topic_or_codec, config=None):
     """Decode the given compressed point cloud encoded with any codec into a raw point cloud.
 
@@ -72,9 +50,9 @@ def decode(compressed, topic_or_codec, config=None):
         return None, "Could not load the codec library."
 
     field_names_allocator = StringAllocator()
-    field_offset_allocator = _NumberAllocator(c_uint32)
-    field_datatype_allocator = _NumberAllocator(c_uint8)
-    field_count_allocator = _NumberAllocator(c_uint32)
+    field_offset_allocator = ScalarAllocator(c_uint32)
+    field_datatype_allocator = ScalarAllocator(c_uint8)
+    field_count_allocator = ScalarAllocator(c_uint32)
     data_allocator = BytesAllocator()
     error_allocator = StringAllocator()
     log_allocator = LogMessagesAllocator()
