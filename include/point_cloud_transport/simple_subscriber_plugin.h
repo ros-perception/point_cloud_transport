@@ -48,6 +48,7 @@
 #include <boost/bind/placeholders.hpp>
 
 #include <cras_cpp_common/string_utils.hpp>
+#include <cras_cpp_common/type_utils.hpp>
 #include <dynamic_reconfigure/Config.h>
 #include <dynamic_reconfigure/server.h>
 #include <ros/forwards.h>
@@ -79,10 +80,10 @@ namespace point_cloud_transport
  * defaults to \<base topic\>/\<transport name\>.
  */
 template<class M, class Config = point_cloud_transport::NoConfigConfig>
-class SimpleSubscriberPlugin : public SubscriberPlugin
+class SimpleSubscriberPlugin : public SingleTopicSubscriberPlugin
 {
 public:
-  virtual ~SimpleSubscriberPlugin()
+  ~SimpleSubscriberPlugin() override
   {
   }
 
@@ -219,14 +220,31 @@ protected:
     }
   }
 
-  /**
-   * Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
-  virtual std::string getTopicToSubscribe(const std::string& base_topic) const
+  std::string getTopicToSubscribe(const std::string& base_topic) const override
   {
     return base_topic + "/" + getTransportName();
+  }
+
+  std::string getDataType() const override
+  {
+    return ros::message_traits::DataType<M>::value();
+  }
+
+  template<typename C, std::enable_if_t<!std::is_same<C, NoConfigConfig>::value, int> = 0>
+  std::string _getConfigDataType() const
+  {
+    return cras::removeSuffix(cras::replace(cras::getTypeName<Config>(), "::", "/"), "Config");
+  }
+
+  template<typename C, std::enable_if_t<std::is_same<C, NoConfigConfig>::value, int> = 0>
+  std::string _getConfigDataType() const
+  {
+    return {};
+  }
+
+  std::string getConfigDataType() const override
+  {
+    return _getConfigDataType<Config>();
   }
 
   void subscribeImpl(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,

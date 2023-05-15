@@ -40,7 +40,9 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/bind.hpp>
@@ -49,6 +51,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
+#include <cras_cpp_common/c_api.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -68,7 +71,41 @@ namespace point_cloud_transport {
 * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
 */
 
-class PointCloudTransport
+class PointCloudTransportLoader
+{
+public:
+  //! Constructor
+  PointCloudTransportLoader();
+
+  //! Destructor
+  virtual ~PointCloudTransportLoader();
+
+  //! Returns the names of all transports declared in the system. Declared
+  //! transports are not necessarily built or loadable.
+  std::vector<std::string> getDeclaredTransports() const;
+
+  //! Returns the names of all transports that are loadable in the system (keys are lookup names, values are names).
+  std::unordered_map<std::string, std::string> getLoadableTransports() const;
+
+  //! The loader that can load publisher plugins.
+  PubLoaderPtr getPublisherLoader() const;
+
+  //! The loader that can load subscriber plugins.
+  SubLoaderPtr getSubscriberLoader() const;
+
+private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
+};
+
+/**
+* Advertise and subscribe to PointCloud2 topics.
+*
+* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
+* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
+*/
+
+class PointCloudTransport : public PointCloudTransportLoader
 {
 public:
   //! Constructor
@@ -125,19 +162,6 @@ public:
                      allow_concurrent_callbacks);
   }
 
-  //! Returns the names of all transports declared in the system. Declared
-  //! transports are not necessarily built or loadable.
-  std::vector<std::string> getDeclaredTransports() const;
-
-  //! Returns the names of all transports that are loadable in the system.
-  std::vector<std::string> getLoadableTransports() const;
-
-  //! The loader that can load publisher plugins.
-  PubLoaderPtr getPublisherLoader() const;
-
-  //! The loader that can load subscriber plugins.
-  SubLoaderPtr getSubscriberLoader() const;
-
 private:
   struct Impl;
   typedef boost::shared_ptr<Impl> ImplPtr;
@@ -147,3 +171,14 @@ private:
 };
 
 }
+
+extern "C" void pointCloudTransportGetLoadableTransports(
+    cras::allocator_t transportAllocator, cras::allocator_t nameAllocator);
+
+extern "C" void pointCloudTransportGetTopicsToPublish(
+    const char* baseTopic, cras::allocator_t transportAllocator, cras::allocator_t nameAllocator,
+    cras::allocator_t topicAllocator, cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
+
+extern "C" void pointCloudTransportGetTopicToSubscribe(
+    const char* baseTopic, const char* transport, cras::allocator_t nameAllocator, cras::allocator_t topicAllocator,
+    cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);

@@ -26,10 +26,12 @@ Example usage:
     # work with the PointCloud2 instance in variable raw2
 """
 
-from ctypes import RTLD_GLOBAL, c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER, byref, sizeof
+from ctypes import RTLD_GLOBAL, c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER, byref, sizeof, c_void_p
 import time
 
 from dynamic_reconfigure.msg import Config, BoolParameter, DoubleParameter, IntParameter, StrParameter
+import dynamic_reconfigure.server
+import rospy
 from sensor_msgs.msg import PointCloud2, PointField
 
 from cras import get_msg_type
@@ -63,20 +65,20 @@ def __dict_to_config(d):
     return c
 
 
-__codec = None
+__library = None
 
 
-def __get_library():
-    global __codec
-    if __codec is None:
-        __codec = load_library('point_cloud_transport', mode=RTLD_GLOBAL)
-        if __codec is None:
+def _get_library():
+    global __library
+    if __library is None:
+        __library = load_library('point_cloud_transport', mode=RTLD_GLOBAL)
+        if __library is None:
             return None
 
         # Add function signatures
 
-        __codec.pointCloudTransportCodecsEncode.restype = c_bool
-        __codec.pointCloudTransportCodecsEncode.argtypes = [
+        __library.pointCloudTransportCodecsEncode.restype = c_bool
+        __library.pointCloudTransportCodecsEncode.argtypes = [
             c_char_p,
             c_uint32, c_uint32, c_size_t, POINTER(c_char_p), POINTER(c_uint32), POINTER(c_uint8), POINTER(c_uint32),
             c_uint8, c_uint32, c_uint32, c_size_t, POINTER(c_uint8), c_uint8,
@@ -85,8 +87,8 @@ def __get_library():
             Allocator.ALLOCATOR, Allocator.ALLOCATOR,
         ]
 
-        __codec.pointCloudTransportCodecsDecode.restype = c_bool
-        __codec.pointCloudTransportCodecsDecode.argtypes = [
+        __library.pointCloudTransportCodecsDecode.restype = c_bool
+        __library.pointCloudTransportCodecsDecode.argtypes = [
             c_char_p,
             c_char_p, c_char_p, c_size_t, POINTER(c_uint8),
             POINTER(c_uint32), POINTER(c_uint32),
@@ -98,10 +100,26 @@ def __get_library():
             Allocator.ALLOCATOR, Allocator.ALLOCATOR,
         ]
 
-    return __codec
+        __library.pointCloudTransportGetLoadableTransports.restype = None
+        __library.pointCloudTransportGetLoadableTransports.argtypes = [
+            Allocator.ALLOCATOR,
+        ]
+
+        __library.pointCloudTransportGetTopicsToPublish.restype = None
+        __library.pointCloudTransportGetTopicsToPublish.argtypes = [
+            c_char_p,
+            Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
+        ]
+
+        __library.pointCloudTransportGetTopicToSubscribe.restype = None
+        __library.pointCloudTransportGetTopicToSubscribe.argtypes = [
+            c_char_p, c_char_p, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
+        ]
+
+    return __library
 
 
-def __c_array(data, c_type):
+def _c_array(data, c_type):
     c_data = (c_type * (len(data) + 1))()
     c_data[:-1] = data
     c_data[-1] = 0
@@ -119,7 +137,7 @@ def encode(raw, topic_or_codec, config=None):
              is filled.
     :rtype: (genpy.Message or None, str)
     """
-    codec = __get_library()
+    codec = _get_library()
     if codec is None:
         return None, "Could not load the codec library."
 
@@ -135,18 +153,14 @@ def encode(raw, topic_or_codec, config=None):
     error_allocator = StringAllocator()
     log_allocator = LogMessagesAllocator()
 
-    field_names = (c_char_p * (len(raw.fields) + 1))()
-    field_names[:-1] = [f.name.encode("utf-8") for f in raw.fields]
-    field_names[len(raw.fields)] = None
-
     args = [
         topic_or_codec.encode("utf-8"),
         raw.height, raw.width,
         len(raw.fields),
-        __c_array([f.name.encode("utf-8") for f in raw.fields], c_char_p),
-        __c_array([f.offset for f in raw.fields], c_uint32),
-        __c_array([f.datatype for f in raw.fields], c_uint8),
-        __c_array([f.count for f in raw.fields], c_uint32),
+        _c_array([f.name.encode("utf-8") for f in raw.fields], c_char_p),
+        _c_array([f.offset for f in raw.fields], c_uint32),
+        _c_array([f.datatype for f in raw.fields], c_uint8),
+        _c_array([f.count for f in raw.fields], c_uint32),
         raw.is_bigendian, raw.point_step, raw.row_step,
         len(raw.data), get_ro_c_buffer(raw.data), raw.is_dense,
         type_allocator.get_cfunc(), md5sum_allocator.get_cfunc(), data_allocator.get_cfunc(),
@@ -202,7 +216,7 @@ def decode(compressed, topic_or_codec, config=None):
     :return: Tuple of raw cloud and error string. If the decoding fails, cloud is `None` and error string is filled.
     :rtype: (sensor_msgs.msg.PointCloud2 or None, str)
     """
-    codec = __get_library()
+    codec = _get_library()
     if codec is None:
         return None, "Could not load the codec library."
 
@@ -273,6 +287,176 @@ def decode(compressed, topic_or_codec, config=None):
     return None, error_allocator.value
 
 
+def _get_loadable_transports():
+    transport_allocator = StringAllocator()
+    name_allocator = StringAllocator()
+    pct = _get_library()
+    pct.pointCloudTransportGetLoadableTransports(transport_allocator.get_cfunc(), name_allocator.get_cfunc())
+    return dict(zip(transport_allocator.values, name_allocator.values))
+
+
+class _TransportInfo(object):
+    def __init__(self, name, topic, data_type, config_data_type=None):
+        self.name = name
+        self.topic = topic
+        self.data_type = data_type
+        self.config_data_type = config_data_type
+
+
+__pkg_modules = dict()
+
+
+def get_cfg_type(cfg_type_str):
+    """Load and return a Python module corresponding to the given ROS dynamic reconfigure type.
+
+    :param str cfg_type_str: Type of the config in textual form (e.g. `compressed_image_transport/CompressedPublisher`).
+    :return: The Python module.
+    """
+    if len(cfg_type_str) == 0:
+        return None
+    pkg, cfg = cfg_type_str.split('/')
+    cfg += 'Config'
+    cfg_module = pkg + '.cfg.' + cfg
+    if cfg_module not in __pkg_modules:
+        import importlib
+        __pkg_modules[cfg_module] = importlib.import_module(cfg_module)
+    return __pkg_modules[cfg_module]
+
+
+def _get_topics_to_publish(base_topic):
+    transport_allocator = StringAllocator()
+    name_allocator = StringAllocator()
+    topic_allocator = StringAllocator()
+    data_type_allocator = StringAllocator()
+    config_type_allocator = StringAllocator()
+    pct = _get_library()
+
+    pct.pointCloudTransportGetTopicsToPublish(
+        base_topic.encode("utf-8"), transport_allocator.get_cfunc(), name_allocator.get_cfunc(),
+        topic_allocator.get_cfunc(), data_type_allocator.get_cfunc(), config_type_allocator.get_cfunc())
+
+    topics = {}
+
+    for i in range(len(transport_allocator.values)):
+        try:
+            data_type = get_msg_type(data_type_allocator.values[i])
+            config_type = get_cfg_type(config_type_allocator.values[i])
+            topics[transport_allocator.values[i]] = \
+                _TransportInfo(name_allocator.values[i], topic_allocator.values[i], data_type, config_type)
+        except ImportError as e:
+            rospy.logerr("Import error: " + str(e))
+
+    return topics
+
+
+def _get_topic_to_subscribe(base_topic, transport):
+    name_allocator = StringAllocator()
+    topic_allocator = StringAllocator()
+    data_type_allocator = StringAllocator()
+    config_type_allocator = StringAllocator()
+    pct = _get_library()
+
+    pct.pointCloudTransportGetTopicToSubscribe(
+        base_topic.encode("utf-8"), transport.encode("utf-8"), name_allocator.get_cfunc(), topic_allocator.get_cfunc(),
+        data_type_allocator.get_cfunc(), config_type_allocator.get_cfunc())
+
+    if len(data_type_allocator.values) == 0:
+        return None
+
+    try:
+        data_type = get_msg_type(data_type_allocator.value)
+        config_type = get_cfg_type(config_type_allocator.value)
+        return _TransportInfo(name_allocator.value, topic_allocator.value, data_type, config_type)
+    except ImportError as e:
+        rospy.logerr("Import error: " + str(e))
+        return None
+
+
+class Publisher(object):
+    def __init__(self, base_topic, *args, **kwargs):
+        self.base_topic = rospy.names.resolve_name(base_topic)
+        self.transports = _get_topics_to_publish(self.base_topic)
+
+        blacklist = set(rospy.get_param(self.base_topic + "/disable_pub_plugins", []))
+
+        self.publishers = {}
+        self.config_servers = {}
+        for transport in self.transports:
+            if transport in blacklist:
+                continue
+            topic_to_publish = self.transports[transport]
+            self.publishers[transport] = rospy.Publisher(
+                topic_to_publish.topic, topic_to_publish.data_type, *args, **kwargs)
+            if topic_to_publish.config_data_type is not None:
+                self.config_servers[transport] = dynamic_reconfigure.server.Server(
+                    topic_to_publish.config_data_type, lambda conf, _: conf, namespace=topic_to_publish.topic)
+
+    def get_num_subscribers(self):
+        sum([p.get_num_connections() for p in self.publishers.values()])
+
+    def get_topic(self):
+        return self.base_topic
+
+    def publish(self, raw):
+        for transport, transport_info in self.transports.items():
+            config = self.config_servers[transport].config if transport in self.config_servers else None
+            compressed, err = encode(raw, transport_info.name, config)
+            if compressed is not None:
+                self.publishers[transport].publish(compressed)
+            else:
+                rospy.logerr(err)
+
+    def shutdown(self):
+        for publisher in self.publishers.values():
+            publisher.unregister()
+
+
+class Subscriber(object):
+    def __init__(self, base_topic, callback, callback_args=None, default_transport="raw",
+                 parameter_namespace="~", parameter_name="point_cloud_transport", *args, **kwargs):
+        self.base_topic = rospy.names.resolve_name(base_topic)
+        self.callback = callback
+        self.callback_args = callback_args
+        self.transport = rospy.get_param(rospy.names.ns_join(parameter_namespace, parameter_name), default_transport)
+
+        transports = _get_loadable_transports()
+        if self.transport not in transports and self.transport not in transports.values():
+            raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
+
+        self.transport_info = _get_topic_to_subscribe(self.base_topic, self.transport)
+        if self.transport_info is None:
+            raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
+
+        self.subscriber = rospy.Subscriber(
+            self.transport_info.topic, self.transport_info.data_type, self.cb, *args, **kwargs)
+        if self.transport_info.config_data_type is not None:
+            self.config_server = dynamic_reconfigure.server.Server(
+                self.transport_info.config_data_type, lambda conf, _: conf,
+                namespace=rospy.names.ns_join(parameter_namespace, self.transport_info.name))
+        else:
+            self.config_server = None
+
+    def cb(self, msg):
+        config = self.config_server.config if self.config_server is not None else None
+        raw, err = decode(msg, self.transport_info.name, config)
+        if raw is not None:
+            if self.callback_args is None:
+                self.callback(raw)
+            else:
+                self.callback(raw, self.callback_args)
+        else:
+            rospy.logerr(err)
+
+    def get_num_publishers(self):
+        return self.subscriber.get_num_connections()
+
+    def get_topic(self):
+        return self.base_topic
+
+    def shutdown(self):
+        self.subscriber.unregister()
+
+
 if __name__ == '__main__':
     def main():
         import rospy
@@ -296,7 +480,7 @@ if __name__ == '__main__':
         if sys.version_info[0] == 2:
             raw.data = map(ord, data)
 
-        rospy.init_node("test")
+        rospy.init_node("test_node")
         rospy.loginfo("start")
         time.sleep(1)
 
@@ -318,5 +502,19 @@ if __name__ == '__main__':
         print(err)
         print(raw.fields == raw2.fields)
         print(raw == raw2)
+
+        def cb(msg):
+            print(msg == raw)  # they are not equal exactly...
+
+        def cb_ros(msg):
+            print(msg == compressed)
+
+        sub = Subscriber("test", cb, default_transport="draco", queue_size=1)
+        sub2 = rospy.Subscriber("test", PointCloud2, cb, queue_size=1)
+        sub3 = rospy.Subscriber("test/draco", type(compressed), cb_ros, queue_size=1)
+        pub = Publisher("test", queue_size=10)
+        time.sleep(0.2)
+        pub.publish(raw)
+        rospy.spin()
 
     main()

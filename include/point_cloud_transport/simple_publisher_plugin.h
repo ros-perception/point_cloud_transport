@@ -51,6 +51,7 @@
 #include <cras_cpp_common/expected.hpp>
 #include <cras_cpp_common/optional.hpp>
 #include <cras_cpp_common/string_utils.hpp>
+#include <cras_cpp_common/type_utils.hpp>
 #include <cras_topic_tools/shape_shifter.h>
 #include <dynamic_reconfigure/Config.h>
 #include <dynamic_reconfigure/server.h>
@@ -91,7 +92,7 @@ namespace point_cloud_transport
  * \tparam Config Type of the publisher dynamic configuration.
  */
 template<class M, class Config = point_cloud_transport::NoConfigConfig>
-class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
+class SimplePublisherPlugin : public point_cloud_transport::SingleTopicPublisherPlugin
 {
 public:
   //! \brief Result of cloud encoding. Either the compressed cloud message, empty value, or error message.
@@ -258,14 +259,31 @@ protected:
     }
   }
 
-  /**
-   * Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
-  virtual std::string getTopicToAdvertise(const std::string& base_topic) const
+  std::string getTopicToAdvertise(const std::string& base_topic) const override
   {
     return base_topic + "/" + getTransportName();
+  }
+
+  std::string getDataType() const override
+  {
+    return ros::message_traits::DataType<M>::value();
+  }
+
+  template<typename C, std::enable_if_t<!std::is_same<C, NoConfigConfig>::value, int> = 0>
+  std::string _getConfigDataType() const
+  {
+    return cras::removeSuffix(cras::replace(cras::getTypeName<Config>(), "::", "/"), "Config");
+  }
+
+  template<typename C, std::enable_if_t<std::is_same<C, NoConfigConfig>::value, int> = 0>
+  std::string _getConfigDataType() const
+  {
+    return {};
+  }
+
+  std::string getConfigDataType() const override
+  {
+    return _getConfigDataType<Config>();
   }
 
 protected:

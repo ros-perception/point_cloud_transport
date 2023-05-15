@@ -38,7 +38,9 @@
  *
  */
 
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/algorithm/string/erase.hpp>
@@ -61,18 +63,35 @@
 namespace point_cloud_transport
 {
 
-struct PointCloudTransport::Impl
+struct PointCloudTransportLoader::Impl
 {
-  ros::NodeHandle nh_;
   point_cloud_transport::PubLoaderPtr pub_loader_;
   point_cloud_transport::SubLoaderPtr sub_loader_;
 
-  explicit Impl(const ros::NodeHandle& nh) : nh_(nh),
+  Impl() :
       pub_loader_(boost::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
       sub_loader_(boost::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
   {
   }
 };
+
+struct PointCloudTransport::Impl
+{
+  ros::NodeHandle nh_;
+
+  explicit Impl(const ros::NodeHandle& nh) : nh_(nh)
+  {
+  }
+};
+
+PointCloudTransportLoader::PointCloudTransportLoader()
+    : impl_(new Impl())
+{
+}
+
+PointCloudTransportLoader::~PointCloudTransportLoader()
+{
+}
 
 PointCloudTransport::PointCloudTransport(const ros::NodeHandle& nh)
     : impl_(new Impl(nh))
@@ -89,7 +108,7 @@ Publisher PointCloudTransport::advertise(const std::string& base_topic, uint32_t
                                          const point_cloud_transport::SubscriberStatusCallback& disconnect_cb,
                                          const ros::VoidPtr& tracked_object, bool latch)
 {
-  return {impl_->nh_, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch, impl_->pub_loader_};
+  return {impl_->nh_, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch, getPublisherLoader()};
 }
 
 Subscriber PointCloudTransport::subscribe(
@@ -99,10 +118,10 @@ Subscriber PointCloudTransport::subscribe(
     bool allow_concurrent_callbacks)
 {
   return {impl_->nh_, base_topic, queue_size, callback, tracked_object, transport_hints, allow_concurrent_callbacks,
-          impl_->sub_loader_};
+          getSubscriberLoader()};
 }
 
-std::vector<std::string> PointCloudTransport::getDeclaredTransports() const
+std::vector<std::string> PointCloudTransportLoader::getDeclaredTransports() const
 {
   auto transports = impl_->sub_loader_->getDeclaredClasses();
 
@@ -114,9 +133,9 @@ std::vector<std::string> PointCloudTransport::getDeclaredTransports() const
   return transports;
 }
 
-std::vector<std::string> PointCloudTransport::getLoadableTransports() const
+std::unordered_map<std::string, std::string> PointCloudTransportLoader::getLoadableTransports() const
 {
-  std::vector<std::string> loadableTransports;
+  std::unordered_map<std::string, std::string> loadableTransports;
 
   for (const auto& transportPlugin : impl_->sub_loader_->getDeclaredClasses())
   {
@@ -126,12 +145,9 @@ std::vector<std::string> PointCloudTransport::getLoadableTransports() const
     {
       auto sub = impl_->sub_loader_->createInstance(transportPlugin);
       // Remove the "_sub" at the end of each class name.
-      loadableTransports.push_back(boost::erase_last_copy(transportPlugin, "_sub"));
+      loadableTransports[boost::erase_last_copy(transportPlugin, "_sub")] = sub->getTransportName();
     }
-    catch (const pluginlib::LibraryLoadException& e)
-    {
-    }
-    catch (const pluginlib::CreateClassException& e)
+    catch (const pluginlib::PluginlibException& e)
     {
     }
   }
@@ -139,14 +155,95 @@ std::vector<std::string> PointCloudTransport::getLoadableTransports() const
   return loadableTransports;
 }
 
-PubLoaderPtr PointCloudTransport::getPublisherLoader() const
+PubLoaderPtr PointCloudTransportLoader::getPublisherLoader() const
 {
   return impl_->pub_loader_;
 }
 
-SubLoaderPtr PointCloudTransport::getSubscriberLoader() const
+SubLoaderPtr PointCloudTransportLoader::getSubscriberLoader() const
 {
   return impl_->sub_loader_;
 }
 
+thread_local std::unique_ptr<point_cloud_transport::PointCloudTransportLoader> loader;
+
+}
+
+point_cloud_transport::PointCloudTransportLoader& getLoader()
+{
+  if (point_cloud_transport::loader == nullptr)
+    point_cloud_transport::loader = std::make_unique<point_cloud_transport::PointCloudTransportLoader>();
+  return *point_cloud_transport::loader;
+}
+
+void pointCloudTransportGetLoadableTransports(cras::allocator_t transportAllocator, cras::allocator_t nameAllocator)
+{
+  for (const auto& transport : getLoader().getLoadableTransports())
+  {
+    cras::outputString(transportAllocator, transport.first);
+    cras::outputString(nameAllocator, transport.second);
+  }
+}
+
+void pointCloudTransportGetTopicsToPublish(const char* baseTopic,
+                                           cras::allocator_t transportAllocator,
+                                           cras::allocator_t nameAllocator,
+                                           cras::allocator_t topicAllocator,
+                                           cras::allocator_t dataTypeAllocator,
+                                           cras::allocator_t configTypeAllocator)
+{
+  auto pubLoader = getLoader().getPublisherLoader();
+  for (const auto& transportPlugin : pubLoader->getDeclaredClasses())
+  {
+    try
+    {
+      auto pub = pubLoader->createInstance(transportPlugin);
+      auto singleTopicPub = boost::dynamic_pointer_cast<point_cloud_transport::SingleTopicPublisherPlugin>(pub);
+      if (singleTopicPub == nullptr)
+        continue;
+      // Remove the "_pub" at the end of each class name.
+      cras::outputString(transportAllocator, boost::erase_last_copy(transportPlugin, "_pub"));
+      cras::outputString(nameAllocator, singleTopicPub->getTransportName());
+      cras::outputString(topicAllocator, singleTopicPub->getTopicToAdvertise(baseTopic));
+      cras::outputString(dataTypeAllocator, singleTopicPub->getDataType());
+      cras::outputString(configTypeAllocator, singleTopicPub->getConfigDataType());
+    }
+    catch (const pluginlib::PluginlibException& e)
+    {
+    }
+  }
+}
+
+void pointCloudTransportGetTopicToSubscribe(const char* baseTopic,
+                                            const char* transport,
+                                            cras::allocator_t nameAllocator,
+                                            cras::allocator_t topicAllocator,
+                                            cras::allocator_t dataTypeAllocator,
+                                            cras::allocator_t configTypeAllocator)
+{
+  auto subLoader = getLoader().getSubscriberLoader();
+  for (const auto& transportPlugin : subLoader->getDeclaredClasses())
+  {
+    try
+    {
+      auto sub = subLoader->createInstance(transportPlugin);
+
+      const auto transportClass = boost::erase_last_copy(transportPlugin, "_sub");
+      if (transportClass != transport && sub->getTransportName() != transport)
+        continue;
+
+      auto singleTopicSub = boost::dynamic_pointer_cast<point_cloud_transport::SingleTopicSubscriberPlugin>(sub);
+      if (singleTopicSub == nullptr)
+        continue;
+
+      cras::outputString(nameAllocator, singleTopicSub->getTransportName());
+      cras::outputString(topicAllocator, singleTopicSub->getTopicToSubscribe(baseTopic));
+      cras::outputString(dataTypeAllocator, singleTopicSub->getDataType());
+      cras::outputString(configTypeAllocator, singleTopicSub->getConfigDataType());
+      return;
+    }
+    catch (const pluginlib::PluginlibException& e)
+    {
+    }
+  }
 }

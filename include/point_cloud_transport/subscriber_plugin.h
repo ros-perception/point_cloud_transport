@@ -235,4 +235,27 @@ protected:
                              bool allow_concurrent_callbacks) = 0;
 };
 
+class SingleTopicSubscriberPlugin : public SubscriberPlugin
+{
+public:
+  /**
+   * Return the communication topic name for a given base topic.
+   *
+   * Defaults to \<base topic\>/\<transport name\>.
+   */
+  virtual std::string getTopicToSubscribe(const std::string& base_topic) const = 0;
+
+  /**
+   * Return the datatype of the transported messages as text.
+   */
+  virtual std::string getDataType() const = 0;
+
+  /**
+   * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
+   * 
+   * Return empty string if no reconfiguration is supported.
+   */
+  virtual std::string getConfigDataType() const = 0;
+};
+
 }
