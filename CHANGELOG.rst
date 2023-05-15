@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.8 (2023-05-15)
+------------------
 * Upstreamed NumberAllocator to cras_py_common.
 * Contributors: Martin Pecka
 
