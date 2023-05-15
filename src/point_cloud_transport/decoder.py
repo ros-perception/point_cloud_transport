@@ -8,9 +8,10 @@ from ctypes import c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER, byref
 from sensor_msgs.msg import PointCloud2, PointField
 
 from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, get_ro_c_buffer
+from cras.message_utils import dict_to_dynamic_config_msg
 from cras.string_utils import BufferStringIO
 
-from .common import _get_base_library, _dict_to_config
+from .common import _get_base_library
 
 
 def _get_library():
@@ -91,7 +92,7 @@ def decode(compressed, topic_or_codec, config=None):
     compressed_buf_len = compressed_buf.tell()
     compressed_buf.seek(0)
 
-    config = _dict_to_config(config)
+    config = dict_to_dynamic_config_msg(config)
     config_buf = BufferStringIO()
     config.serialize(config_buf)
     config_buf_len = config_buf.tell()

@@ -8,10 +8,10 @@ from ctypes import c_char_p
 import dynamic_reconfigure.server
 import rospy
 
-from cras import get_msg_type
+from cras import get_msg_type, get_cfg_module
 from cras.ctypes_utils import Allocator, StringAllocator
 
-from .common import _get_base_library, get_cfg_type, _TransportInfo
+from .common import _get_base_library, _TransportInfo
 from .encoder import encode
 
 
@@ -49,7 +49,7 @@ def _get_topics_to_publish(base_topic):
     for i in range(len(transport_allocator.values)):
         try:
             data_type = get_msg_type(data_type_allocator.values[i])
-            config_type = get_cfg_type(config_type_allocator.values[i])
+            config_type = get_cfg_module(config_type_allocator.values[i])
             topics[transport_allocator.values[i]] = \
                 _TransportInfo(name_allocator.values[i], topic_allocator.values[i], data_type, config_type)
         except ImportError as e:

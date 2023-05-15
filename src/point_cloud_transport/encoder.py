@@ -6,10 +6,11 @@
 from ctypes import c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER
 
 from cras import get_msg_type
-from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, get_ro_c_buffer
+from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, get_ro_c_buffer, c_array
+from cras.message_utils import dict_to_dynamic_config_msg
 from cras.string_utils import BufferStringIO
 
-from .common import _get_base_library, _c_array, _dict_to_config
+from .common import _get_base_library
 
 
 def _get_library():
@@ -44,7 +45,7 @@ def encode(raw, topic_or_codec, config=None):
     if codec is None:
         return None, "Could not load the codec library."
 
-    config = _dict_to_config(config)
+    config = dict_to_dynamic_config_msg(config)
     config_buf = BufferStringIO()
     config.serialize(config_buf)
     config_buf_len = config_buf.tell()
@@ -60,10 +61,10 @@ def encode(raw, topic_or_codec, config=None):
         topic_or_codec.encode("utf-8"),
         raw.height, raw.width,
         len(raw.fields),
-        _c_array([f.name.encode("utf-8") for f in raw.fields], c_char_p),
-        _c_array([f.offset for f in raw.fields], c_uint32),
-        _c_array([f.datatype for f in raw.fields], c_uint8),
-        _c_array([f.count for f in raw.fields], c_uint32),
+        c_array([f.name.encode("utf-8") for f in raw.fields], c_char_p),
+        c_array([f.offset for f in raw.fields], c_uint32),
+        c_array([f.datatype for f in raw.fields], c_uint8),
+        c_array([f.count for f in raw.fields], c_uint32),
         raw.is_bigendian, raw.point_step, raw.row_step,
         len(raw.data), get_ro_c_buffer(raw.data), raw.is_dense,
         type_allocator.get_cfunc(), md5sum_allocator.get_cfunc(), data_allocator.get_cfunc(),

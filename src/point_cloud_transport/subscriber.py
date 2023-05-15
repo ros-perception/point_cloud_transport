@@ -8,10 +8,10 @@ from ctypes import c_char_p
 import dynamic_reconfigure.server
 import rospy
 
-from cras import get_msg_type
+from cras import get_msg_type, get_cfg_module
 from cras.ctypes_utils import Allocator, StringAllocator
 
-from .common import _get_base_library, _TransportInfo, get_cfg_type
+from .common import _get_base_library, _TransportInfo
 from .decoder import decode
 
 
@@ -56,7 +56,7 @@ def _get_topic_to_subscribe(base_topic, transport):
 
     try:
         data_type = get_msg_type(data_type_allocator.value)
-        config_type = get_cfg_type(config_type_allocator.value)
+        config_type = get_cfg_module(config_type_allocator.value)
         return _TransportInfo(name_allocator.value, topic_allocator.value, data_type, config_type)
     except ImportError as e:
         rospy.logerr("Import error: " + str(e))
