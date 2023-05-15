@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2023-05-15)
+------------------
 * Split Python API into several files.
 * Improved Python API to allow the pub/sub-like usage.
 * Contributors: Martin Pecka
