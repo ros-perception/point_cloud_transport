@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.9 (2023-05-23)
+------------------
 * Fixed bad_expected_access bug in simple_subscriber_plugin.
 * Contributors: Martin Pecka
 

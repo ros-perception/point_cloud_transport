@@ -1,6 +1,6 @@
 <package format="3">
   <name>point_cloud_transport</name>
-  <version>1.0.8</version>
+  <version>1.0.9</version>
   <description>
     Support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
   </description>
