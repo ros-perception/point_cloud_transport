@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.10 (2023-05-24)
+-------------------
 * Fixed wrong dependency version.
 * Contributors: Martin Pecka
 
