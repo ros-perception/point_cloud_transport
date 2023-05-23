@@ -214,7 +214,7 @@ protected:
     DecodeResult res = this->decodeTyped(message, config_);
     if (!res)
       ROS_ERROR("Error decoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
-    if (res.value())
+    else if (res.value())
     {
       user_cb(res.value().value());
     }
