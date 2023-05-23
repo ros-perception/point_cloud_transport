@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed bad_expected_access bug in simple_subscriber_plugin.
+* Contributors: Martin Pecka
+
 1.0.8 (2023-05-15)
 ------------------
 * Upstreamed NumberAllocator to cras_py_common.
