@@ -22,7 +22,7 @@
   <build_export_depend>message_filters</build_export_depend>
   <build_export_depend>message_runtime</build_export_depend>
 
-  <exec_depend version_lte="2.2.2">cras_py_common</exec_depend>
+  <exec_depend version_gte="2.2.2">cras_py_common</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>pluginlib</exec_depend>
 
