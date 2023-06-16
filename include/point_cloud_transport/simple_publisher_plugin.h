@@ -252,8 +252,10 @@ protected:
   {
     const auto res = this->encodeTyped(message, config_);
     if (!res)
+    {
       ROS_ERROR("Error encoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
-    if (res.value())
+    }
+    else if (res.value())
     {
       publish_fn(res.value().value());
     }
