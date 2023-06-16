@@ -38,6 +38,11 @@ Similar to image_transport, this package provides a node(let) called `republish`
 <node name="republish" pkg="point_cloud_transport" type="republish" args="draco raw in:=input_topic out:=output_topic" />
 ```
 
+## Known transports
+
+- [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google Draco library.
+- Did you write one? Don't hesitate and send a pull request adding it to this list!
+
 ## Authors
 
 * **Jakub Paplhám** - *Initial work* - [paplhjak](https://github.com/paplhjak)
