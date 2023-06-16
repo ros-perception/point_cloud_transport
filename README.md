@@ -2,78 +2,18 @@
 
 ## Description
 
-[point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) is a [ROS](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html) messages via different transport layers.
+[point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) is a [ROS](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages via different transport layers.
 E.g. it can provide support for transporting point clouds in low-bandwidth environment using [Draco](https://github.com/google/draco) compression library.
 
 [point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) is released as C++ source code and binary packages via ROS buildfarm.
 
-## Getting Started
+## Usage
 
-### Installation
-
-### Prerequisites
-
-- ROS [Melodic](http://wiki.ros.org/melodic/Installation) or [Noetic](http://wiki.ros.org/noetic/Installation)
-- Catkin Tools ( *optional* ) https://catkin-tools.readthedocs.io/en/latest/installing.html
-
-#### Setting up ROS workspace
-
-Commands for creating workspace directory and cloning all necessary repositories:
-
-~~~~~ bash
-$ mkdir -p point_cloud_transport_ws/src
-$ cd point_cloud_transport_ws/src
-$ git clone https://github.com/ctu-vras/point_cloud_transport.git
-$ git clone https://github.com/ctu-vras/draco_point_cloud_transport.git
-$ git clone https://github.com/ctu-vras/point_cloud_transport_plugins.git
-$ rosdep install --from-paths . --ignore-src -r
-~~~~~
-
-### Building project
-
-Commands for setting up catkin workspace and building the project:
-
-~~~~~ bash
-$ cd ..
-$ catkin init
-$ catkin config --extend /opt/ros/${ROS_DISTRO}
-$ catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release
-$ catkin build
-~~~~~
-
-To build the project without [Catkin Command Line Tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) use the following command in the root of the workspace:
-
-~~~~~ bash
-$ catkin_make_isolated --cmake-args -DCMAKE_BUILD_TYPE=Release
-~~~~~
-
-### Dependencies
-
-* [ROS](https://www.ros.org/) Melodic or Noetic
-* [Draco](https://github.com/google/draco) 1.3.5 - Compression library
-* [Catkin tools](https://catkin-tools.readthedocs.io/en/latest/installing.html) - Command line tools for working with the catkin meta-buildsystem and catkin workspaces
-
-### Usage
-
-[point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) can be used to publish and subscribe to [PointCloud2](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html) messages. At this level of usage, it is similar to using ROS Publishers and Subscribers. Using [point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) instead of the ROS primitives, however, gives the user much greater flexibility in how point clouds are communicated between nodes.
+[point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) can be used to publish and subscribe to [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages. At this level of usage, it is similar to using ROS Publishers and Subscribers. Using [point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) instead of the ROS primitives, however, gives the user much greater flexibility in how point clouds are communicated between nodes.
 
 For complete examples of publishing and subscribing to point clouds using [point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport) , see [Tutorial](https://github.com/ctu-vras/point_cloud_transport_tutorial). 
 
-#### C++
-Communicating PointCloud2 messages using base ROS publishers and subscribers:
-```cpp
-#include <ros/ros.h>
-
-void Callback(const sensor_msgs::PointCloud2ConstPtr& msg)
-{
-  // ... process the message
-}
-
-ros::NodeHandle nh;
-ros::Subscriber sub = nh.subscribe("in_point_cloud_topic", 1, Callback);
-ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2>("out_point_cloud_topic", 1);
-```
-
+### C++
 Communicating PointCloud2 messages using [point_cloud_transport](https://github.com/ctu-vras/point_cloud_transport):
 ```cpp
 #include <ros/ros.h>
@@ -90,11 +30,17 @@ point_cloud_transport::Subscriber sub = pct.subscribe("in_point_cloud_base_topic
 point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic", 1);
 ```
 
-## Additional Information
+### Republish node(let)
 
-### Authors
+Similar to image_transport, this package provides a node(let) called `republish` that can convert between different transports. It can be used in a launch file in the following way:
 
-* **Jakub Paplhám** - *Initial work* - [ctu-vras](https://github.com/ctu-vras)
+```xml
+<node name="republish" pkg="point_cloud_transport" type="republish" args="draco raw in:=input_topic out:=output_topic" />
+```
+
+## Authors
+
+* **Jakub Paplhám** - *Initial work* - [paplhjak](https://github.com/paplhjak)
 * **Ing. Tomáš Petříček, Ph.D.** - *Supervisor* - [tpet](https://github.com/tpet)
 * **Martin Pecka** - *Maintainer* - [peci1](https://github.com/peci1)
 
