@@ -2,8 +2,8 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.11 (2023-06-16)
+-------------------
 * Fixed bad_expected_access error when pointcloud encoding fails.
 * Added known transports to readme.
 * Update README.md
