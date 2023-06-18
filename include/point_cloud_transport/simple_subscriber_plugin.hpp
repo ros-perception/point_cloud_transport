@@ -71,7 +71,7 @@ namespace point_cloud_transport
  * defaults to \<base topic\>/\<transport name\>.
  */
 template<class M>
-class SimpleSubscriberPlugin : public SingleTopicSubscriberPlugin
+class SimpleSubscriberPlugin : public SubscriberPlugin
 {
 public:
   virtual ~SimpleSubscriberPlugin()

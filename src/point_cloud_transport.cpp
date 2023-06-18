@@ -59,8 +59,8 @@
 namespace point_cloud_transport
 {
 
-PointCloudTransportLoader::PointCloudTransportLoader()
-    : impl_(new Impl)
+PointCloudTransportLoader::PointCloudTransportLoader() : pub_loader_(std::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
+  sub_loader_(std::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
 {
 }
 
@@ -70,7 +70,7 @@ PointCloudTransportLoader::~PointCloudTransportLoader()
 
 std::vector<std::string> PointCloudTransportLoader::getDeclaredTransports() const
 {
-  auto transports = impl_->sub_loader_->getDeclaredClasses();
+  auto transports = sub_loader_->getDeclaredClasses();
 
   // Remove the "_sub" at the end of each class name.
   for (auto& transport : transports)
@@ -84,13 +84,13 @@ std::unordered_map<std::string, std::string> PointCloudTransportLoader::getLoada
 {
   std::unordered_map<std::string, std::string> loadableTransports;
 
-  for (const auto& transportPlugin : impl_->sub_loader_->getDeclaredClasses())
+  for (const auto& transportPlugin : sub_loader_->getDeclaredClasses())
   {
     // If the plugin loads without throwing an exception, add its transport name to the list of valid plugins,
     // otherwise ignore it.
     try
     {
-      auto sub = impl_->sub_loader_->createSharedInstance(transportPlugin);
+      auto sub = sub_loader_->createSharedInstance(transportPlugin);
       // Remove the "_sub" at the end of each class name.
       loadableTransports[erase_last_copy(transportPlugin, "_sub")] = sub->getTransportName();
     } catch (const pluginlib::LibraryLoadException & e) {
@@ -105,12 +105,12 @@ std::unordered_map<std::string, std::string> PointCloudTransportLoader::getLoada
 
 PubLoaderPtr PointCloudTransportLoader::getPublisherLoader() const
 {
-  return impl_->pub_loader_;
+  return pub_loader_;
 }
 
 SubLoaderPtr PointCloudTransportLoader::getSubscriberLoader() const
 {
-  return impl_->sub_loader_;
+  return sub_loader_;
 }
 
 thread_local std::unique_ptr<point_cloud_transport::PointCloudTransportLoader> loader;

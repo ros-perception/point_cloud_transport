@@ -177,11 +177,6 @@ public:
   virtual std::string getTopicToSubscribe(const std::string& base_topic) const = 0;
 
   /**
-   * Return the datatype of the transported messages as text.
-   */
-  virtual std::string getDataType() const = 0;
-
-  /**
    * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
    * 
    * Return empty string if no reconfiguration is supported.

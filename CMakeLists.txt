@@ -46,10 +46,10 @@ target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
   pluginlib::pluginlib)
 
 # Build republish (TODO: there was some nodelet stuff happening here)
-add_executable(republish src/republish.cpp)
-target_link_libraries(republish
-  ${PROJECT_NAME}
-  pluginlib::pluginlib)
+# add_executable(republish src/republish.cpp)
+# target_link_libraries(republish
+#   ${PROJECT_NAME}
+#   pluginlib::pluginlib)
 
 # Build list_transports (TODO: there was some nodelet stuff happening here)
 add_executable(list_transports src/list_transports.cpp)
@@ -69,7 +69,7 @@ install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME})
 
 # Install executables
 install(
-  TARGETS list_transports republish
+  TARGETS list_transports #republish
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 

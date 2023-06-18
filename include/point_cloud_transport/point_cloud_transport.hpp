@@ -87,10 +87,11 @@ public:
   //! The loader that can load subscriber plugins.
   SubLoaderPtr getSubscriberLoader() const;
 
-private:
-  struct Impl;
-  std::unique_ptr<Impl> impl_;
+protected:
+  point_cloud_transport::PubLoaderPtr pub_loader_;
+  point_cloud_transport::SubLoaderPtr sub_loader_;
 };
+
 
 /**
 * Advertise and subscribe to PointCloud2 topics.
@@ -107,14 +108,26 @@ public:
   //! Constructor
   explicit PointCloudTransport(rclcpp::Node::SharedPtr node);
 
-  ~PointCloudTransport();
+  ~PointCloudTransport() override = default;
+
+  std::string getTransportOrDefault(const TransportHints * transport_hints)
+  {
+    std::string ret;
+    if (nullptr == transport_hints) {
+      TransportHints th(node_.get());
+      ret = th.getTransport();
+    } else {
+      ret = transport_hints->getTransport();
+    }
+    return ret;
+  }
 
   //! Advertise a PointCloud2 topic, simple version.
   Publisher advertise(
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos)
   {
-    return Publisher(node_.get(), base_topic, impl_->pub_loader_, custom_qos);
+    return Publisher(node_.get(), base_topic, pub_loader_, custom_qos);
   }
 
   //! Advertise an PointCloud2 topic with subscriber status callbacks.
@@ -131,7 +144,10 @@ public:
       const VoidPtr &tracked_object = {},
       const point_cloud_transport::TransportHints *transport_hints = nullptr)
   {
-    return Subscriber(node_, base_topic, callback, impl_->sub_loader_, transport, custom_qos, options);
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default;
+    custom_qos.depth = queue_size;
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions();
+    return Subscriber(node_.get(), base_topic, callback, sub_loader_, getTransportOrDefault(transport_hints), custom_qos, options);
   }
 
   //! Subscribe to a point cloud topic, version for bare function.
@@ -165,19 +181,6 @@ public:
   }
 
 private:
-  struct Impl
-  {
-    point_cloud_transport::PubLoaderPtr pub_loader_;
-    point_cloud_transport::SubLoaderPtr sub_loader_;
-
-    Impl() :
-        pub_loader_(std::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
-        sub_loader_(std::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
-    {
-    }
-  };
-
-  std::shared_ptr<Impl> impl_;
   rclcpp::Node::SharedPtr node_;
 };
 

@@ -79,7 +79,7 @@ template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::SingleTopicPublisherPlugin
 {
 public:
-  ~SimplePublisherPlugin() override
+  ~SimplePublisherPlugin()
   {
   }
 
