@@ -80,10 +80,11 @@ public:
    * \param transport The transport hint to pass along
    */
   SubscriberFilter(
+    PointCloudTransport& pct,
     rclcpp::Node * node, const std::string & base_topic,
     const std::string & transport)
   {
-    subscribe(node, base_topic, transport);
+    subscribe(pct, node, base_topic, transport);
   }
 
   /**
@@ -107,6 +108,7 @@ public:
    * \param base_topic The topic to subscribe to.
    */
   void subscribe(
+    PointCloudTransport& pct,
     rclcpp::Node * node,
     const std::string & base_topic,
     const std::string & transport,
@@ -114,10 +116,8 @@ public:
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     unsubscribe();
-    sub_ = point_cloud_transport::create_subscription(
-      node, base_topic,
-      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1), transport, custom_qos,
-      options);
+    // TODO: Not quite right
+    sub_ = pct.subscribe(base_topic, 1, std::bind(&SubscriberFilter::cb, this, std::placeholders::_1));
   }
 
   /**

@@ -59,20 +59,8 @@
 namespace point_cloud_transport
 {
 
-struct PointCloudTransportLoader::Impl
-{
-  point_cloud_transport::PubLoaderPtr pub_loader_;
-  point_cloud_transport::SubLoaderPtr sub_loader_;
-
-  Impl() :
-      pub_loader_(std::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
-      sub_loader_(std::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
-  {
-  }
-};
-
 PointCloudTransportLoader::PointCloudTransportLoader()
-    : impl_(new Impl())
+    : impl_(new Impl)
 {
 }
 
@@ -133,6 +121,14 @@ point_cloud_transport::PointCloudTransportLoader& getLoader()
     point_cloud_transport::loader = std::make_unique<point_cloud_transport::PointCloudTransportLoader>();
   return *point_cloud_transport::loader;
 }
+
+PointCloudTransport::PointCloudTransport(rclcpp::Node::SharedPtr node)
+{
+  PointCloudTransportLoader();
+  node_ = node;
+}
+
+
 
 // TODO: Are these needed?
 // void pointCloudTransportGetLoadableTransports(cras::allocator_t transportAllocator, cras::allocator_t nameAllocator)
