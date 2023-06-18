@@ -40,24 +40,70 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <string>
+#include <memory>
 
-// Forward-declare some classes most users shouldn't care about so that
-// point_cloud_transport.h doesn't bring them in.
+#include "rclcpp/macros.hpp"
+#include "rclcpp/node.hpp"
 
-namespace pluginlib
-{
-template<class T> class ClassLoader;
-}
+#include <sensor_msgs/msg/point_cloud2.hpp>
+
+#include "pluginlib/class_loader.hpp"
+
+#include <point_cloud_transport/loader_fwds.hpp>
+#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {
-class PublisherPlugin;
-class SubscriberPlugin;
 
-typedef pluginlib::ClassLoader<PublisherPlugin> PubLoader;
-typedef boost::shared_ptr<PubLoader> PubLoaderPtr;
+class Publisher
+{
+public:
+  //! Constructor
+  Publisher() = default;
 
-typedef pluginlib::ClassLoader<SubscriberPlugin> SubLoader;
-typedef boost::shared_ptr<SubLoader> SubLoaderPtr;
+  Publisher(
+    rclcpp::Node * nh,
+    const std::string & base_topic,
+    PubLoaderPtr loader,
+    rmw_qos_profile_t custom_qos);
+    
+  //! get total number of subscribers to all advertised topics.
+  uint32_t getNumSubscribers() const;
+
+  //! get base topic of this Publisher
+  std::string getTopic() const;
+
+  //! Publish a point cloud on the topics associated with this Publisher.
+  void publish(const sensor_msgs::msg::PointCloud2& message) const;
+
+  //! Publish a point cloud on the topics associated with this Publisher.
+  void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message) const;
+
+  //! Shutdown the advertisements associated with this Publisher.
+  void shutdown();
+
+  operator void*() const;
+
+  bool operator<(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ < rhs.impl_;
+  }
+
+  bool operator!=(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ != rhs.impl_;
+  }
+
+  bool operator==(const point_cloud_transport::Publisher& rhs) const
+  {
+    return impl_ == rhs.impl_;
+  }
+
+private:
+  struct Impl;
+  std::shared_ptr<Impl> impl_;
+  friend class PointCloudTransport;
+};
+
 }

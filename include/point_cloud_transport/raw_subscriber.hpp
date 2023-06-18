@@ -41,10 +41,11 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/simple_subscriber_plugin.h>
+#include <point_cloud_transport/simple_subscriber_plugin.hpp>
 
 namespace point_cloud_transport
 {
@@ -55,21 +56,29 @@ namespace point_cloud_transport
  * RawSubscriber is a simple wrapper for ros::Subscriber which listens for PointCloud2 messages
  * and passes them through to the callback.
  */
-class RawSubscriber : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::PointCloud2>
+class RawSubscriber : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::msg::PointCloud2>
 {
 public:
+  virtual ~RawSubscriber() {}
+
   std::string getTransportName() const override;
 
-  DecodeResult decodeTyped(const sensor_msgs::PointCloud2& compressed, const NoConfigConfig& config) const override;
-  DecodeResult decodeTyped(const sensor_msgs::PointCloud2ConstPtr& compressed,
-                           const NoConfigConfig& config) const override;
-
-  bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
-
 protected:
-  void callback(const sensor_msgs::PointCloud2ConstPtr& message, const Callback& user_cb) override;
+  void internalCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const Callback& user_cb) override;
 
   std::string getTopicToSubscribe(const std::string& base_topic) const override;
+
+  using SubscriberPlugin::subscribeImpl;
+
+  void subscribeImpl(
+    rclcpp::Node * node,
+    const std::string & base_topic,
+    const Callback & callback,
+    rmw_qos_profile_t custom_qos,
+    rclcpp::SubscriptionOptions options) override
+  {
+    this->subscribeImplWithOptions(node, base_topic, callback, custom_qos, options);
+  }
 };
 
 }

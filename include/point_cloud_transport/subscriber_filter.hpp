@@ -40,16 +40,14 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
-
 #include <message_filters/simple_filter.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/point_cloud_transport.h>
-#include <point_cloud_transport/transport_hints.h>
+#include <point_cloud_transport/point_cloud_transport.hpp>
+#include <point_cloud_transport/transport_hints.hpp>
 
 namespace point_cloud_transport
 {
@@ -67,24 +65,25 @@ namespace point_cloud_transport
  *
  * SubscriberFilter has no input connection.
  *
- * The output connection for the SubscriberFilter object is the same signature as for roscpp
+ * The output connection for the SubscriberFilter object is the same signature as for rclcpp
  * subscription callbacks, ie.
  */
-class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::PointCloud2>
+class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::msg::PointCloud2>
 {
 public:
   /**
    * Constructor
    *
-   * \param pct The transport to use.
+   * \param nh The ros::NodeHandle to use to subscribe.
    * \param base_topic The topic to subscribe to.
    * \param queue_size The subscription queue size
-   * \param transport_hints The transport hints to pass along
+   * \param transport The transport hint to pass along
    */
-  SubscriberFilter(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
-                   const point_cloud_transport::TransportHints& transport_hints = {})
+  SubscriberFilter(
+    rclcpp::Node * node, const std::string & base_topic,
+    const std::string & transport)
   {
-    subscribe(pct, base_topic, queue_size, transport_hints);
+    subscribe(node, base_topic, transport);
   }
 
   /**
@@ -104,17 +103,21 @@ public:
    *
    * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
    *
-   * \param pct The transport to use.
+   * \param nh The ros::NodeHandle to use to subscribe.
    * \param base_topic The topic to subscribe to.
-   * \param queue_size The subscription queue size
-   * \param transport_hints The transport hints to pass along
    */
-  void subscribe(PointCloudTransport& pct, const std::string& base_topic, uint32_t queue_size,
-                 const point_cloud_transport::TransportHints& transport_hints = {})
+  void subscribe(
+    rclcpp::Node * node,
+    const std::string & base_topic,
+    const std::string & transport,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     unsubscribe();
-
-    sub_ = pct.subscribe(base_topic, queue_size, boost::bind(&SubscriberFilter::cb, this, _1), {}, transport_hints);
+    sub_ = point_cloud_transport::create_subscription(
+      node, base_topic,
+      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1), transport, custom_qos,
+      options);
   }
 
   /**
@@ -155,7 +158,7 @@ public:
   }
 
 private:
-  void cb(const sensor_msgs::PointCloud2ConstPtr& m)
+  void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& m)
   {
     signalMessage(m);
   }

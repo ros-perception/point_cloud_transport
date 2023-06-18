@@ -42,16 +42,12 @@
 #include <map>
 #include <string>
 
-#include <boost/algorithm/string/erase.hpp>
-#include <boost/shared_ptr.hpp>
+#include <pluginlib/class_loader.hpp>
+#include <pluginlib/exceptions.hpp>
 
-#include <pluginlib/class_loader.h>
-
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/subscriber_plugin.h>
-
-using namespace point_cloud_transport;
-using namespace pluginlib;
+#include <point_cloud_transport/point_cloud_common.hpp>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/subscriber_plugin.hpp>
 
 enum PluginStatus
 {
@@ -73,26 +69,26 @@ struct TransportDesc
 
 int main(int argc, char** argv)
 {
-  ClassLoader<PublisherPlugin> pub_loader("point_cloud_transport", "point_cloud_transport::PublisherPlugin");
-  ClassLoader<SubscriberPlugin> sub_loader("point_cloud_transport", "point_cloud_transport::SubscriberPlugin");
+  pluginlib::ClassLoader<point_cloud_transport::PublisherPlugin> pub_loader("point_cloud_transport", "point_cloud_transport::PublisherPlugin");
+  pluginlib::ClassLoader<point_cloud_transport::SubscriberPlugin> sub_loader("point_cloud_transport", "point_cloud_transport::SubscriberPlugin");
   typedef std::map<std::string, TransportDesc> StatusMap;
   StatusMap transports;
 
   for (const auto& lookup_name : pub_loader.getDeclaredClasses())
   {
-    std::string transport_name = boost::erase_last_copy(lookup_name, "_pub");
+    std::string transport_name = point_cloud_transport::erase_last_copy(lookup_name, "_pub");
     transports[transport_name].pub_name = lookup_name;
     transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
     try
     {
-      boost::shared_ptr<PublisherPlugin> pub = pub_loader.createInstance(lookup_name);
+      auto pub = pub_loader.createSharedInstance(lookup_name);
       transports[transport_name].pub_status = SUCCESS;
     }
-    catch (const LibraryLoadException& e)
+    catch (const pluginlib::LibraryLoadException& e)
     {
       transports[transport_name].pub_status = LIB_LOAD_FAILURE;
     }
-    catch (const CreateClassException& e)
+    catch (const pluginlib::CreateClassException& e)
     {
       transports[transport_name].pub_status = CREATE_FAILURE;
     }
@@ -100,19 +96,19 @@ int main(int argc, char** argv)
 
   for (const auto& lookup_name : sub_loader.getDeclaredClasses())
   {
-    std::string transport_name = boost::erase_last_copy(lookup_name, "_sub");
+    std::string transport_name = point_cloud_transport::erase_last_copy(lookup_name, "_sub");
     transports[transport_name].sub_name = lookup_name;
     transports[transport_name].package_name = sub_loader.getClassPackage(lookup_name);
     try
     {
-      boost::shared_ptr<SubscriberPlugin> sub = sub_loader.createInstance(lookup_name);
+      auto sub = sub_loader.createSharedInstance(lookup_name);
       transports[transport_name].sub_status = SUCCESS;
     }
-    catch (const LibraryLoadException& e)
+    catch (const pluginlib::LibraryLoadException& e)
     {
       transports[transport_name].sub_status = LIB_LOAD_FAILURE;
     }
-    catch (const CreateClassException& e)
+    catch (const pluginlib::CreateClassException& e)
     {
       transports[transport_name].sub_status = CREATE_FAILURE;
     }
@@ -120,7 +116,7 @@ int main(int argc, char** argv)
 
   bool problem_package = false;
   printf("Declared transports:\n");
-  for (const auto& value : transports)
+  for (const StatusMap::value_type & value : transports)
   {
     const TransportDesc& td = value.second;
     printf("%s", value.first.c_str());

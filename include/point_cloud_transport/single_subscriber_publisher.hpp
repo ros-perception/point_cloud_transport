@@ -38,45 +38,49 @@
  *
  */
 
+#pragma once
+
+#include <functional>
 #include <string>
 
-#include <sensor_msgs/PointCloud2.h>
-
-#include <point_cloud_transport/NoConfigConfig.h>
-#include <point_cloud_transport/raw_publisher.h>
+#include "rclcpp/macros.hpp"
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 namespace point_cloud_transport
 {
 
-RawPublisher::TypedEncodeResult RawPublisher::encodeTyped(
-    const sensor_msgs::PointCloud2& raw, const point_cloud_transport::NoConfigConfig&) const
+//! Allows publication of a point cloud to a single subscriber. Only available inside subscriber connection callbacks.
+class SingleSubscriberPublisher
 {
-  return raw;
-}
+public:
+  typedef std::function<uint32_t()> GetNumSubscribersFn;
+  typedef std::function<void(const sensor_msgs::msg::PointCloud2&)> PublishFn;
 
-std::string RawPublisher::getTransportName() const
-{
-  return "raw";
-}
+  SingleSubscriberPublisher(const SingleSubscriberPublisher &) = delete;
+  SingleSubscriberPublisher & operator=(const SingleSubscriberPublisher &) = delete;
 
-void RawPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
-{
-  getPublisher().publish(message);
-}
+  SingleSubscriberPublisher(const std::string& caller_id, const std::string& topic,
+                            const GetNumSubscribersFn& num_subscribers_fn,
+                            const PublishFn& publish_fn);
 
-void RawPublisher::publish(const sensor_msgs::PointCloud2& message, const RawPublisher::PublishFn& publish_fn) const
-{
-  publish_fn(message);
-}
+  std::string getSubscriberName() const;
 
-std::string RawPublisher::getTopicToAdvertise(const std::string& base_topic) const
-{
-  return base_topic;
-}
+  std::string getTopic() const;
 
-bool RawPublisher::matchesTopic(const std::string& topic, const std::string& datatype) const
-{
-  return datatype == ros::message_traits::DataType<sensor_msgs::PointCloud2>::value();
-}
+  uint32_t getNumSubscribers() const;
 
-}
+  void publish(const sensor_msgs::msg::PointCloud2& message) const;
+  void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message) const;
+
+private:
+  std::string caller_id_;
+  std::string topic_;
+  GetNumSubscribersFn num_subscribers_fn_;
+  PublishFn publish_fn_;
+
+  friend class Publisher;  // to get publish_fn_ directly
+};
+
+typedef std::function<void(const SingleSubscriberPublisher&)> SubscriberStatusCallback;
+
+} // namespace point_cloud_transport

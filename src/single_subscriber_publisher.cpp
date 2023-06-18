@@ -40,18 +40,21 @@
 
 #include <string>
 
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.h>
-#include <point_cloud_transport/single_subscriber_publisher.h>
+#include <point_cloud_transport/publisher.hpp>
+#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {
 
 SingleSubscriberPublisher::SingleSubscriberPublisher(
-    const std::string& caller_id, const std::string& topic, const GetNumSubscribersFn& num_subscribers_fn,
-    const PublishFn& publish_fn)
-    : caller_id_(caller_id), topic_(topic), num_subscribers_fn_(num_subscribers_fn), publish_fn_(publish_fn)
+  const std::string & caller_id, const std::string & topic,
+  const GetNumSubscribersFn & num_subscribers_fn,
+  const PublishFn & publish_fn)
+: caller_id_(caller_id), topic_(topic),
+  num_subscribers_fn_(num_subscribers_fn),
+  publish_fn_(publish_fn)
 {
 }
 
@@ -70,12 +73,12 @@ uint32_t SingleSubscriberPublisher::getNumSubscribers() const
   return num_subscribers_fn_();
 }
 
-void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2& message) const
+void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2& message) const
 {
   publish_fn_(message);
 }
 
-void SingleSubscriberPublisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
+void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message) const
 {
   publish_fn_(*message);
 }

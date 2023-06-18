@@ -11,35 +11,31 @@
 
 #include <memory>
 
-#include <boost/shared_ptr.hpp>
-
-#include <cras_cpp_common/nodelet_utils.hpp>
-
-#include <point_cloud_transport/point_cloud_transport.h>
-#include <point_cloud_transport/publisher.h>
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/subscriber.h>
+#include <point_cloud_transport/point_cloud_transport.hpp>
+#include <point_cloud_transport/publisher.hpp>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/subscriber.hpp>
 
 
 namespace point_cloud_transport
 {
 
-//! A node(let) for republishing clouds from one transport to other transports
+//! A Node (component) for republishing clouds from one transport to other transports
 //!
 //! Usage: republish in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>
 //!
 //! Parameters:
 //! - `~in_queue_size` (int, default 10): Input queue size.
 //! - `~out_queue_size` (int, default `in_queue_size`): Output queue size.
-class RepublishNodelet : public cras::Nodelet
+class RepublishComponent
 {
 protected:
   void onInit() override;
 
   std::unique_ptr<point_cloud_transport::PointCloudTransport> pct;
   point_cloud_transport::Subscriber sub;
-  boost::shared_ptr<point_cloud_transport::Publisher> pub;
-  boost::shared_ptr<point_cloud_transport::PublisherPlugin> pubPlugin;
+  std::shared_ptr<point_cloud_transport::Publisher> pub;
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> pubPlugin;
 };
 
 }

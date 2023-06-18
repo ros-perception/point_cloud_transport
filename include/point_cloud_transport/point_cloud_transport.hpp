@@ -40,26 +40,20 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include "rclcpp/node.hpp"
 
-#include <cras_cpp_common/c_api.h>
-#include <ros/forwards.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.h>
-#include <point_cloud_transport/single_subscriber_publisher.h>
-#include <point_cloud_transport/subscriber.h>
-#include <point_cloud_transport/transport_hints.h>
+#include <point_cloud_transport/publisher.hpp>
+#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include <point_cloud_transport/subscriber.hpp>
+#include <point_cloud_transport/transport_hints.hpp>
 
 
 namespace point_cloud_transport {
@@ -107,78 +101,76 @@ private:
 
 class PointCloudTransport : public PointCloudTransportLoader
 {
+  using VoidPtr = std::shared_ptr<void>;
+
 public:
   //! Constructor
-  explicit PointCloudTransport(const ros::NodeHandle& nh);
+  explicit PointCloudTransport(rclcpp::Node::SharedPtr node);
+
+  ~PointCloudTransport();
 
   //! Advertise a PointCloud2 topic, simple version.
   point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size, bool latch = false);
 
   //! Advertise an PointCloud2 topic with subscriber status callbacks.
-  point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size,
-                                             const point_cloud_transport::SubscriberStatusCallback& connect_cb,
-                                             const point_cloud_transport::SubscriberStatusCallback& disconnect_cb = {},
-                                             const ros::VoidPtr& tracked_object = {}, bool latch = false);
+  // TODO(ros2) Implement when SubscriberStatusCallback is available
+  // point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size,
+  //                                            const point_cloud_transport::SubscriberStatusCallback& connect_cb,
+  //                                            const point_cloud_transport::SubscriberStatusCallback& disconnect_cb = {},
+  //                                            const ros::VoidPtr& tracked_object = {}, bool latch = false);
 
-  //! Subscribe to a point cloud topic, version for arbitrary boost::function object.
+  //! Subscribe to a point cloud topic, version for arbitrary std::function object.
   point_cloud_transport::Subscriber subscribe(
       const std::string& base_topic, uint32_t queue_size,
-      const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-      const ros::VoidPtr& tracked_object = {},
-      const point_cloud_transport::TransportHints& transport_hints = {},
-      bool allow_concurrent_callbacks = false);
+      const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&)>& callback,
+      const VoidPtr& tracked_object = {},
+      const point_cloud_transport::TransportHints* transport_hints = nullptr);
 
   //! Subscribe to a point cloud topic, version for bare function.
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                                              void(* fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                                              const point_cloud_transport::TransportHints& transport_hints = {},
-                                              bool allow_concurrent_callbacks = false)
+                                              void(* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&),
+                                              const point_cloud_transport::TransportHints* transport_hints = nullptr)
   {
     return subscribe(base_topic, queue_size,
-                     boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>(fp),
-                     ros::VoidPtr(), transport_hints, allow_concurrent_callbacks);
+                     std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&)>(fp),
+                     VoidPtr(), transport_hints);
   }
 
   //! Subscribe to a point cloud topic, version for class member function with bare pointer.
   template<class T>
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                                              void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&), T* obj,
-                                              const point_cloud_transport::TransportHints& transport_hints = {},
+                                              void(T::*fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&), T* obj,
+                                              const point_cloud_transport::TransportHints* transport_hints = nullptr,
                                               bool allow_concurrent_callbacks = false)
   {
-    return subscribe(base_topic, queue_size, boost::bind(fp, obj, _1), ros::VoidPtr(), transport_hints,
-                     allow_concurrent_callbacks);
+    return subscribe(base_topic, queue_size, std::bind(fp, obj.get(), std::placeholders::_1), VoidPtr(), transport_hints);
   }
 
   //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
   template<class T>
   point_cloud_transport::Subscriber subscribe(const std::string& base_topic, uint32_t queue_size,
-                                              void(T::*fp)(const sensor_msgs::PointCloud2ConstPtr&),
-                                              const boost::shared_ptr<T>& obj,
-                                              const point_cloud_transport::TransportHints& transport_hints = {},
-                                              bool allow_concurrent_callbacks = false)
+                                              void(T::*fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&),
+                                              const std::shared_ptr<T>& obj,
+                                              const point_cloud_transport::TransportHints* transport_hints = nullptr)
   {
-    return subscribe(base_topic, queue_size, boost::bind(fp, obj.get(), _1), obj, transport_hints,
-                     allow_concurrent_callbacks);
+    return subscribe(base_topic, queue_size, std::bind(fp, obj.get(), std::placeholders::_1), obj, transport_hints);
   }
 
 private:
   struct Impl;
-  typedef boost::shared_ptr<Impl> ImplPtr;
-  typedef boost::weak_ptr<Impl> ImplWPtr;
-
-  ImplPtr impl_;
+  std::shared_ptr<Impl> impl_;
 };
 
 }
 
-extern "C" void pointCloudTransportGetLoadableTransports(
-    cras::allocator_t transportAllocator, cras::allocator_t nameAllocator);
+// TODO: May need these?
+// extern "C" void pointCloudTransportGetLoadableTransports(
+//     cras::allocator_t transportAllocator, cras::allocator_t nameAllocator);
 
-extern "C" void pointCloudTransportGetTopicsToPublish(
-    const char* baseTopic, cras::allocator_t transportAllocator, cras::allocator_t nameAllocator,
-    cras::allocator_t topicAllocator, cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
+// extern "C" void pointCloudTransportGetTopicsToPublish(
+//     const char* baseTopic, cras::allocator_t transportAllocator, cras::allocator_t nameAllocator,
+//     cras::allocator_t topicAllocator, cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
 
-extern "C" void pointCloudTransportGetTopicToSubscribe(
-    const char* baseTopic, const char* transport, cras::allocator_t nameAllocator, cras::allocator_t topicAllocator,
-    cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
+// extern "C" void pointCloudTransportGetTopicToSubscribe(
+//     const char* baseTopic, const char* transport, cras::allocator_t nameAllocator, cras::allocator_t topicAllocator,
+//     cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);

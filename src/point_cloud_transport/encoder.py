@@ -31,7 +31,7 @@ def _get_library():
 
 
 def encode(raw, topic_or_codec, config=None):
-    """Encode the given raw image into a compressed image with a suitable codec.
+    """Encode the given raw point_cloud into a compressed point_cloud with a suitable codec.
 
     :param sensor_msgs.msg.PointCloud2 raw: The raw point cloud.
     :param str topic_or_codec: Name of the topic where this cloud should be published or explicit name of the codec.

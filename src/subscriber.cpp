@@ -39,31 +39,28 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include <pluginlib/class_loader.h>
 #include <pluginlib/exceptions.hpp>
-#include <ros/forwards.h>
-#include <ros/names.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
 
-#include <point_cloud_transport/exception.h>
-#include <point_cloud_transport/loader_fwds.h>
-#include <point_cloud_transport/subscriber.h>
-#include <point_cloud_transport/subscriber_plugin.h>
-#include <point_cloud_transport/transport_hints.h>
+#include "rclcpp/expand_topic_or_service_name.hpp"
+#include "rclcpp/logging.hpp"
+
+#include <point_cloud_transport/exception.hpp>
+#include <point_cloud_transport/subscriber.hpp>
+#include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
 {
 
 struct Subscriber::Impl
 {
-  Impl() : unsubscribed_(false)
+  Impl(rclcpp::Node * node, SubLoaderPtr loader)
+  : logger_(node->get_logger()),
+    loader_(loader),
+    unsubscribed_(false)
   {
   }
 
@@ -87,33 +84,37 @@ struct Subscriber::Impl
     }
   }
 
+  rclcpp::Logger logger_;
+  std::string lookup_name_;
   point_cloud_transport::SubLoaderPtr loader_;
-  boost::shared_ptr<SubscriberPlugin> subscriber_;
+  std::shared_ptr<SubscriberPlugin> subscriber_;
   bool unsubscribed_;
 };
 
-Subscriber::Subscriber() = default;
-
-Subscriber::Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                       const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-                       const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
-                       bool allow_concurrent_callbacks, const point_cloud_transport::SubLoaderPtr& loader)
-    : impl_(new Impl)
+Subscriber::Subscriber(
+  rclcpp::Node * node,
+  const std::string & base_topic,
+  const Callback & callback,
+  SubLoaderPtr loader,
+  const std::string & transport,
+  rmw_qos_profile_t custom_qos,
+  rclcpp::SubscriptionOptions options)
+: impl_(std::make_shared<Impl>(node, loader))
 {
   // Load the plugin for the chosen transport.
-  std::string lookup_name = SubscriberPlugin::getLookupName(transport_hints.getTransport());
+  std::string lookup_name = SubscriberPlugin::getLookupName(transport);
   try
   {
-    impl_->subscriber_ = loader->createInstance(lookup_name);
+    impl_->subscriber_ = loader->createSharedInstance(lookup_name);
   }
   catch (pluginlib::PluginlibException& e) {
-    throw point_cloud_transport::TransportLoadException(transport_hints.getTransport(), e.what());
+    throw point_cloud_transport::TransportLoadException(transport, e.what());
   }
   // Hang on to the class loader so our shared library doesn't disappear from under us.
   impl_->loader_ = loader;
 
   // Try to catch if user passed in a transport-specific topic as base_topic.
-  std::string clean_topic = ros::names::clean(base_topic);
+  std::string clean_topic = base_topic;
   size_t found = clean_topic.rfind('/');
   if (found != std::string::npos) {
     std::string transport = clean_topic.substr(found+1);
@@ -121,17 +122,21 @@ Subscriber::Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint3
     std::vector<std::string> plugins = loader->getDeclaredClasses();
     if (std::find(plugins.begin(), plugins.end(), plugin_name) != plugins.end()) {
       std::string real_base_topic = clean_topic.substr(0, found);
-      ROS_WARN("[point_cloud_transport] It looks like you are trying to subscribe directly to a "
-               "transport-specific point cloud topic '%s', in which case you will likely get a connection "
-               "error. Try subscribing to the base topic '%s' instead with parameter ~point_cloud_transport "
-               "set to '%s' (on the command line, _point_cloud_transport:=%s). ",
-               clean_topic.c_str(), real_base_topic.c_str(), transport.c_str(), transport.c_str());
+
+      RCLCPP_WARN(
+        impl_->logger_,
+        "[point_cloud_transport] It looks like you are trying to subscribe directly to a "
+        "transport-specific point_cloud topic '%s', in which case you will likely get a connection "
+        "error. Try subscribing to the base topic '%s' instead with parameter ~point_cloud_transport "
+        "set to '%s' (on the command line, _point_cloud_transport:=%s). "
+        "See http://ros.org/wiki/point_cloud_transport for details.",
+        clean_topic.c_str(), real_base_topic.c_str(), transport.c_str(), transport.c_str());
     }
   }
 
   // Tell plugin to subscribe.
-  impl_->subscriber_->subscribe(nh, base_topic, queue_size, callback, tracked_object, transport_hints,
-                                allow_concurrent_callbacks);
+  RCLCPP_DEBUG(impl_->logger_, "Subscribing to: %s\n", base_topic.c_str());
+  impl_->subscriber_->subscribe(node, base_topic, callback, custom_qos, options);
 }
 
 std::string Subscriber::getTopic() const
@@ -163,7 +168,7 @@ void Subscriber::shutdown()
 
 Subscriber::operator void*() const
 {
-  return (impl_ && impl_->isValid()) ? reinterpret_cast<void*>(1) : nullptr;
+  return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
 }
 
 }

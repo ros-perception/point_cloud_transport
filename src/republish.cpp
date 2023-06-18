@@ -40,38 +40,43 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
+#include <pluginlib/class_loader.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <pluginlib/class_loader.h>
-#include <pluginlib/class_list_macros.hpp>
-#include <sensor_msgs/PointCloud2.h>
-
-#include <point_cloud_transport/point_cloud_transport.h>
-#include <point_cloud_transport/publisher.h>
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/republish.h>
-#include <point_cloud_transport/subscriber.h>
-#include <point_cloud_transport/exception.h>
+#include <point_cloud_transport/point_cloud_transport.hpp>
+#include <point_cloud_transport/publisher.hpp>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/republish.hpp>
+#include <point_cloud_transport/subscriber.hpp>
+#include <point_cloud_transport/exception.hpp>
 
 namespace point_cloud_transport
 {
 
-void RepublishNodelet::onInit()
+// TODO: Fix this
+void RepublishComponent::onInit()
 {
-  if (this->getMyArgv().empty())
-  {
-    throw std::runtime_error("Usage: republish in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>");
+  auto vargv = rclcpp::init_and_remove_ros_arguments(argc, argv);
+
+  if (vargv.size() < 2) {
+    printf(
+      "Usage: %s in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>\n",
+      argv[0]);
+    return 0;
   }
 
-  std::string in_transport = this->getMyArgv()[0];
-  std::string in_topic = this->getNodeHandle().resolveName("in");
-  std::string out_topic = this->getNodeHandle().resolveName("out");
+  auto node = rclcpp::Node::make_shared("point_cloud_republisher");
 
-  const auto params = this->params(this->getPrivateNodeHandle());
-  const auto in_queue_size = params->getParam("in_queue_size", 10_sz, "messages");
-  const auto out_queue_size = params->getParam("out_queue_size", in_queue_size, "messages");
+  std::string in_topic = rclcpp::expand_topic_or_service_name(
+    "in",
+    node->get_name(), node->get_namespace());
+  std::string out_topic = rclcpp::expand_topic_or_service_name(
+    "out",
+    node->get_name(), node->get_namespace());
+
+  std::string in_transport = vargv[1];
 
   this->pct = std::make_unique<PointCloudTransport>(this->getMTNodeHandle());
   point_cloud_transport::TransportHints hints(in_transport, {}, this->getPrivateNodeHandle());
@@ -85,10 +90,10 @@ void RepublishNodelet::onInit()
     *this->pub = this->pct->advertise(out_topic, out_queue_size);
 
     // Use Publisher::publish as the subscriber callback
-    typedef void (point_cloud_transport::Publisher::*PublishMemFn)(const sensor_msgs::PointCloud2ConstPtr&) const;
+    typedef void (point_cloud_transport::Publisher::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
     PublishMemFn pub_mem_fn = &point_cloud_transport::Publisher::publish;
 
-    this->sub = this->pct->subscribe(in_topic, in_queue_size, boost::bind(pub_mem_fn, this->pub.get(), _1), this->pub,
+    this->sub = this->pct->subscribe(in_topic, in_queue_size, std::bind(pub_mem_fn, this->pub.get(), std::placeholders::_1), this->pub,
                                      hints);
   }
   else
@@ -100,15 +105,15 @@ void RepublishNodelet::onInit()
     typedef point_cloud_transport::PublisherPlugin Plugin;
     auto loader = this->pct->getPublisherLoader();
     std::string lookup_name = Plugin::getLookupName(out_transport);
-    this->pubPlugin = loader->createInstance(lookup_name);
+    this->pubPlugin = loader->createUniqueInstance(lookup_name);
 
     this->pubPlugin->advertise(this->getMTNodeHandle(), out_topic, out_queue_size, {}, {}, this->pubPlugin, false);
 
     // Use PublisherPlugin::publish as the subscriber callback
-    typedef void (Plugin::*PublishMemFn)(const sensor_msgs::PointCloud2ConstPtr&) const;
+    typedef void (Plugin::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
     PublishMemFn pub_mem_fn = &Plugin::publish;
 
-    this->sub = this->pct->subscribe(in_topic, in_queue_size, boost::bind(pub_mem_fn, this->pubPlugin.get(), _1),
+    this->sub = this->pct->subscribe(in_topic, in_queue_size, std::bind(pub_mem_fn, this->pubPlugin.get(), std::placeholders::_1),
                                      this->pubPlugin, in_transport);
   }
 }

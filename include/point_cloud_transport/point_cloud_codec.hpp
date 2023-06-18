@@ -44,21 +44,15 @@
 #include <string>
 #include <vector>
 
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-
 #include <cras_cpp_common/c_api.h>
 #include <cras_cpp_common/log_utils.h>
 #include <cras_cpp_common/log_utils/node.h>
 #include <ros/forwards.h>
 #include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/subscriber_plugin.h>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
 {
@@ -76,20 +70,20 @@ public:
   //! Constructor
   explicit PointCloudCodec(const cras::LogHelperPtr& log = std::make_shared<cras::NodeLogHelper>());
 
-  boost::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string& name) const;
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string& name) const;
 
-  boost::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
       const std::string& topic, const std::string& datatype) const;
 
-  boost::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(const std::string& name) const;
+  std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(const std::string& name) const;
 
-  boost::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
+  std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
       const std::string& topic, const std::string& datatype) const;
 
 private:
   struct Impl;
-  typedef boost::shared_ptr<Impl> ImplPtr;
-  typedef boost::weak_ptr<Impl> ImplWPtr;
+  typedef std::shared_ptr<Impl> ImplPtr;
+  typedef std::weak_ptr<Impl> ImplWPtr;
 
   ImplPtr impl_;
 };
@@ -98,19 +92,19 @@ private:
 
 extern "C" bool pointCloudTransportCodecsEncode(
     const char* codec,
-    sensor_msgs::PointCloud2::_height_type rawHeight,
-    sensor_msgs::PointCloud2::_width_type rawWidth,
+    sensor_msgs::msg::PointCloud2::_height_type rawHeight,
+    sensor_msgs::msg::PointCloud2::_width_type rawWidth,
     size_t rawNumFields,
     const char* rawFieldNames[],
     sensor_msgs::PointField::_offset_type rawFieldOffsets[],
     sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
     sensor_msgs::PointField::_count_type rawFieldCounts[],
-    sensor_msgs::PointCloud2::_is_bigendian_type rawIsBigendian,
-    sensor_msgs::PointCloud2::_point_step_type rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type rawRowStep,
+    sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
+    sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
+    sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
     size_t rawDataLength,
     const uint8_t rawData[],
-    sensor_msgs::PointCloud2::_is_dense_type rawIsDense,
+    sensor_msgs::msg::PointCloud2::_is_dense_type rawIsDense,
     cras::allocator_t compressedTypeAllocator,
     cras::allocator_t compressedMd5SumAllocator,
     cras::allocator_t compressedDataAllocator,
@@ -126,18 +120,18 @@ extern "C" bool pointCloudTransportCodecsDecode(
     const char* compressedMd5sum,
     size_t compressedDataLength,
     const uint8_t compressedData[],
-    sensor_msgs::PointCloud2::_height_type& rawHeight,
-    sensor_msgs::PointCloud2::_width_type& rawWidth,
+    sensor_msgs::msg::PointCloud2::_height_type& rawHeight,
+    sensor_msgs::msg::PointCloud2::_width_type& rawWidth,
     uint32_t& rawNumFields,
     cras::allocator_t rawFieldNamesAllocator,
     cras::allocator_t rawFieldOffsetsAllocator,
     cras::allocator_t rawFieldDatatypesAllocator,
     cras::allocator_t rawFieldCountsAllocator,
-    sensor_msgs::PointCloud2::_is_bigendian_type& rawIsBigEndian,
-    sensor_msgs::PointCloud2::_point_step_type& rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type& rawRowStep,
+    sensor_msgs::msg::PointCloud2::_is_bigendian_type& rawIsBigEndian,
+    sensor_msgs::msg::PointCloud2::_point_step_type& rawPointStep,
+    sensor_msgs::msg::PointCloud2::_row_step_type& rawRowStep,
     cras::allocator_t rawDataAllocator,
-    sensor_msgs::PointCloud2::_is_dense_type& rawIsDense,
+    sensor_msgs::msg::PointCloud2::_is_dense_type& rawIsDense,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
     cras::allocator_t errorStringAllocator,

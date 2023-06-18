@@ -40,18 +40,18 @@
 
 #pragma once
 
+#include <functional>
+#include <memory>
 #include <string>
 
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include "rclcpp/node.hpp"
 
-#include <ros/forwards.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/loader_fwds.h>
-#include <point_cloud_transport/transport_hints.h>
+#include "pluginlib/class_loader.hpp"
+
+#include <point_cloud_transport/loader_fwds.hpp>
+#include <point_cloud_transport/transport_hints.hpp>
 
 namespace point_cloud_transport {
 
@@ -73,7 +73,18 @@ namespace point_cloud_transport {
 class Subscriber
 {
 public:
-  Subscriber();
+  typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
+
+  Subscriber() = default;
+
+  Subscriber(
+    rclcpp::Node * node,
+    const std::string & base_topic,
+    const Callback & callback,
+    SubLoaderPtr loader,
+    const std::string & transport,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   /**
    * Returns the base point cloud topic.
@@ -116,17 +127,9 @@ public:
   }
 
 private:
-  Subscriber(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-             const boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)>& callback,
-             const ros::VoidPtr& tracked_object, const point_cloud_transport::TransportHints& transport_hints,
-             bool allow_concurrent_callbacks, const point_cloud_transport::SubLoaderPtr& loader);
 
   struct Impl;
-  typedef boost::shared_ptr<Impl> ImplPtr;
-  typedef boost::weak_ptr<Impl> ImplWPtr;
-
-  ImplPtr impl_;
-
+  std::shared_ptr<Impl> impl_;
   friend class PointCloudTransport;
 };
 

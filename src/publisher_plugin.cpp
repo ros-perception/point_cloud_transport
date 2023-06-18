@@ -41,49 +41,13 @@
 #include <list>
 #include <string>
 
-#include <cras_cpp_common/expected.hpp>
-#include <cras_cpp_common/xmlrpc_value_utils.hpp>
-#include <dynamic_reconfigure/Config.h>
-#include <ros/forwards.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <XmlRpcValue.h>
-
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/single_subscriber_publisher.h>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {
 
-PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::PointCloud2& raw) const
-{
-  return this->encode(raw, dynamic_reconfigure::Config());
-}
-
-PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::PointCloud2& raw,
-                                                      const XmlRpc::XmlRpcValue& config) const
-{
-  dynamic_reconfigure::Config configMsg;
-  std::list<std::string> errors;
-  if (!cras::convert(config, configMsg, true, &errors))
-    return cras::make_unexpected("Invalid encoder config: " + cras::join(errors, " "));
-  return this->encode(raw, configMsg);
-}
-
-void PublisherPlugin::advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size, bool latch)
-{
-  advertiseImpl(nh, base_topic, queue_size, {}, {}, {}, latch);
-}
-
-void PublisherPlugin::advertise(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                                const point_cloud_transport::SubscriberStatusCallback& connect_cb,
-                                const point_cloud_transport::SubscriberStatusCallback& disconnect_cb,
-                                const ros::VoidPtr& tracked_object, bool latch)
-{
-  advertiseImpl(nh, base_topic, queue_size, connect_cb, disconnect_cb, tracked_object, latch);
-}
-
-void PublisherPlugin::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
+void PublisherPlugin::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message) const
 {
   publish(*message);
 }

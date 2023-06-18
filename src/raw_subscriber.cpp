@@ -40,9 +40,9 @@
 
 #include <string>
 
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/raw_subscriber.h>
+#include <point_cloud_transport/raw_subscriber.hpp>
 
 namespace point_cloud_transport
 {
@@ -57,28 +57,9 @@ std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) co
   return base_topic;
 }
 
-void RawSubscriber::callback(const sensor_msgs::PointCloud2ConstPtr& message, const SubscriberPlugin::Callback& user_cb)
+void RawSubscriber::internalCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const SubscriberPlugin::Callback& user_cb)
 {
   user_cb(message);
 }
 
-SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::PointCloud2ConstPtr& compressed,
-                                                          const NoConfigConfig&) const
-{
-  return compressed;
-}
-
-SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::PointCloud2& compressed,
-                                                          const NoConfigConfig& config) const
-{
-  sensor_msgs::PointCloud2Ptr compressedPtr(new sensor_msgs::PointCloud2);
-  *compressedPtr = compressed;
-  return this->decodeTyped(compressedPtr, config);
-}
-
-bool RawSubscriber::matchesTopic(const std::string& topic, const std::string& datatype) const
-{
-  return datatype == ros::message_traits::DataType<sensor_msgs::PointCloud2>::value();
-}
-
-}
+} // namespace point_cloud_transport

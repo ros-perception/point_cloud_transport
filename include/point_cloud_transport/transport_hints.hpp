@@ -42,43 +42,43 @@
 
 #include <string>
 
-#include <boost/noncopyable.hpp>
-#include <boost/function.hpp>
-
-#include <sensor_msgs/PointCloud2.h>
+#include "rclcpp/node.hpp"
 
 namespace point_cloud_transport
 {
 
-//! Allows publication of a point cloud to a single subscriber. Only available inside subscriber connection callbacks.
-class SingleSubscriberPublisher : boost::noncopyable
+//! Stores transport settings for a point cloud topic subscription.
+class TransportHints
 {
 public:
-  typedef boost::function<uint32_t()> GetNumSubscribersFn;
-  typedef boost::function<void(const sensor_msgs::PointCloud2&)> PublishFn;
+  /**
+   * Constructor.
+   *
+   * The default transport can be overridden by setting a certain parameter to the
+   * name of the desired transport. By default this parameter is named "point_cloud_transport"
+   * in the node's local namespace. For consistency across ROS applications, the
+   * name of this parameter should not be changed without good reason.
+   * 
+   * @param node Node to use when looking up the transport parameter.
+   * @param default_transport Preferred transport to use
+   * @param parameter_name The name of the transport parameter
+   *
+   */
+  TransportHints(
+                const rclcpp::Node * node,
+                const std::string & default_transport = "raw",
+                const std::string& parameter_name = "point_cloud_transport")
+  {
+    node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
+  }
 
-  SingleSubscriberPublisher(const std::string& caller_id, const std::string& topic,
-                            const GetNumSubscribersFn& num_subscribers_fn,
-                            const PublishFn& publish_fn);
-
-  std::string getSubscriberName() const;
-
-  std::string getTopic() const;
-
-  uint32_t getNumSubscribers() const;
-
-  void publish(const sensor_msgs::PointCloud2& message) const;
-  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const;
+  const std::string& getTransport() const
+  {
+    return transport_;
+  }
 
 private:
-  std::string caller_id_;
-  std::string topic_;
-  GetNumSubscribersFn num_subscribers_fn_;
-  PublishFn publish_fn_;
-
-  friend class Publisher;  // to get publish_fn_ directly
+  std::string transport_;
 };
-
-typedef boost::function<void(const SingleSubscriberPublisher&)> SubscriberStatusCallback;
 
 }

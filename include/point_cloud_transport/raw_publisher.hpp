@@ -42,34 +42,40 @@
 
 #include <string>
 
-#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/NoConfigConfig.h>
-#include <point_cloud_transport/simple_publisher_plugin.h>
+#include <point_cloud_transport/simple_publisher_plugin.hpp>
 
 namespace point_cloud_transport
 {
 
 //! RawPublisher is a simple wrapper for ros::Publisher,
 //! publishing unaltered PointCloud2 messages on the base topic.
-class RawPublisher : public point_cloud_transport::SimplePublisherPlugin<sensor_msgs::PointCloud2>
+class RawPublisher : public point_cloud_transport::SimplePublisherPlugin<sensor_msgs::msg::PointCloud2>
 {
 public:
-  std::string getTransportName() const override;
+  virtual ~RawPublisher() {}
 
-  TypedEncodeResult encodeTyped(
-      const sensor_msgs::PointCloud2& raw, const point_cloud_transport::NoConfigConfig& config) const override;
-
-  // Override the default implementation because publishing the message pointer allows
-  // the no-copy intraprocess optimization.
-  void publish(const sensor_msgs::PointCloud2ConstPtr& message) const override;
-
-  bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
+  virtual std::string getTransportName() const
+  {
+    return "raw";
+  }
 
 protected:
-  void publish(const sensor_msgs::PointCloud2& message, const PublishFn& publish_fn) const override;
+  virtual void publish(const sensor_msgs::msg::PointCloud2 & message, const PublishFn & publish_fn) const
+  {
+    publish_fn(message);
+  }
 
-  std::string getTopicToAdvertise(const std::string& base_topic) const override;
+  virtual void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message_ptr, const PublishFn & publish_fn) const
+  {
+    publish_fn(*message_ptr);
+  }
+
+  virtual std::string getTopicToAdvertise(const std::string & base_topic) const
+  {
+    return base_topic;
+  }
 };
 
 }

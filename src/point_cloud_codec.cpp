@@ -43,19 +43,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/make_shared.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <cras_cpp_common/c_api.h>
-#include <cras_cpp_common/log_utils.h>
-#include <cras_cpp_common/log_utils/memory.h>
-#include <pluginlib/class_loader.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include <point_cloud_transport/loader_fwds.h>
-#include <point_cloud_transport/point_cloud_codec.h>
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/subscriber_plugin.h>
+#include <point_cloud_transport/loader_fwds.hpp>
+#include <point_cloud_transport/point_cloud_codec.hpp>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
 {
@@ -68,8 +61,8 @@ struct PointCloudCodec::Impl
   std::unordered_map<std::string, std::string> decoders_for_topics_;
 
   Impl() :
-      enc_loader_(boost::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
-      dec_loader_(boost::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
+      enc_loader_(std::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
+      dec_loader_(std::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
   {
   }
 };
@@ -97,7 +90,7 @@ bool transportNameMatches(const std::string& lookup_name, const std::string& nam
   return false;
 }
 
-boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByName(
+std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByName(
     const std::string& name) const
 {
   for (const auto& lookup_name : impl_->enc_loader_->getDeclaredClasses())
@@ -114,7 +107,7 @@ boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEn
   return nullptr;
 }
 
-boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByTopic(
+std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByTopic(
     const std::string& topic, const std::string& datatype) const
 {
   if (impl_->encoders_for_topics_.find(topic) != impl_->encoders_for_topics_.end())
@@ -143,7 +136,7 @@ boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEn
   return nullptr;
 }
 
-boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByName(
+std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByName(
     const std::string& name) const
 {
   for (const auto& lookup_name : impl_->dec_loader_->getDeclaredClasses())
@@ -160,7 +153,7 @@ boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getD
   return nullptr;
 }
 
-boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByTopic(
+std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByTopic(
     const std::string& topic, const std::string& datatype) const
 {
   if (impl_->decoders_for_topics_.find(topic) != impl_->decoders_for_topics_.end())
@@ -196,19 +189,19 @@ thread_local PointCloudCodec point_cloud_transport_codec_instance(globalLogger);
 
 bool pointCloudTransportCodecsEncode(
     const char* codec,
-    sensor_msgs::PointCloud2::_height_type rawHeight,
-    sensor_msgs::PointCloud2::_width_type rawWidth,
+    sensor_msgs::msg::PointCloud2::_height_type rawHeight,
+    sensor_msgs::msg::PointCloud2::_width_type rawWidth,
     size_t rawNumFields,
     const char* rawFieldNames[],
     sensor_msgs::PointField::_offset_type rawFieldOffsets[],
     sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
     sensor_msgs::PointField::_count_type rawFieldCounts[],
-    sensor_msgs::PointCloud2::_is_bigendian_type rawIsBigendian,
-    sensor_msgs::PointCloud2::_point_step_type rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type rawRowStep,
+    sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
+    sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
+    sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
     size_t rawDataLength,
     const uint8_t rawData[],
-    sensor_msgs::PointCloud2::_is_dense_type rawIsDense,
+    sensor_msgs::msg::PointCloud2::_is_dense_type rawIsDense,
     cras::allocator_t compressedTypeAllocator,
     cras::allocator_t compressedMd5SumAllocator,
     cras::allocator_t compressedDataAllocator,
@@ -232,7 +225,7 @@ bool pointCloudTransportCodecsEncode(
       return false;
     }
   }
-  sensor_msgs::PointCloud2 raw;
+  sensor_msgs::msg::PointCloud2 raw;
   raw.height = rawHeight;
   raw.width = rawWidth;
   for (size_t i = 0; i < rawNumFields; ++i)
@@ -288,18 +281,18 @@ bool pointCloudTransportCodecsDecode(
     const char* compressedMd5sum,
     size_t compressedDataLength,
     const uint8_t compressedData[],
-    sensor_msgs::PointCloud2::_height_type& rawHeight,
-    sensor_msgs::PointCloud2::_width_type& rawWidth,
+    sensor_msgs::msg::PointCloud2::_height_type& rawHeight,
+    sensor_msgs::msg::PointCloud2::_width_type& rawWidth,
     uint32_t& rawNumFields,
     cras::allocator_t rawFieldNamesAllocator,
     cras::allocator_t rawFieldOffsetsAllocator,
     cras::allocator_t rawFieldDatatypesAllocator,
     cras::allocator_t rawFieldCountsAllocator,
-    sensor_msgs::PointCloud2::_is_bigendian_type& rawIsBigEndian,
-    sensor_msgs::PointCloud2::_point_step_type& rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type& rawRowStep,
+    sensor_msgs::msg::PointCloud2::_is_bigendian_type& rawIsBigEndian,
+    sensor_msgs::msg::PointCloud2::_point_step_type& rawPointStep,
+    sensor_msgs::msg::PointCloud2::_row_step_type& rawRowStep,
     cras::allocator_t rawDataAllocator,
-    sensor_msgs::PointCloud2::_is_dense_type& rawIsDense,
+    sensor_msgs::msg::PointCloud2::_is_dense_type& rawIsDense,
     size_t serializedConfigLength,
     const uint8_t serializedConfig[],
     cras::allocator_t errorStringAllocator,

@@ -38,31 +38,31 @@
  *
  */
 
+#include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <boost/algorithm/string/erase.hpp>
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
-#include <boost/shared_ptr.hpp>
+#include "rclcpp/expand_topic_or_service_name.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <pluginlib/class_loader.h>
-#include <ros/forwards.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include <point_cloud_transport/exception.h>
-#include <point_cloud_transport/publisher.h>
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/single_subscriber_publisher.h>
+#include <point_cloud_transport/point_cloud_common.hpp>
+#include <point_cloud_transport/exception.hpp>
+#include <point_cloud_transport/publisher.hpp>
+#include <point_cloud_transport/publisher_plugin.hpp>
+#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {
 
 struct Publisher::Impl
 {
-  Impl() : unadvertised_(false)
+  explicit Impl(rclcpp::Node * node)
+  : logger_(node->get_logger()),
+    unadvertised_(false)
   {
   }
 
@@ -104,54 +104,51 @@ struct Publisher::Impl
                     const point_cloud_transport::SubscriberStatusCallback& user_cb)
   {
     point_cloud_transport::SingleSubscriberPublisher ssp(
-        plugin_pub.getSubscriberName(), getTopic(), boost::bind(&Publisher::Impl::getNumSubscribers, this),
+        plugin_pub.getSubscriberName(), getTopic(), std::bind(&Publisher::Impl::getNumSubscribers, this),
         plugin_pub.publish_fn_);
     user_cb(ssp);
   }
 
+  rclcpp::Logger logger_;
   std::string base_topic_;
   PubLoaderPtr loader_;
-  std::vector<boost::shared_ptr<point_cloud_transport::PublisherPlugin> > publishers_;
+  std::vector<std::shared_ptr<PublisherPlugin>> publishers_;
   bool unadvertised_;
 };
 
-Publisher::Publisher() = default;
-
-Publisher::Publisher(ros::NodeHandle& nh, const std::string& base_topic, uint32_t queue_size,
-                     const point_cloud_transport::SubscriberStatusCallback& connect_cb,
-                     const point_cloud_transport::SubscriberStatusCallback& disconnect_cb,
-                     const ros::VoidPtr& tracked_object, bool latch,
-                     const point_cloud_transport::PubLoaderPtr& loader)
-    : impl_(new Impl)
+Publisher::Publisher(
+  rclcpp::Node * node, const std::string & base_topic,
+  PubLoaderPtr loader, rmw_qos_profile_t custom_qos)
+: impl_(std::make_shared<Impl>(node))
 {
-  // Resolve the name explicitly because otherwise the compressed topics don't remap properly
-  impl_->base_topic_ = nh.resolveName(base_topic);
+  // Resolve the name explicitly because otherwise the compressed topics don't remap
+  // properly (#3652).
+  std::string point_cloud_topic = rclcpp::expand_topic_or_service_name(
+    base_topic,
+    node->get_name(), node->get_namespace());
+  impl_->base_topic_ = point_cloud_topic;
   impl_->loader_ = loader;
 
-  // sequence container which encapsulates dynamic size arrays
   std::vector<std::string> blacklist_vec;
-  // call to parameter server
-  nh.getParam(impl_->base_topic_ + "/disable_pub_plugins", blacklist_vec);
-
+  node->get_parameter(impl_->base_topic_ + "/disable_pub_plugins", blacklist_vec);
   // set
   std::set<std::string> blacklist(blacklist_vec.begin(), blacklist_vec.end());
 
   for (const auto& lookup_name : loader->getDeclaredClasses())
   {
-    const std::string transport_name = boost::erase_last_copy(lookup_name, "_pub");
+    const std::string transport_name = erase_last_copy(lookup_name, "_pub");
     if (blacklist.find(transport_name) != blacklist.end())
       continue;
 
     try
     {
-      auto pub = loader->createInstance(lookup_name);
-      impl_->publishers_.push_back(pub);
-      pub->advertise(nh, impl_->base_topic_, queue_size, rebindCB(connect_cb),
-                     rebindCB(disconnect_cb), tracked_object, latch);
+      auto pub = loader->createUniqueInstance(lookup_name);
+      pub->advertise(node, point_cloud_topic, custom_qos);
+      impl_->publishers_.push_back(std::move(pub));
     }
     catch (const std::runtime_error& e)
     {
-      ROS_ERROR("Failed to load plugin %s, error string: %s", lookup_name.c_str(), e.what());
+      RCLCPP_ERROR(impl_->logger_, "Failed to load plugin %s, error string: %s", lookup_name.c_str(), e.what());
     }
   }
 
@@ -176,11 +173,13 @@ std::string Publisher::getTopic() const
   return {};
 }
 
-void Publisher::publish(const sensor_msgs::PointCloud2& message) const
+void Publisher::publish(const sensor_msgs::msg::PointCloud2& message) const
 {
   if (!impl_ || !impl_->isValid())
   {
-    ROS_ASSERT_MSG(false, "Call to publish() on an invalid point_cloud_transport::Publisher");
+    // TODO(ros2) Switch to RCUTILS_ASSERT when ros2/rcutils#112 is merged
+    auto logger = impl_ ? impl_->logger_ : rclcpp::get_logger("point_cloud_transport");
+    RCLCPP_FATAL(logger, "Call to publish() on an invalid point_cloud_transport::Publisher");
     return;
   }
 
@@ -193,11 +192,12 @@ void Publisher::publish(const sensor_msgs::PointCloud2& message) const
   }
 }
 
-void Publisher::publish(const sensor_msgs::PointCloud2ConstPtr& message) const
+void Publisher::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message) const
 {
-  if (!impl_ || !impl_->isValid())
-  {
-    ROS_ASSERT_MSG(false, "Call to publish() on an invalid point_cloud_transport::Publisher");
+  if (!impl_ || !impl_->isValid()) {
+    // TODO(ros2) Switch to RCUTILS_ASSERT when ros2/rcutils#112 is merged
+    auto logger = impl_ ? impl_->logger_ : rclcpp::get_logger("point_cloud_transport");
+    RCLCPP_FATAL(logger, "Call to publish() on an invalid point_cloud_transport::Publisher");
     return;
   }
 
@@ -221,31 +221,32 @@ void Publisher::shutdown()
 
 Publisher::operator void*() const
 {
-  return (impl_ && impl_->isValid()) ? reinterpret_cast<void*>(1) : nullptr;
+  return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
 }
 
-void Publisher::weakSubscriberCb(const ImplWPtr& impl_wptr,
-                                 const point_cloud_transport::SingleSubscriberPublisher& plugin_pub,
-                                 const point_cloud_transport::SubscriberStatusCallback& user_cb)
-{
-  if (ImplPtr impl = impl_wptr.lock())
-  {
-    impl->subscriberCB(plugin_pub, user_cb);
-  }
-}
+// TODO: fix this
+// void Publisher::weakSubscriberCb(const ImplWPtr& impl_wptr,
+//                                  const point_cloud_transport::SingleSubscriberPublisher& plugin_pub,
+//                                  const point_cloud_transport::SubscriberStatusCallback& user_cb)
+// {
+//   if (ImplPtr impl = impl_wptr.lock())
+//   {
+//     impl->subscriberCB(plugin_pub, user_cb);
+//   }
+// }
 
-SubscriberStatusCallback Publisher::rebindCB(const point_cloud_transport::SubscriberStatusCallback& user_cb)
-{
-  // Note: the subscriber callback must be bound to the internal Impl object, not
-  // 'this'. Due to copying behavior the Impl object may outlive the original Publisher
-  // instance. But it should not outlive the last Publisher, so we use a weak_ptr.
-  if (user_cb)
-  {
-    ImplWPtr impl_wptr(impl_);
-    return boost::bind(&Publisher::weakSubscriberCb, impl_wptr, _1, user_cb);
-  }
+// SubscriberStatusCallback Publisher::rebindCB(const point_cloud_transport::SubscriberStatusCallback& user_cb)
+// {
+//   // Note: the subscriber callback must be bound to the internal Impl object, not
+//   // 'this'. Due to copying behavior the Impl object may outlive the original Publisher
+//   // instance. But it should not outlive the last Publisher, so we use a weak_ptr.
+//   if (user_cb)
+//   {
+//     ImplWPtr impl_wptr(impl_);
+//     return std::bind(&Publisher::weakSubscriberCb, impl_wptr, _1, user_cb);
+//   }
 
-  return {};
-}
+//   return {};
+// }
 
 }
