@@ -9,8 +9,9 @@
 --> bag the pointcloud data
 --> Test point_cloud_codec files with bagged point cloud data
 - [] c++ codebase runs with test pointcloudsc
---> Fix c++ tests
+- [] rviz integration
 - [] tests build and pass
+--> Fix c++ tests
 - [] rospy --> rclpy conversion
 --> Update python rclpy files
 --> Update python bindings

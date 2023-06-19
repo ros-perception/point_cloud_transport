@@ -144,7 +144,7 @@ public:
       const VoidPtr& tracked_object = {},
       const point_cloud_transport::TransportHints *transport_hints = nullptr)
   {
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default;
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
     custom_qos.depth = queue_size;
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions();
     return Subscriber(node_.get(), base_topic, callback, sub_loader_, getTransportOrDefault(transport_hints), custom_qos, options);

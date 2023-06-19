@@ -72,7 +72,7 @@ install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME})
 
 # Install executables
 install(
-  TARGETS list_transports #republish
+  TARGETS list_transports republish
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
