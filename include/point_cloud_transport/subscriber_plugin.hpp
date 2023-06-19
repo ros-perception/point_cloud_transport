@@ -43,11 +43,13 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <optional>
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
 namespace point_cloud_transport
@@ -59,6 +61,10 @@ namespace point_cloud_transport
 class SubscriberPlugin
 {
 public:
+  //! \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2` holding the raw message, empty value or
+  //! error message.
+  typedef cras::expected<std::optional<sensor_msgs::msg::PointCloud2::ConstSharedPtr>, std::string> DecodeResult;
+
   SubscriberPlugin() = default;
   SubscriberPlugin(const SubscriberPlugin &) = delete;
   SubscriberPlugin & operator=(const SubscriberPlugin &) = delete;

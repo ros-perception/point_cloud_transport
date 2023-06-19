@@ -61,6 +61,12 @@ public:
     return "raw";
   }
 
+  RawPublisher::TypedEncodeResult encodeTyped(
+      const sensor_msgs::msg::PointCloud2& raw) const
+  {
+    return raw;
+  }
+
 protected:
   virtual void publish(const sensor_msgs::msg::PointCloud2 & message, const PublishFn & publish_fn) const
   {

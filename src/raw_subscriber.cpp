@@ -57,7 +57,7 @@ std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) co
   return base_topic;
 }
 
-void RawSubscriber::internalCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const SubscriberPlugin::Callback& user_cb)
+void RawSubscriber::callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const SubscriberPlugin::Callback& user_cb)
 {
   user_cb(message);
 }

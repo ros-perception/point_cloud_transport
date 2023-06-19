@@ -44,10 +44,12 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <optional>
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 
@@ -76,11 +78,34 @@ namespace point_cloud_transport
  * \tparam Config Type of the publisher dynamic configuration.
  */
 template<class M>
-class SimplePublisherPlugin : public point_cloud_transport::SingleTopicPublisherPlugin
+class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
 {
 public:
+  //! \brief Result of cloud encoding. Either the compressed cloud message, empty value, or error message.
+  typedef cras::expected<std::optional<M>, std::string> TypedEncodeResult;
+
   ~SimplePublisherPlugin()
   {
+  }
+
+  rclcpp::Logger getLogger() const
+  {
+    if (simple_impl_)
+    {
+      return simple_impl_->logger_;
+    }
+    return rclcpp::get_logger("point_cloud_transport");
+  }
+
+  // template function for getting parameter of a given type
+  template<typename T>
+  bool getParam(const std::string& name, T& value) const
+  {
+    if (simple_impl_)
+    {
+      return simple_impl_->node_->get_parameter(name, value);
+    }
+    return false;
   }
 
   uint32_t getNumSubscribers() const override
@@ -101,6 +126,7 @@ public:
     return {};
   }
 
+  // TODO: Ask about this
   void publish(const sensor_msgs::msg::PointCloud2& message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_)
@@ -120,11 +146,23 @@ public:
     simple_impl_.reset();
   }
 
+
+  /**
+   * \brief Encode the given raw pointcloud into a compressed message.
+   * \param[in] raw The input raw pointcloud.
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  virtual TypedEncodeResult encodeTyped(
+      const sensor_msgs::msg::PointCloud2& raw) const = 0;
+
 protected:
+  std::string base_topic_;
+
   virtual void advertiseImpl(
     rclcpp::Node * node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos)
   {
+    base_topic_ = base_topic;
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);
 

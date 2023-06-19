@@ -62,7 +62,7 @@ namespace point_cloud_transport
  *
  * A subclass need implement only two methods:
  * - getTransportName() from SubscriberPlugin
- * - internalCallback() - processes a message and invoked the user PointCloud2 callback if
+ * - callback() - processes a message and invoked the user PointCloud2 callback if
  * appropriate.
  *
  * For access to the parameter server and name remappings, use nh().
@@ -101,17 +101,30 @@ public:
     impl_.reset();
   }
 
+  /**
+   * \brief Decode the given compressed pointcloud into a raw message.
+   * \param[in] compressed The input compressed pointcloud.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The raw cloud message (if encoding succeeds), or an error message.
+   */
+  virtual DecodeResult decodeTyped(const M& compressed) const = 0;
+
+
 protected:
   /**
-   * \brief Process a message. Must be implemented by the subclass.
-   *
-   * @param message A message from the PublisherPlugin.
-   * @param user_cb The user PointCloud2 callback to invoke, if appropriate.
+   * Process a message. Must be implemented by the subclass.
    */
-
-  virtual void internalCallback(
-    const typename std::shared_ptr<const M> & message,
-    const Callback & user_cb) = 0;
+  virtual void callback(const typename M::ConstPtr& message, const Callback& user_cb)
+  {
+    DecodeResult res = this->decodeTyped(*message);
+    if (!res){      
+      RCLCPP_ERROR(rclcpp::get_logger("point_cloud_transport"), "Error decoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
+    }
+    else if (res.value())
+    {
+      user_cb(res.value().value());
+    }
+  }
 
   /**
    * \brief Return the communication topic name for a given base topic.
@@ -137,7 +150,7 @@ protected:
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
-        internalCallback(msg, callback);
+        this->callback(msg, callback);
       });
   }
 
@@ -156,7 +169,7 @@ protected:
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
-        internalCallback(msg, callback);
+        this->callback(msg, callback);
       },
       options);
   }

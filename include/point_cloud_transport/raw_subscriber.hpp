@@ -61,10 +61,22 @@ class RawSubscriber : public point_cloud_transport::SimpleSubscriberPlugin<senso
 public:
   virtual ~RawSubscriber() {}
 
+
+  SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& compressed) const
+  {
+    return compressed;
+  }
+
+  SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2& compressed) const
+  {
+    auto compressedPtr = std::make_shared<const sensor_msgs::msg::PointCloud2>(compressed);
+    return this->decodeTyped(compressedPtr);
+  }
+
   std::string getTransportName() const override;
 
 protected:
-  void internalCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const Callback& user_cb) override;
+  void callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& message, const Callback& user_cb) override;
 
   std::string getTopicToSubscribe(const std::string& base_topic) const override;
 
