@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "point_cloud_transport/point_cloud_common.hpp"
-
 #include <string>
 #include <vector>
 
@@ -40,5 +38,13 @@ namespace point_cloud_transport
  * \brief Replacement for uses of boost::erase_last_copy
  */
 std::string erase_last_copy(const std::string & input, const std::string & search);
+
+std::vector<std::string> split(const std::string& str, const std::string& delimiter, int maxSplits);
+
+// from cras::string_utils
+bool endsWith(const std::string& str, const std::string& suffix);
+
+// from cras::string_utils
+std::string removeSuffix(const std::string& str, const std::string& suffix, bool* hadSuffix);
 
 }

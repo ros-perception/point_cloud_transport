@@ -45,8 +45,10 @@
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/c_api.h>
 #include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/point_cloud_codec.hpp>
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
@@ -67,7 +69,7 @@ struct PointCloudCodec::Impl
   }
 };
 
-PointCloudCodec::PointCloudCodec(const cras::LogHelperPtr& log) : cras::HasLogger(log), impl_(new Impl)
+PointCloudCodec::PointCloudCodec() : impl_(new Impl)
 {
 }
 
@@ -77,12 +79,12 @@ bool transportNameMatches(const std::string& lookup_name, const std::string& nam
   {
     return true;
   }
-  const std::string transport_name = cras::removeSuffix(lookup_name, suffix);
+  const std::string transport_name = removeSuffix(lookup_name, suffix);
   if (transport_name == name)
   {
     return true;
   }
-  const auto parts = cras::split(transport_name, "/");
+  const auto parts = split(transport_name, "/");
   if (parts.size() == 2 && parts[1] == name)
   {
     return true;
@@ -97,13 +99,12 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
   {
     if (transportNameMatches(lookup_name, name, "_pub"))
     {
-      auto encoder = impl_->enc_loader_->createInstance(lookup_name);
-      encoder->setCrasLogger(this->log);
+      auto encoder = impl_->enc_loader_->createSharedInstance(lookup_name);
       return encoder;
     }
   }
 
-  ROS_DEBUG("Failed to find encoder %s.", name.c_str());
+  // ROS_DEBUG("Failed to find encoder %s.", name.c_str());
   return nullptr;
 }
 
@@ -112,14 +113,13 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
 {
   if (impl_->encoders_for_topics_.find(topic) != impl_->encoders_for_topics_.end())
   {
-    auto encoder = impl_->enc_loader_->createInstance(impl_->encoders_for_topics_[topic]);
-    encoder->setCrasLogger(this->log);
+    auto encoder = impl_->enc_loader_->createSharedInstance(impl_->encoders_for_topics_[topic]);
     return encoder;
   }
 
   for (const auto& lookup_name : impl_->enc_loader_->getDeclaredClasses())
   {
-    const auto& encoder = impl_->enc_loader_->createInstance(lookup_name);
+    const auto& encoder = impl_->enc_loader_->createSharedInstance(lookup_name);
     if (!encoder)
     {
       continue;
@@ -127,12 +127,11 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
     if (encoder->matchesTopic(topic, datatype))
     {
       impl_->encoders_for_topics_[topic] = lookup_name;
-      encoder->setCrasLogger(this->log);
       return encoder;
     }
   }
 
-  ROS_DEBUG("Failed to find encoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
+  // ROS_DEBUG("Failed to find encoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
   return nullptr;
 }
 
@@ -143,13 +142,12 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
   {
     if (transportNameMatches(lookup_name, name, "_sub"))
     {
-      auto decoder = impl_->dec_loader_->createInstance(lookup_name);
-      decoder->setCrasLogger(this->log);
+      auto decoder = impl_->dec_loader_->createSharedInstance(lookup_name);
       return decoder;
     }
   }
 
-  ROS_DEBUG("Failed to find decoder %s.", name.c_str());
+  // ROS_DEBUG("Failed to find decoder %s.", name.c_str());
   return nullptr;
 }
 
@@ -158,14 +156,13 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
 {
   if (impl_->decoders_for_topics_.find(topic) != impl_->decoders_for_topics_.end())
   {
-    auto decoder = impl_->dec_loader_->createInstance(impl_->decoders_for_topics_[topic]);
-    decoder->setCrasLogger(this->log);
+    auto decoder = impl_->dec_loader_->createSharedInstance(impl_->decoders_for_topics_[topic]);
     return decoder;
   }
 
   for (const auto& lookup_name : impl_->dec_loader_->getDeclaredClasses())
   {
-    const auto& decoder = impl_->dec_loader_->createInstance(lookup_name);
+    const auto& decoder = impl_->dec_loader_->createSharedInstance(lookup_name);
     if (!decoder)
     {
       continue;
@@ -173,19 +170,17 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
     if (decoder->matchesTopic(topic, datatype))
     {
       impl_->decoders_for_topics_[topic] = lookup_name;
-      decoder->setCrasLogger(this->log);
       return decoder;
     }
   }
 
-  ROS_DEBUG("Failed to find decoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
+  // ROS_DEBUG("Failed to find decoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
   return nullptr;
 }
 
-thread_local auto globalLogger = std::make_shared<cras::MemoryLogHelper>();
-thread_local PointCloudCodec point_cloud_transport_codec_instance(globalLogger);
-
 }
+
+// TODO: These functions seem overly complex. Can we simplify them?
 
 bool pointCloudTransportCodecsEncode(
     const char* codec,
@@ -244,8 +239,6 @@ bool pointCloudTransportCodecsEncode(
   memcpy(raw.data.data(), rawData, rawDataLength);
   raw.is_dense = rawIsDense;
 
-  point_cloud_transport::globalLogger->clear();
-
   auto encoder = point_cloud_transport::point_cloud_transport_codec_instance.getEncoderByName(codec);
   if (!encoder)
   {
@@ -254,10 +247,6 @@ bool pointCloudTransportCodecsEncode(
   }
 
   const auto compressed = encoder->encode(raw, config);
-
-  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
-    cras::outputRosMessage(logMessagesAllocator, msg);
-  point_cloud_transport::globalLogger->clear();
 
   if (!compressed)
   {
@@ -319,8 +308,6 @@ bool pointCloudTransportCodecsDecode(
   cras::resizeBuffer(compressed, compressedDataLength);
   memcpy(cras::getBuffer(compressed), compressedData, compressedDataLength);
 
-  point_cloud_transport::globalLogger->clear();
-
   auto decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByTopic(
       topicOrCodec, compressedType);
   if (!decoder)
@@ -334,10 +321,6 @@ bool pointCloudTransportCodecsDecode(
   }
 
   const auto res = decoder->decode(compressed, config);
-
-  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
-    cras::outputRosMessage(logMessagesAllocator, msg);
-  point_cloud_transport::globalLogger->clear();
 
   if (!res)
   {

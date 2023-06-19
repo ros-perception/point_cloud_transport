@@ -28,9 +28,6 @@
 
 #include "point_cloud_transport/point_cloud_common.hpp"
 
-#include <string>
-#include <vector>
-
 namespace point_cloud_transport
 {
 
@@ -43,5 +40,45 @@ std::string erase_last_copy(const std::string & input, const std::string & searc
   }
   return input_copy;
 }
+
+std::vector<std::string> split(const std::string& str, const std::string& delimiter, int maxSplits)
+{
+  // inspired by https://stackoverflow.com/a/46931770/1076564, CC-BY-SA 4.0
+  // renamed some variables, added the maxSplits option
+  size_t start{0};
+  size_t end;
+  size_t delimiterLength{delimiter.length()};
+  std::string token;
+  std::vector<std::string> result;
+
+  while ((end = str.find(delimiter, start)) != std::string::npos && (maxSplits == -1 || result.size() < maxSplits))
+  {
+    token = str.substr(start, end - start);
+    start = end + delimiterLength;
+    result.push_back(token);
+  }
+
+  result.push_back(str.substr(start));
+  return result;
+}
+
+// from cras::string_utils
+bool endsWith(const std::string& str, const std::string& suffix)
+{
+  return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+
+// from cras::string_utils
+std::string removeSuffix(const std::string& str, const std::string& suffix, bool* hadSuffix)
+{
+  const auto hasSuffix = endsWith(str, suffix);
+  if (hadSuffix != nullptr)
+    *hadSuffix = hasSuffix;
+
+  return hasSuffix ? str.substr(0, str.length() - suffix.length()) : str;
+}
+
+
 
 }

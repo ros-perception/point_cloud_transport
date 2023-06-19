@@ -44,13 +44,9 @@
 #include <string>
 #include <vector>
 
-#include <cras_cpp_common/c_api.h>
-#include <cras_cpp_common/log_utils.h>
-#include <cras_cpp_common/log_utils/node.h>
-#include <ros/forwards.h>
-#include <ros/node_handle.h>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/c_api.h>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
@@ -64,11 +60,11 @@ namespace point_cloud_transport
 * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
 */
 
-class PointCloudCodec : public cras::HasLogger
+class PointCloudCodec
 {
 public:
   //! Constructor
-  explicit PointCloudCodec(const cras::LogHelperPtr& log = std::make_shared<cras::NodeLogHelper>());
+  explicit PointCloudCodec();
 
   std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string& name) const;
 

@@ -15,7 +15,7 @@ include_directories(
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
-  # src/point_cloud_codec.cpp # TODO: Is this needed?
+  # src/point_cloud_codec.cpp # TODO: This is needed for exposing the encode/decode functions without spinning an node
   src/point_cloud_common.cpp
   src/point_cloud_transport.cpp
   src/publisher.cpp
