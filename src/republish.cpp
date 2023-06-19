@@ -61,7 +61,7 @@ int main(int argc, char **argv)
   if (vargv.size() < 2)
   {
     printf(
-        "Usage: %s in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>\n",
+        "Usage: %s in_transport out_transport --ros-args --remap in:=<input_topic> --ros-args --remap out:=<output_topic>\n",
         argv[0]);
     return 0;
   }
@@ -104,6 +104,7 @@ int main(int argc, char **argv)
     typedef point_cloud_transport::PublisherPlugin Plugin;
     auto loader = pct.getPublisherLoader();
     std::string lookup_name = Plugin::getLookupName(out_transport);
+    RCLCPP_INFO(node->get_logger(), "Loading %s publisher", lookup_name.c_str());
 
     auto instance = loader->createUniqueInstance(lookup_name);
     // DO NOT use instance after this line
@@ -114,10 +115,14 @@ int main(int argc, char **argv)
     typedef void (point_cloud_transport::PublisherPlugin::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
     PublishMemFn pub_mem_fn = &point_cloud_transport::PublisherPlugin::publish;
 
+    RCLCPP_INFO(node->get_logger(), "Loading %s subscriber");
+
     const point_cloud_transport::TransportHints hint(in_transport);
     auto sub = pct.subscribe(
         in_topic, static_cast<uint32_t>(1),
         pub_mem_fn, pub, &hint);
+
+    RCLCPP_INFO(node->get_logger(), "Spinning node");
     // spin the node
     rclcpp::spin(node);
   }
