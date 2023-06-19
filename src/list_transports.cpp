@@ -76,21 +76,24 @@ int main(int argc, char** argv)
 
   for (const auto& lookup_name : pub_loader.getDeclaredClasses())
   {
+    printf("Declared class: %s\n", lookup_name.c_str());
     std::string transport_name = point_cloud_transport::erase_last_copy(lookup_name, "_pub");
     transports[transport_name].pub_name = lookup_name;
     transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
     try
     {
-      auto pub = pub_loader.createSharedInstance(lookup_name);
+      auto pub = pub_loader.createUniqueInstance(lookup_name);
       transports[transport_name].pub_status = SUCCESS;
     }
     catch (const pluginlib::LibraryLoadException& e)
     {
       transports[transport_name].pub_status = LIB_LOAD_FAILURE;
+      printf("LibraryLoadException: %s\n", e.what());
     }
     catch (const pluginlib::CreateClassException& e)
     {
       transports[transport_name].pub_status = CREATE_FAILURE;
+      printf("CreateClassException: %s\n", e.what());
     }
   }
 
@@ -101,16 +104,18 @@ int main(int argc, char** argv)
     transports[transport_name].package_name = sub_loader.getClassPackage(lookup_name);
     try
     {
-      auto sub = sub_loader.createSharedInstance(lookup_name);
+      auto sub = sub_loader.createUniqueInstance(lookup_name);
       transports[transport_name].sub_status = SUCCESS;
     }
     catch (const pluginlib::LibraryLoadException& e)
     {
       transports[transport_name].sub_status = LIB_LOAD_FAILURE;
+      printf("LibraryLoadException: %s\n", e.what());
     }
     catch (const pluginlib::CreateClassException& e)
     {
       transports[transport_name].sub_status = CREATE_FAILURE;
+      printf("CreateClassException: %s\n", e.what());
     }
   }
 

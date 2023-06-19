@@ -47,13 +47,14 @@ target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
   ${PROJECT_NAME}
   pluginlib::pluginlib)
 
-# Build republish (TODO: there was some nodelet stuff happening here)
+# TODO: Fix build errors
+# TODO: Make this a composition
 # add_executable(republish src/republish.cpp)
 # target_link_libraries(republish
 #   ${PROJECT_NAME}
 #   pluginlib::pluginlib)
 
-# Build list_transports (TODO: there was some nodelet stuff happening here)
+# Build list_transports
 add_executable(list_transports src/list_transports.cpp)
 target_link_libraries(list_transports
   ${PROJECT_NAME}

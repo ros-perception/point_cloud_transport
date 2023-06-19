@@ -72,6 +72,11 @@ public:
     node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
   }
 
+  TransportHints(
+                const std::string & transport = "raw") : transport_(transport)
+  {
+  }
+
   const std::string& getTransport() const
   {
     return transport_;

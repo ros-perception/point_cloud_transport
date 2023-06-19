@@ -42,82 +42,85 @@
 #include <string>
 #include <utility>
 
+#include "rclcpp/rclcpp.hpp"
+
 #include <pluginlib/class_loader.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/point_cloud_transport.hpp>
 #include <point_cloud_transport/publisher.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
-#include <point_cloud_transport/republish.hpp>
 #include <point_cloud_transport/subscriber.hpp>
 #include <point_cloud_transport/exception.hpp>
 
-namespace point_cloud_transport
-{
-
 // TODO: Fix this
-void RepublishComponent::onInit()
+int main(int argc, char **argv)
 {
   auto vargv = rclcpp::init_and_remove_ros_arguments(argc, argv);
 
-  if (vargv.size() < 2) {
+  if (vargv.size() < 2)
+  {
     printf(
-      "Usage: %s in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>\n",
-      argv[0]);
+        "Usage: %s in_transport in:=<in_base_topic> [out_transport] out:=<out_base_topic>\n",
+        argv[0]);
     return 0;
   }
 
   auto node = rclcpp::Node::make_shared("point_cloud_republisher");
 
   std::string in_topic = rclcpp::expand_topic_or_service_name(
-    "in",
-    node->get_name(), node->get_namespace());
+      "in",
+      node->get_name(), node->get_namespace());
   std::string out_topic = rclcpp::expand_topic_or_service_name(
-    "out",
-    node->get_name(), node->get_namespace());
+      "out",
+      node->get_name(), node->get_namespace());
 
   std::string in_transport = vargv[1];
 
-  this->pct = std::make_unique<PointCloudTransport>(this->getMTNodeHandle());
-  point_cloud_transport::TransportHints hints(in_transport, {}, this->getPrivateNodeHandle());
+  point_cloud_transport::PointCloudTransport pct(node);
 
-  // There might be exceptions thrown by the loaders. We want the propagate so that the nodelet loading fails.
-
-  if (this->getMyArgv().size() < 2)
+  if (vargv.size() < 3)
   {
     // Use all available transports for output
-    this->pub.reset(new point_cloud_transport::Publisher);
-    *this->pub = this->pct->advertise(out_topic, out_queue_size);
+    const auto pub = std::make_shared<point_cloud_transport::Publisher>(pct.advertise(out_topic, rmw_qos_profile_default));
 
     // Use Publisher::publish as the subscriber callback
     typedef void (point_cloud_transport::Publisher::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
     PublishMemFn pub_mem_fn = &point_cloud_transport::Publisher::publish;
 
-    this->sub = this->pct->subscribe(in_topic, in_queue_size, std::bind(pub_mem_fn, this->pub.get(), std::placeholders::_1), this->pub,
-                                     hints);
+    const point_cloud_transport::TransportHints hint(in_transport);
+    auto sub = pct.subscribe(
+        in_topic, static_cast<uint32_t>(1),
+        pub_mem_fn, pub, &hint);
+    // spin the node
+    rclcpp::spin(node);
   }
   else
   {
     // Use one specific transport for output
-    std::string out_transport = this->getMyArgv()[1];
+    std::string out_transport = vargv[2];
 
     // Load transport plugin
     typedef point_cloud_transport::PublisherPlugin Plugin;
-    auto loader = this->pct->getPublisherLoader();
+    auto loader = pct.getPublisherLoader();
     std::string lookup_name = Plugin::getLookupName(out_transport);
-    this->pubPlugin = loader->createUniqueInstance(lookup_name);
 
-    this->pubPlugin->advertise(this->getMTNodeHandle(), out_topic, out_queue_size, {}, {}, this->pubPlugin, false);
+    auto instance = loader->createUniqueInstance(lookup_name);
+    // DO NOT use instance after this line
+    const std::shared_ptr<Plugin> pub = std::move(instance);
+    pub->advertise(node.get(), out_topic);
 
     // Use PublisherPlugin::publish as the subscriber callback
-    typedef void (Plugin::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
-    PublishMemFn pub_mem_fn = &Plugin::publish;
+    typedef void (point_cloud_transport::PublisherPlugin::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
+    PublishMemFn pub_mem_fn = &point_cloud_transport::PublisherPlugin::publish;
 
-    this->sub = this->pct->subscribe(in_topic, in_queue_size, std::bind(pub_mem_fn, this->pubPlugin.get(), std::placeholders::_1),
-                                     this->pubPlugin, in_transport);
+    const point_cloud_transport::TransportHints hint(in_transport);
+    auto sub = pct.subscribe(
+        in_topic, static_cast<uint32_t>(1),
+        pub_mem_fn, pub, &hint);
+    // spin the node
+    rclcpp::spin(node);
   }
-}
 
+  return 0;
 }
-
-PLUGINLIB_EXPORT_CLASS(point_cloud_transport::RepublishNodelet, nodelet::Nodelet)
