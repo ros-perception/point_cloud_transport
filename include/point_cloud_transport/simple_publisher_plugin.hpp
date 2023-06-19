@@ -175,16 +175,25 @@ protected:
   typedef std::function<void (const M &)> PublishFn;
 
   /**
-   * \brief Publish an pointcloud using the specified publish function. Must be implemented by
+   * Publish a point cloud using the specified publish function. Must be implemented by
    * the subclass.
    *
    * The PublishFn publishes the transport-specific message type. This indirection allows
    * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
    * single subscriber publishing (in subscription callbacks).
    */
-  virtual void publish(
-    const sensor_msgs::msg::PointCloud2 & message,
-    const PublishFn & publish_fn) const = 0;
+  virtual void publish(const sensor_msgs::msg::PointCloud2& message, const PublishFn& publish_fn) const
+  {
+    const auto res = this->encodeTyped(message);
+    if (!res)
+    {
+      RCLCPP_ERROR(rclcpp::get_logger("point_cloud_transport"), "Error encoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
+    }
+    else if (res.value())
+    {
+      publish_fn(res.value().value());
+    }
+  }
 
   /**
    * \brief Return the communication topic name for a given base topic.
