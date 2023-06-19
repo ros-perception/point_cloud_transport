@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
   src/point_cloud_transport.cpp
   src/publisher.cpp
   src/publisher_plugin.cpp
+  src/raw_subscriber.cpp
   src/single_subscriber_publisher.cpp
   src/subscriber.cpp
 )

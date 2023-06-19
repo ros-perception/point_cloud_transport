@@ -76,8 +76,9 @@ int main(int argc, char** argv)
 
   for (const auto& lookup_name : pub_loader.getDeclaredClasses())
   {
-    printf("Declared class: %s\n", lookup_name.c_str());
+    printf("Lookup name: %s\n", lookup_name.c_str());
     std::string transport_name = point_cloud_transport::erase_last_copy(lookup_name, "_pub");
+    printf("Transport name: %s\n", transport_name.c_str());
     transports[transport_name].pub_name = lookup_name;
     transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
     try
