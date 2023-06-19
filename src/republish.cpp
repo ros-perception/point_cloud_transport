@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   if (vargv.size() < 3)
   {
     // Use all available transports for output
-    const auto pub = std::make_shared<point_cloud_transport::Publisher>(pct.advertise(out_topic, rmw_qos_profile_default));
+    auto pub = std::make_shared<point_cloud_transport::Publisher>(pct.advertise(out_topic, rmw_qos_profile_default));
 
     // Use Publisher::publish as the subscriber callback
     typedef void (point_cloud_transport::Publisher::*PublishMemFn)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr&) const;
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 
     auto instance = loader->createUniqueInstance(lookup_name);
     // DO NOT use instance after this line
-    const std::shared_ptr<Plugin> pub = std::move(instance);
+    std::shared_ptr<Plugin> pub = std::move(instance);
     pub->advertise(node.get(), out_topic);
 
     // Use PublisherPlugin::publish as the subscriber callback
