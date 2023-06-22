@@ -1,44 +1,39 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
-
 /*
- *
- * BSD 3-Clause License
- *
- * Copyright (c) Czech Technical University in Prague
+ * Copyright (c) 2023, Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
- *
- *        All rights reserved.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- *        modification, are permitted provided that the following conditions are met:
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ *    * Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
+ *    * Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
  *
- * 3. Neither the name of the copyright holder nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
+ *    * Neither the name of the copyright holder nor the names of its
+ *      contributors may be used to endorse or promote products derived from
+ *      this software without specific prior written permission.
  *
- *       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- *       AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *       IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *       DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- *       FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *       DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- *       SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *       CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- *       OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- *       OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef POINT_CLOUD_TRANSPORT__SIMPLE_PUBLISHER_PLUGIN_HPP_
+#define POINT_CLOUD_TRANSPORT__SIMPLE_PUBLISHER_PLUGIN_HPP_
+
 
 #include <functional>
 #include <memory>
@@ -81,7 +76,8 @@ template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
 {
 public:
-  //! \brief Result of cloud encoding. Either the compressed cloud message, empty value, or error message.
+  //! \brief Result of cloud encoding. Either the compressed cloud message,
+  // empty value, or error message.
   typedef cras::expected<std::optional<M>, std::string> TypedEncodeResult;
 
   ~SimplePublisherPlugin()
@@ -90,8 +86,7 @@ public:
 
   rclcpp::Logger getLogger() const
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       return simple_impl_->logger_;
     }
     return rclcpp::get_logger("point_cloud_transport");
@@ -99,10 +94,9 @@ public:
 
   // template function for getting parameter of a given type
   template<typename T>
-  bool getParam(const std::string& name, T& value) const
+  bool getParam(const std::string & name, T & value) const
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       return simple_impl_->node_->get_parameter(name, value);
     }
     return false;
@@ -110,8 +104,7 @@ public:
 
   uint32_t getNumSubscribers() const override
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       return simple_impl_->pub_->get_subscription_count();
     }
     return 0;
@@ -119,19 +112,18 @@ public:
 
   std::string getTopic() const override
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       return simple_impl_->pub_->get_topic_name();
     }
     return {};
   }
 
-  // TODO: Ask about this
-  void publish(const sensor_msgs::msg::PointCloud2& message) const override
+  // TODO(anyone): Ask about this
+  void publish(const sensor_msgs::msg::PointCloud2 & message) const override
   {
-    if (!simple_impl_ || !simple_impl_->pub_)
-    {
-      auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger("point_cloud_transport");
+    if (!simple_impl_ || !simple_impl_->pub_) {
+      auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
+        "point_cloud_transport");
       RCLCPP_ERROR(
         logger,
         "Call to publish() on an invalid point_cloud_transport::SimplePublisherPlugin");
@@ -150,10 +142,11 @@ public:
   /**
    * \brief Encode the given raw pointcloud into a compressed message.
    * \param[in] raw The input raw pointcloud.
-   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   * \return The output shapeshifter holding the compressed cloud message
+   * (if encoding succeeds), or an error message.
    */
   virtual TypedEncodeResult encodeTyped(
-      const sensor_msgs::msg::PointCloud2& raw) const = 0;
+    const sensor_msgs::msg::PointCloud2 & raw) const = 0;
 
 protected:
   std::string base_topic_;
@@ -182,15 +175,17 @@ protected:
    * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
    * single subscriber publishing (in subscription callbacks).
    */
-  virtual void publish(const sensor_msgs::msg::PointCloud2& message, const PublishFn& publish_fn) const
+  virtual void publish(
+    const sensor_msgs::msg::PointCloud2 & message,
+    const PublishFn & publish_fn) const
   {
     const auto res = this->encodeTyped(message);
-    if (!res)
-    {
-      RCLCPP_ERROR(rclcpp::get_logger("point_cloud_transport"), "Error encoding message by transport %s: %s.", this->getTransportName().c_str(), res.error().c_str());
-    }
-    else if (res.value())
-    {
+    if (!res) {
+      RCLCPP_ERROR(
+        rclcpp::get_logger(
+          "point_cloud_transport"), "Error encoding message by transport %s: %s.",
+        this->getTransportName().c_str(), res.error().c_str());
+    } else if (res.value()) {
       publish_fn(res.value().value());
     }
   }
@@ -239,4 +234,5 @@ private:
   }
 };
 
-}
+}  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__SIMPLE_PUBLISHER_PLUGIN_HPP_
