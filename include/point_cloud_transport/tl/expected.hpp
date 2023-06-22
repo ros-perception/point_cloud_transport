@@ -1299,7 +1299,7 @@ struct expected_delete_assign_base<T, E, false, false>
 // follows, while still conditionally deleting the default constructor.
 struct default_constructor_tag
 {
-  explicit constexpr explicit default_constructor_tag() = default;
+  constexpr explicit default_constructor_tag() = default;
 };
 
 // expected_default_ctor_base will ensure that expected has a deleted default
