@@ -9,6 +9,7 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(
@@ -48,11 +49,31 @@ target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
   ${PROJECT_NAME}
   pluginlib::pluginlib)
 
-# TODO: Make this a composition
-add_executable(republish src/republish.cpp)
+add_library(republish_node SHARED src/republish.cpp)
+target_link_libraries(republish_node
+  ${PROJECT_NAME}
+)
+ament_target_dependencies(republish_node
+  pluginlib
+  rclcpp_components
+  rclcpp
+)
+rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
+
+add_executable(republish src/republish_program.cpp)
 target_link_libraries(republish
   ${PROJECT_NAME}
-  pluginlib::pluginlib)
+  republish_node
+)
+ament_target_dependencies(republish
+  pluginlib
+  rclcpp_components
+  rclcpp
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 # Build list_transports
 add_executable(list_transports src/list_transports.cpp)
@@ -63,7 +84,7 @@ target_link_libraries(list_transports
 # Install plugin descriptions
 pluginlib_export_plugin_description_file(${PROJECT_NAME} default_plugins.xml)
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins republish_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

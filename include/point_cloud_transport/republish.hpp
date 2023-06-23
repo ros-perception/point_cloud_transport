@@ -31,66 +31,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_
-#define POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_
+#ifndef POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_
+#define POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_
 
-#include <memory>
-#include <string>
+#include "point_cloud_transport/visibility_control.h"
+
+#include <point_cloud_transport/point_cloud_transport.hpp>
 
 #include <rclcpp/node.hpp>
 
 namespace point_cloud_transport
 {
 
-//! Stores transport settings for a point cloud topic subscription.
-class TransportHints
+class Republisher : public rclcpp::Node
 {
 public:
-  /**
-   * Constructor.
-   *
-   * The default transport can be overridden by setting a certain parameter to the
-   * name of the desired transport. By default this parameter is named "point_cloud_transport"
-   * in the node's local namespace. For consistency across ROS applications, the
-   * name of this parameter should not be changed without good reason.
-   *
-   * @param node Node to use when looking up the transport parameter.
-   * @param default_transport Preferred transport to use
-   * @param parameter_name The name of the transport parameter
-   *
-   */
-  TransportHints(
-    const std::shared_ptr<rclcpp::Node> node,
-    const std::string & default_transport = "raw",
-    const std::string & parameter_name = "point_cloud_transport")
-    // : TransportHints(
-    //   node->get_node_base_interface())
-  {
-    node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
-  }
-
-  // TransportHints(
-  //   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_interface,
-  //   const std::string & default_transport = "raw",
-  //   const std::string & parameter_name = "point_cloud_transport")
-  // {
-  //   node_base_interface->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
-  // }
-
-  TransportHints(
-    const std::string & transport = "raw")
-  : transport_(transport)
-  {
-  }
-
-  const std::string & getTransport() const
-  {
-    return transport_;
-  }
-
+  //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  explicit Republisher(const rclcpp::NodeOptions & options);
 private:
-  std::string transport_;
+
+  void initialize();
+
+  std::shared_ptr<point_cloud_transport::PointCloudTransport> pct;
+  rclcpp::TimerBase::SharedPtr timer_;
+  bool initialized_{false};
+  point_cloud_transport::Subscriber sub;
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> pub;
+  std::shared_ptr<point_cloud_transport::Publisher> simple_pub;
 };
 
 }  // namespace point_cloud_transport
-#endif  // POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_
+#endif  // POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_

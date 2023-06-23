@@ -152,7 +152,7 @@ protected:
   std::string base_topic_;
 
   virtual void advertiseImpl(
-    rclcpp::Node * node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos)
   {
     base_topic_ = base_topic;
@@ -203,13 +203,13 @@ protected:
 private:
   struct SimplePublisherPluginImpl
   {
-    explicit SimplePublisherPluginImpl(rclcpp::Node * node)
+    explicit SimplePublisherPluginImpl(std::shared_ptr<rclcpp::Node> node)
     : node_(node),
       logger_(node->get_logger())
     {
     }
 
-    rclcpp::Node * node_;
+    std::shared_ptr<rclcpp::Node> node_;
     rclcpp::Logger logger_;
     typename rclcpp::Publisher<M>::SharedPtr pub_;
   };

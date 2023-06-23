@@ -57,7 +57,7 @@ public:
   Publisher() = default;
 
   Publisher(
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     PubLoaderPtr loader,
     rmw_qos_profile_t custom_qos);

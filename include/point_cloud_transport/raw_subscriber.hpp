@@ -82,7 +82,7 @@ protected:
   using SubscriberPlugin::subscribeImpl;
 
   void subscribeImpl(
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos,

@@ -76,7 +76,7 @@ public:
    */
   SubscriberFilter(
     PointCloudTransport & pct,
-    rclcpp::Node * node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const std::string & transport)
   {
     subscribe(pct, node, base_topic, transport);
@@ -104,7 +104,7 @@ public:
    */
   void subscribe(
     PointCloudTransport & pct,
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const std::string & transport,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,

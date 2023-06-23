@@ -50,7 +50,7 @@ namespace point_cloud_transport
 
 struct Subscriber::Impl
 {
-  Impl(rclcpp::Node * node, SubLoaderPtr loader)
+  Impl(std::shared_ptr<rclcpp::Node> node, SubLoaderPtr loader)
   : logger_(node->get_logger()),
     loader_(loader),
     unsubscribed_(false)
@@ -85,7 +85,7 @@ struct Subscriber::Impl
 };
 
 Subscriber::Subscriber(
-  rclcpp::Node * node,
+  std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
   const Callback & callback,
   SubLoaderPtr loader,
