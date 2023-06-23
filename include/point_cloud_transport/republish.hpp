@@ -31,8 +31,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_
-#define POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_
+#ifndef POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_
+#define POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_
+
+#include <memory>
 
 #include "point_cloud_transport/visibility_control.h"
 
@@ -49,8 +51,8 @@ public:
   //! Constructor
   POINT_CLOUD_TRANSPORT_PUBLIC
   explicit Republisher(const rclcpp::NodeOptions & options);
-private:
 
+private:
   void initialize();
 
   std::shared_ptr<point_cloud_transport::PointCloudTransport> pct;
@@ -62,4 +64,4 @@ private:
 };
 
 }  // namespace point_cloud_transport
-#endif  // POINT_CLOUD_TRANSPORT__REPUBLISHER_HPP_
+#endif  // POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_

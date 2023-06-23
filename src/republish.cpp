@@ -56,17 +56,15 @@ Republisher::Republisher(const rclcpp::NodeOptions & options)
 {
   // Initialize Republishercomponent after construction
   // shared_from_this can't be used in the constructor
-  this->timer_ = create_wall_timer(1ms, [this]() {
-    if (initialized_)
-    {
-      timer_->cancel();
-    }
-    else
-    {
-      this->initialize();
-      initialized_ = true;
-    }
-  });
+  this->timer_ = create_wall_timer(
+    1ms, [this]() {
+      if (initialized_) {
+        timer_->cancel();
+      } else {
+        this->initialize();
+        initialized_ = true;
+      }
+    });
 }
 
 void Republisher::initialize()

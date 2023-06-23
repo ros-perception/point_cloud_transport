@@ -63,19 +63,9 @@ public:
     const std::shared_ptr<rclcpp::Node> node,
     const std::string & default_transport = "raw",
     const std::string & parameter_name = "point_cloud_transport")
-    // : TransportHints(
-    //   node->get_node_base_interface())
   {
     node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
   }
-
-  // TransportHints(
-  //   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_interface,
-  //   const std::string & default_transport = "raw",
-  //   const std::string & parameter_name = "point_cloud_transport")
-  // {
-  //   node_base_interface->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
-  // }
 
   TransportHints(
     const std::string & transport = "raw")
