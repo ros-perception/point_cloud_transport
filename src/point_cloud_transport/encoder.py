@@ -30,10 +30,11 @@
 
 """Encoding and decoding of point clouds compressed with any point cloud transport."""
 
-from ctypes import c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER
+from ctypes import c_bool, c_char_p, c_size_t, c_uint32, c_uint8, POINTER
 
 from cras import get_msg_type
-from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, get_ro_c_buffer, c_array
+from cras.ctypes_utils import Allocator, BytesAllocator, LogMessagesAllocator, StringAllocator
+from cras.ctypes_utils import c_array, get_ro_c_buffer
 from cras.message_utils import dict_to_dynamic_config_msg
 from cras.string_utils import BufferStringIO
 
@@ -47,7 +48,8 @@ def _get_library():
     library.pointCloudTransportCodecsEncode.restype = c_bool
     library.pointCloudTransportCodecsEncode.argtypes = [
         c_char_p,
-        c_uint32, c_uint32, c_size_t, POINTER(c_char_p), POINTER(c_uint32), POINTER(c_uint8), POINTER(c_uint32),
+        c_uint32, c_uint32, c_size_t, POINTER(c_char_p), POINTER(c_uint32),
+        POINTER(c_uint8), POINTER(c_uint32),
         c_uint8, c_uint32, c_uint32, c_size_t, POINTER(c_uint8), c_uint8,
         Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
         c_size_t, POINTER(c_uint8),
@@ -58,19 +60,21 @@ def _get_library():
 
 
 def encode(raw, topic_or_codec, config=None):
-    """Encode the given raw point_cloud into a compressed point_cloud with a suitable codec.
+    """
+    Encode the given raw point_cloud into a compressed point_cloud with a suitable codec.
 
     :param sensor_msgs.msg.PointCloud2 raw: The raw point cloud.
-    :param str topic_or_codec: Name of the topic where this cloud should be published or explicit name of the codec.
+    :param str topic_or_codec: Name of the topic where this cloud should be published or explicit
+           name of the codec.
     :param config: Configuration of the encoding process.
     :type config: dict or dynamic_reconfigure.msg.Config or None
-    :return: Tuple of compressed cloud and error string. If the compression fails, cloud is `None` and error string
-             is filled.
+    :return: Tuple of compressed cloud and error string. If the compression fails, cloud is `None`
+             and error string is filled.
     :rtype: (genpy.Message or None, str)
     """
     codec = _get_library()
     if codec is None:
-        return None, "Could not load the codec library."
+        return None, 'Could not load the codec library.'
 
     config = dict_to_dynamic_config_msg(config)
     config_buf = BufferStringIO()
@@ -85,10 +89,10 @@ def encode(raw, topic_or_codec, config=None):
     log_allocator = LogMessagesAllocator()
 
     args = [
-        topic_or_codec.encode("utf-8"),
+        topic_or_codec.encode('utf-8'),
         raw.height, raw.width,
         len(raw.fields),
-        c_array([f.name.encode("utf-8") for f in raw.fields], c_char_p),
+        c_array([f.name.encode('utf-8') for f in raw.fields], c_char_p),
         c_array([f.offset for f in raw.fields], c_uint32),
         c_array([f.datatype for f in raw.fields], c_uint8),
         c_array([f.count for f in raw.fields], c_uint32),
@@ -106,9 +110,9 @@ def encode(raw, topic_or_codec, config=None):
         msg_type = get_msg_type(type_allocator.value)
         compressed = msg_type()
         if md5sum_allocator.value != compressed._md5sum:
-            return None, "MD5 sum mismatch for %s: %s vs %s" % (
+            return None, 'MD5 sum mismatch for %s: %s vs %s' % (
                 type_allocator.value, md5sum_allocator.value, compressed._md5sum)
         compressed.deserialize(data_allocator.value)
         compressed.header = raw.header
-        return compressed, ""
+        return compressed, ''
     return None, error_allocator.value

@@ -49,6 +49,7 @@ def _get_base_library():
 
 
 class _TransportInfo(object):
+
     def __init__(self, name, topic, data_type, config_data_type=None):
         self.name = name
         self.topic = topic
