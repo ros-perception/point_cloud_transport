@@ -133,13 +133,14 @@ public:
    */
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;
 
-  DecodeResult decode(const std::shared_ptr<rmw_serialized_message_t>& compressed) const override
+  DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage>& compressed) const override
   {
     // TODO (john-maidbot): Fix conversion from serialized msg to template
-    typename M::ConstPtr msg;
+    typename M::ConstSharedPtr msg;
     try
     {
-      msg = compressed.instantiate<M>();
+      auto serializer = rclcpp::Serialization<M>();
+      serializer.deserialize_message(compressed.get(), msg.get());
     }
     catch (const std::exception& e)
     {

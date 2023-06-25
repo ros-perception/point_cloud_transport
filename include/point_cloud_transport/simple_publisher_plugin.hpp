@@ -191,6 +191,7 @@ public:
 
   EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const override
   {
+    // encode the message using the expected transport method
     auto res = this->encodeTyped(raw);
     if (!res)
     {
@@ -200,11 +201,12 @@ public:
     {
       return cras::nullopt;
     }
-    const M& message = res.value().value();
-    // TODO (john-maidbot): Figure out conversion from template to rmw_serialized_message_t
-    cras::ShapeShifter shifter;
-    cras::msgToShapeShifter(message, shifter);
-    return shifter;
+
+    // publish the message (of some unknown type) as a serialized message
+    std::shared_ptr<rclcpp::SerializedMessage> serialized_msg_ptr;
+    static rclcpp::Serialization<std_msgs::msg::String> serializer;
+    serializer.serialize_message(&(res.value().value()), serialized_msg_ptr.get());    
+    return serialized_msg_ptr;
   }
 
 protected:
