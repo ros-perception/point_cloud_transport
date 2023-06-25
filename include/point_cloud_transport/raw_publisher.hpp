@@ -59,7 +59,13 @@ public:
     return "raw";
   }
 
-  RawPublisher::TypedEncodeResult encodeTyped(
+  RawPublisher::TypedEncodeResult 
+  
+  
+  
+  
+  
+  (
     const sensor_msgs::msg::PointCloud2 & raw) const
   {
     return raw;

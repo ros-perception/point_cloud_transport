@@ -41,6 +41,7 @@
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
 
@@ -51,6 +52,10 @@ namespace point_cloud_transport
 class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 {
 public:
+  //! \brief Result of cloud encoding. Either a shapeshifter holding the compressed cloud, empty value or error message.
+  // TODO (john-maidbot): ShapeShifter?
+  typedef cras::expected<std::optional<cras::ShapeShifter>, std::string> EncodeResult;
+
   PublisherPlugin() = default;
   PublisherPlugin(const PublisherPlugin &) = delete;
   PublisherPlugin & operator=(const PublisherPlugin &) = delete;
@@ -81,6 +86,13 @@ public:
    */
   virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
 
+  /**
+   * \brief Encode the given raw pointcloud into the given shapeshifter object using default configuration.
+   * \param[in] raw The input raw pointcloud.
+   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   */
+  virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const;
+
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
   virtual void publish(const sensor_msgs::msg::PointCloud2 & message) const = 0;
 
@@ -106,10 +118,28 @@ protected:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };
 
-//  class SingleTopicPublisherPlugin : public PublisherPlugin
-//  {
-//  public:
-//  };
+class SingleTopicPublisherPlugin : public PublisherPlugin
+{
+public:
+  /**
+   * Return the communication topic name for a given base topic.
+   *
+   * Defaults to \<base topic\>/\<transport name\>.
+   */
+  virtual std::string getTopicToAdvertise(const std::string& base_topic) const = 0;
+
+  /**
+   * Return the datatype of the transported messages (as text in the form `package/Message`).
+   */
+  virtual std::string getDataType() const = 0;
+
+  /**
+   * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
+   * 
+   * Return empty string if no reconfiguration is supported.
+   */
+  virtual std::string getConfigDataType() const = 0;
+};
 
 }  // namespace point_cloud_transport
 #endif  // POINT_CLOUD_TRANSPORT__PUBLISHER_PLUGIN_HPP_

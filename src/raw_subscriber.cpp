@@ -56,6 +56,19 @@ std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) co
   return base_topic;
 }
 
+SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const
+{
+  return compressed;
+}
+
+SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const
+{
+  auto compressedPtr = std::make_shared<const sensor_msgs::msg::PointCloud2>(compressed);
+  return this->decodeTyped(compressedPtr);
+}
+
+
 void RawSubscriber::callback(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
   const SubscriberPlugin::Callback & user_cb)
