@@ -72,6 +72,8 @@ public:
   }
 
   POINT_CLOUD_TRANSPORT_PUBLIC
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
+
   std::string getTransportName() const override;
 
 protected:

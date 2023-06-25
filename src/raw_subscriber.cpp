@@ -34,6 +34,7 @@
 #include <string>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/msg/point_cloud2__traits.hpp>
 
 #include <point_cloud_transport/raw_subscriber.hpp>
 
@@ -45,7 +46,12 @@ std::string RawSubscriber::getTransportName() const
   return "raw";
 }
 
-std::string RawSubscriber::getTopicToSubscribe(const std::string & base_topic) const
+bool RawSubscriber::matchesTopic(const std::string& topic, const std::string& datatype) const
+{
+  return datatype == std::string(rosidl_generator_traits::data_type<sensor_msgs::msg::PointCloud2>());
+}
+
+std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) const
 {
   return base_topic;
 }

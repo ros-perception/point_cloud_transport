@@ -100,7 +100,7 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
     }
   }
 
-  // ROS_DEBUG("Failed to find encoder %s.", name.c_str());
+  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find encoder %s.", name.c_str()
   return nullptr;
 }
 
@@ -123,8 +123,8 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
     }
   }
 
-  // ROS_DEBUG("Failed to find encoder for topic %s with data type %s.", t
-  // opic.c_str(), datatype.c_str());
+  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find encoder for topic %s with data type %s.",
+               topic.c_str(), datatype.c_str());
   return nullptr;
 }
 

@@ -37,6 +37,7 @@
 #include <string>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/msg/point_cloud2__traits.hpp>
 
 #include <point_cloud_transport/simple_publisher_plugin.hpp>
 
@@ -62,6 +63,11 @@ public:
     const sensor_msgs::msg::PointCloud2 & raw) const
   {
     return raw;
+  }
+
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const
+  {
+    return datatype == std::string(rosidl_generator_traits::data_type<sensor_msgs::msg::PointCloud2>());
   }
 
 protected:

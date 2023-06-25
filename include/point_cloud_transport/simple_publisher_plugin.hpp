@@ -45,6 +45,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/expected.hpp>
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
@@ -143,8 +144,14 @@ public:
     return {};
   }
 
-  // TODO(anyone): Ask about this
-  void publish(const sensor_msgs::msg::PointCloud2 & message) const override
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override
+  {
+    return datatype == rosidl_generator_traits::data_type<M>() &&
+        endsWith(topic, std::string("/" + getTransportName()));
+  }
+
+  // TODO: Ask about this
+  void publish(const sensor_msgs::msg::PointCloud2& message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_) {
       auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(

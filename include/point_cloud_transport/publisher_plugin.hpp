@@ -76,6 +76,11 @@ public:
   //! Returns the topic that this PublisherPlugin will publish on.
   virtual std::string getTopic() const = 0;
 
+  /**
+   * Whether the given topic and datatype match this transport.
+   */
+  virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
+
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
   virtual void publish(const sensor_msgs::msg::PointCloud2 & message) const = 0;
 

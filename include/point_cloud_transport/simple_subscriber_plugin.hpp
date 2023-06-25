@@ -42,6 +42,7 @@
 
 #include "rclcpp/subscription.hpp"
 
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
@@ -112,6 +113,12 @@ public:
   void shutdown() override
   {
     impl_.reset();
+  }
+
+  bool matchesTopic(const std::string& topic, const std::string& datatype) const override
+  {
+    return datatype == rosidl_generator_traits::data_type<M>() &&
+        endsWith(topic, std::string("/" + getTransportName()));
   }
 
   void declareParameters() override
