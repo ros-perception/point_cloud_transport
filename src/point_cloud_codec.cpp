@@ -259,10 +259,11 @@ bool pointCloudTransportCodecsDecode(
   cras::allocator_t logMessagesAllocator
 )
 {
-  topic_tools::ShapeShifter compressed;
-  compressed.morph(compressedMd5sum, compressedType, "", "");
-  cras::resizeBuffer(compressed, compressedDataLength);
-  memcpy(cras::getBuffer(compressed), compressedData, compressedDataLength);
+  // Copy the C-style pieces into the ROS2 serialized message
+  // TODO (john-maidbot): Should we use the md5sum?
+  rclcpp::SerializedMessage compressed;
+  compressed.reserve(compressedDataLength);
+  memcpy((void*)(&compressed.get_rcl_serialized_message()), compressedData, compressedDataLength);
 
   auto decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByTopic(
     topicOrCodec, compressedType);
