@@ -168,9 +168,13 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
   return nullptr;
 }
 
+// TODO (john-maidbot): I do not quite understand how thread_local works.
+thread_local PointCloudCodec point_cloud_transport_codec_instance();
+
 }  // namespace point_cloud_transport
 
-// TODO(anyone): These functions seem overly complex. Can we simplify them?
+// TODO(john-maidbot): These functions should also have simpler versions that take the native C++
+// type rather than all the C-style pieces
 
 bool pointCloudTransportCodecsEncode(
   const char * codec,
