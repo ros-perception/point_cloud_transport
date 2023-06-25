@@ -138,7 +138,7 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
     }
   }
 
-  // ROS_DEBUG("Failed to find decoder %s.", name.c_str());
+  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find decoder %s.", name.c_str());
   return nullptr;
 }
 
@@ -161,8 +161,9 @@ std::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDec
     }
   }
 
-  // ROS_DEBUG("Failed to find decoder for topic %s with data type %s.",
-  // topic.c_str(), datatype.c_str());
+  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find decoder for topic %s with data type %s.",
+  topic.c_str(), datatype.c_str());
+
   return nullptr;
 }
 
@@ -176,9 +177,9 @@ bool pointCloudTransportCodecsEncode(
   sensor_msgs::msg::PointCloud2::_width_type rawWidth,
   size_t rawNumFields,
   const char * rawFieldNames[],
-  sensor_msgs::PointField::_offset_type rawFieldOffsets[],
-  sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
-  sensor_msgs::PointField::_count_type rawFieldCounts[],
+  sensor_msgs::msg::PointField::_offset_type rawFieldOffsets[],
+  sensor_msgs::msg::PointField::_datatype_type rawFieldDatatypes[],
+  sensor_msgs::msg::PointField::_count_type rawFieldCounts[],
   sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
   sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
   sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
@@ -188,30 +189,15 @@ bool pointCloudTransportCodecsEncode(
   cras::allocator_t compressedTypeAllocator,
   cras::allocator_t compressedMd5SumAllocator,
   cras::allocator_t compressedDataAllocator,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
   cras::allocator_t errorStringAllocator,
   cras::allocator_t logMessagesAllocator
 )
 {
-  dynamic_reconfigure::Config config;
-  if (serializedConfigLength > 0) {
-    ros::serialization::IStream data(const_cast<uint8_t *>(serializedConfig),
-      serializedConfigLength);
-    try {
-      ros::serialization::deserialize(data, config);
-    } catch (const ros::Exception & e) {
-      cras::outputString(
-        errorStringAllocator,
-        cras::format("Could not deserialize encoder config: %s.", e.what()));
-      return false;
-    }
-  }
   sensor_msgs::msg::PointCloud2 raw;
   raw.height = rawHeight;
   raw.width = rawWidth;
   for (size_t i = 0; i < rawNumFields; ++i) {
-    sensor_msgs::PointField field;
+    sensor_msgs::msg::PointField field;
     field.name = rawFieldNames[i];
     field.offset = rawFieldOffsets[i];
     field.datatype = rawFieldDatatypes[i];
@@ -232,7 +218,7 @@ bool pointCloudTransportCodecsEncode(
     return false;
   }
 
-  const auto compressed = encoder->encode(raw, config);
+  const auto compressed = encoder->encode(raw);
 
   if (!compressed) {
     cras::outputString(errorStringAllocator, compressed.error());
@@ -268,26 +254,10 @@ bool pointCloudTransportCodecsDecode(
   sensor_msgs::msg::PointCloud2::_row_step_type & rawRowStep,
   cras::allocator_t rawDataAllocator,
   sensor_msgs::msg::PointCloud2::_is_dense_type & rawIsDense,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
   cras::allocator_t errorStringAllocator,
   cras::allocator_t logMessagesAllocator
 )
 {
-  dynamic_reconfigure::Config config;
-  if (serializedConfigLength > 0) {
-    ros::serialization::IStream data(const_cast<uint8_t *>(serializedConfig),
-      serializedConfigLength);
-    try {
-      ros::serialization::deserialize(data, config);
-    } catch (const ros::Exception & e) {
-      cras::outputString(
-        errorStringAllocator,
-        cras::format("Could not deserialize decoder config: %s.", e.what()));
-      return false;
-    }
-  }
-
   topic_tools::ShapeShifter compressed;
   compressed.morph(compressedMd5sum, compressedType, "", "");
   cras::resizeBuffer(compressed, compressedDataLength);
@@ -306,7 +276,7 @@ bool pointCloudTransportCodecsDecode(
     return false;
   }
 
-  const auto res = decoder->decode(compressed, config);
+  const auto res = decoder->decode(compressed);
 
   if (!res) {
     cras::outputString(errorStringAllocator, res.error());

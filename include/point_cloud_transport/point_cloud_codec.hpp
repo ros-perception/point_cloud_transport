@@ -99,9 +99,9 @@ extern "C" bool pointCloudTransportCodecsEncode(
   sensor_msgs::msg::PointCloud2::_width_type rawWidth,
   size_t rawNumFields,
   const char * rawFieldNames[],
-  sensor_msgs::PointField::_offset_type rawFieldOffsets[],
-  sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
-  sensor_msgs::PointField::_count_type rawFieldCounts[],
+  sensor_msgs::msg::PointField::_offset_type rawFieldOffsets[],
+  sensor_msgs::msg::PointField::_datatype_type rawFieldDatatypes[],
+  sensor_msgs::msg::PointField::_count_type rawFieldCounts[],
   sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
   sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
   sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
@@ -111,8 +111,6 @@ extern "C" bool pointCloudTransportCodecsEncode(
   cras::allocator_t compressedTypeAllocator,
   cras::allocator_t compressedMd5SumAllocator,
   cras::allocator_t compressedDataAllocator,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
   cras::allocator_t errorStringAllocator,
   cras::allocator_t logMessagesAllocator
 );
@@ -135,8 +133,6 @@ extern "C" bool pointCloudTransportCodecsDecode(
   sensor_msgs::msg::PointCloud2::_row_step_type & rawRowStep,
   cras::allocator_t rawDataAllocator,
   sensor_msgs::msg::PointCloud2::_is_dense_type & rawIsDense,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
   cras::allocator_t errorStringAllocator,
   cras::allocator_t logMessagesAllocator
 );
