@@ -133,6 +133,22 @@ public:
    */
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;
 
+  DecodeResult decode(const std::shared_ptr<rmw_serialized_message_t>& compressed) const override
+  {
+    // TODO (john-maidbot): Fix conversion from serialized msg to template
+    typename M::ConstPtr msg;
+    try
+    {
+      msg = compressed.instantiate<M>();
+    }
+    catch (const std::exception& e)
+    {
+      return cras::make_unexpected(cras::format("Error deserializing message for transport decoder: %s.", e.what()));
+    }
+
+    return this->decodeTyped(msg);
+  }
+
 protected:
   /**
    * Process a message. Must be implemented by the subclass.

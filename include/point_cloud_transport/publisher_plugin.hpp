@@ -52,9 +52,8 @@ namespace point_cloud_transport
 class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 {
 public:
-  //! \brief Result of cloud encoding. Either a shapeshifter holding the compressed cloud, empty value or error message.
-  // TODO (john-maidbot): ShapeShifter?
-  typedef cras::expected<std::optional<cras::ShapeShifter>, std::string> EncodeResult;
+  //! \brief Result of cloud encoding. Either an holding the compressed cloud, empty value or error message.
+  typedef cras::expected<std::optional<const std::shared_ptr<rmw_serialized_message_t>>, std::string> EncodeResult;
 
   PublisherPlugin() = default;
   PublisherPlugin(const PublisherPlugin &) = delete;
@@ -87,9 +86,9 @@ public:
   virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
 
   /**
-   * \brief Encode the given raw pointcloud into the given shapeshifter object using default configuration.
+   * \brief Encode the given raw pointcloud into the given rmw serialized msg object.
    * \param[in] raw The input raw pointcloud.
-   * \return The output shapeshifter holding the compressed cloud message (if encoding succeeds), or an error message.
+   * \return The output rmw serialized msg holding the compressed cloud message (if encoding succeeds), or an error message.
    */
   virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const;
 

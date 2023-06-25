@@ -81,6 +81,24 @@ public:
    */
   virtual std::string getTransportName() const = 0;
 
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud.
+   * \param[in] compressed The rmw_serialized_message_t of the compressed pointcloud to be decoded.
+   * \param[in] config Config of the decompression (if it has any parameters).
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  virtual DecodeResult decode(const std::shared_ptr<rmw_serialized_message_t>& compressed) const = 0;
+
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud using default config.
+   * \param[in] compressed The rmw_serialized_message_t of the compressed pointcloud to be decoded.
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  DecodeResult decode(const std::shared_ptr<rmw_serialized_message_t>& compressed) const
+  {
+    return this->decode(compressed);
+  }
+
 
   /**
    * \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.

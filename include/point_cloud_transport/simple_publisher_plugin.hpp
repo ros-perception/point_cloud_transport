@@ -182,12 +182,30 @@ public:
   /**
    * \brief Encode the given raw pointcloud into a compressed message.
    * \param[in] raw The input raw pointcloud.
-   * \return The output shapeshifter holding the compressed cloud message
+   * \return The output rmw serialized msg holding the compressed cloud message
    * (if encoding succeeds), or an error message.
    */
   POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
+
+  EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const override
+  {
+    auto res = this->encodeTyped(raw);
+    if (!res)
+    {
+      return cras::make_unexpected(res.error());
+    }
+    if (!res.value())
+    {
+      return cras::nullopt;
+    }
+    const M& message = res.value().value();
+    // TODO (john-maidbot): Figure out conversion from template to rmw_serialized_message_t
+    cras::ShapeShifter shifter;
+    cras::msgToShapeShifter(message, shifter);
+    return shifter;
+  }
 
 protected:
   std::string base_topic_;
