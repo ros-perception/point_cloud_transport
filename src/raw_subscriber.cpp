@@ -33,9 +33,6 @@
 
 #include <string>
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
-#include <sensor_msgs/msg/point_cloud2__traits.hpp>
-
 #include <point_cloud_transport/raw_subscriber.hpp>
 
 namespace point_cloud_transport

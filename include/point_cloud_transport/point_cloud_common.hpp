@@ -49,7 +49,7 @@ std::string erase_last_copy(const std::string & input, const std::string & searc
 POINT_CLOUD_TRANSPORT_PUBLIC
 std::vector<std::string> split(
   const std::string & str, const std::string & delimiter,
-  int maxSplits);
+  int maxSplits=10);
 
 // from cras::string_utils
 POINT_CLOUD_TRANSPORT_PUBLIC

@@ -89,4 +89,5 @@ std::string removeSuffix(const std::string & str, const std::string & suffix, bo
 
   return hasSuffix ? str.substr(0, str.length() - suffix.length()) : str;
 }
+
 }  // namespace point_cloud_transport

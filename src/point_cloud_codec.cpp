@@ -38,6 +38,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/loader_fwds.hpp>
@@ -100,7 +101,7 @@ std::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEnco
     }
   }
 
-  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find encoder %s.", name.c_str()
+  RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"), "Failed to find encoder %s.", name.c_str());
   return nullptr;
 }
 
