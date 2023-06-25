@@ -42,6 +42,7 @@
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
+#include "rclcpp/serialization.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/expected.hpp>
@@ -204,7 +205,7 @@ public:
 
     // publish the message (of some unknown type) as a serialized message
     std::shared_ptr<rclcpp::SerializedMessage> serialized_msg_ptr;
-    static rclcpp::Serialization<std_msgs::msg::String> serializer;
+    static rclcpp::Serialization<M> serializer;
     serializer.serialize_message(&(res.value().value()), serialized_msg_ptr.get());    
     return serialized_msg_ptr;
   }

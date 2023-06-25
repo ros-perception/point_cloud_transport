@@ -40,6 +40,7 @@
 #include <string>
 #include <type_traits>
 
+#include "rclcpp/serialization.hpp"
 #include "rclcpp/subscription.hpp"
 
 #include <point_cloud_transport/point_cloud_common.hpp>
@@ -144,7 +145,7 @@ public:
     }
     catch (const std::exception& e)
     {
-      return cras::make_unexpected(cras::format("Error deserializing message for transport decoder: %s.", e.what()));
+      return cras::make_unexpected("Error deserializing message for transport decoder: "+std::string(e.what())+".");
     }
 
     return this->decodeTyped(msg);
