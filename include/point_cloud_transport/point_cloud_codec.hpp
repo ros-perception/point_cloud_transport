@@ -59,7 +59,7 @@ class PointCloudCodec
 {
 public:
   //! Constructor
-  PointCloudCodec();
+  explicit PointCloudCodec();
 
   /**
    * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
