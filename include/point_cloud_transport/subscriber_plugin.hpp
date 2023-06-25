@@ -1,44 +1,38 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
-
 /*
- *
- * BSD 3-Clause License
- *
- * Copyright (c) Czech Technical University in Prague
+ * Copyright (c) 2023, Czech Technical University in Prague
  * Copyright (c) 2019, paplhjak
  * Copyright (c) 2009, Willow Garage, Inc.
- *
- *        All rights reserved.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- *        modification, are permitted provided that the following conditions are met:
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ *    * Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
+ *    * Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
  *
- * 3. Neither the name of the copyright holder nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
+ *    * Neither the name of the copyright holder nor the names of its
+ *      contributors may be used to endorse or promote products derived from
+ *      this software without specific prior written permission.
  *
- *       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- *       AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *       IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *       DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- *       FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *       DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- *       SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *       CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- *       OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- *       OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef POINT_CLOUD_TRANSPORT__SUBSCRIBER_PLUGIN_HPP_
+#define POINT_CLOUD_TRANSPORT__SUBSCRIBER_PLUGIN_HPP_
 
 #include <list>
 #include <memory>
@@ -61,9 +55,10 @@ namespace point_cloud_transport
 class SubscriberPlugin
 {
 public:
-  //! \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2` holding the raw message, empty value or
-  //! error message.
-  typedef cras::expected<std::optional<sensor_msgs::msg::PointCloud2::ConstSharedPtr>, std::string> DecodeResult;
+  //! \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2`
+  //! holding the raw message, empty value or error message.
+  typedef cras::expected<std::optional<sensor_msgs::msg::PointCloud2::ConstSharedPtr>,
+      std::string> DecodeResult;
 
   SubscriberPlugin() = default;
   SubscriberPlugin(const SubscriberPlugin &) = delete;
@@ -141,7 +136,7 @@ public:
    * Return the lookup name of the SubscriberPlugin associated with a specific
    * transport identifier.
    */
-  static std::string getLookupName(const std::string& transport_type)
+  static std::string getLookupName(const std::string & transport_type)
   {
     return "point_cloud_transport/" + transport_type + "_sub";
   }
@@ -169,7 +164,6 @@ protected:
       "SubscriberPlugin::subscribeImpl with five arguments has not been overridden");
     this->subscribeImpl(node, base_topic, callback, custom_qos);
   }
-
 };
 
 class SingleTopicSubscriberPlugin : public SubscriberPlugin
@@ -180,14 +174,15 @@ public:
    *
    * Defaults to \<base topic\>/\<transport name\>.
    */
-  virtual std::string getTopicToSubscribe(const std::string& base_topic) const = 0;
+  virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
   /**
    * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
-   * 
+   *
    * Return empty string if no reconfiguration is supported.
    */
   virtual std::string getConfigDataType() const = 0;
 };
 
-}
+}  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__SUBSCRIBER_PLUGIN_HPP_

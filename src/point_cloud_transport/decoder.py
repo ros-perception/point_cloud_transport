@@ -1,16 +1,43 @@
-# SPDX-License-Identifier: BSD-3-Clause
-# SPDX-FileCopyrightText: Czech Technical University in Prague
+# Copyright (c) 2023, Czech Technical University in Prague
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above
+#     copyright notice, this list of conditions and the following
+#     disclaimer in the documentation and/or other materials provided
+#     with the distribution.
+#   * Neither the name of the TU Darmstadt nor the names of its
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 """Encoding and decoding of point clouds compressed with any point cloud transport."""
 
-from ctypes import c_bool, c_uint8, c_uint32, c_char_p, c_size_t, POINTER, byref, sizeof
+from ctypes import byref, c_bool, c_char_p, c_size_t, c_uint32, c_uint8, POINTER
 
-from sensor_msgs.msg import PointCloud2, PointField
-
-from cras.ctypes_utils import Allocator, StringAllocator, BytesAllocator, LogMessagesAllocator, ScalarAllocator, \
-    get_ro_c_buffer
+from cras.ctypes_utils import Allocator, BytesAllocator, LogMessagesAllocator
+from cras.ctypes_utils import get_ro_c_buffer, ScalarAllocator, StringAllocator
 from cras.message_utils import dict_to_dynamic_config_msg
 from cras.string_utils import BufferStringIO
+
+from sensor_msgs.msg import PointCloud2, PointField
 
 from .common import _get_base_library
 
@@ -24,7 +51,8 @@ def _get_library():
         c_char_p,
         c_char_p, c_char_p, c_size_t, POINTER(c_uint8),
         POINTER(c_uint32), POINTER(c_uint32),
-        POINTER(c_size_t), Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
+        POINTER(c_size_t), Allocator.ALLOCATOR,
+        Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
         POINTER(c_uint8), POINTER(c_uint32), POINTER(c_uint32),
         Allocator.ALLOCATOR,
         POINTER(c_uint8),
@@ -36,18 +64,21 @@ def _get_library():
 
 
 def decode(compressed, topic_or_codec, config=None):
-    """Decode the given compressed point cloud encoded with any codec into a raw point cloud.
+    """
+    Decode the given compressed point cloud encoded with any codec into a raw point cloud.
 
     :param genpy.Message compressed: The compressed point cloud.
-    :param str topic_or_codec: Name of the topic this cloud comes from or explicit name of the codec.
+    :param str topic_or_codec: Name of the topic this cloud comes from or explicit name
+           of the codec.
     :param config: Configuration of the decoding process.
     :type config: dict or dynamic_reconfigure.msg.Config or None
-    :return: Tuple of raw cloud and error string. If the decoding fails, cloud is `None` and error string is filled.
+    :return: Tuple of raw cloud and error string. If the decoding fails, cloud is `None`
+             and error string is filled.
     :rtype: (sensor_msgs.msg.PointCloud2 or None, str)
     """
     codec = _get_library()
     if codec is None:
-        return None, "Could not load the codec library."
+        return None, 'Could not load the codec library.'
 
     field_names_allocator = StringAllocator()
     field_offset_allocator = ScalarAllocator(c_uint32)
@@ -77,13 +108,16 @@ def decode(compressed, topic_or_codec, config=None):
     config_buf.seek(0)
 
     args = [
-        topic_or_codec.encode("utf-8"),
-        compressed._type.encode("utf-8"), compressed._md5sum.encode("utf-8"), compressed_buf_len,
+        topic_or_codec.encode('utf-8'),
+        compressed._type.encode('utf-8'), compressed._md5sum.encode('utf-8'),
+        compressed_buf_len,
         get_ro_c_buffer(compressed_buf),
         byref(raw_height), byref(raw_width),
-        byref(raw_num_fields), field_names_allocator.get_cfunc(), field_offset_allocator.get_cfunc(),
+        byref(raw_num_fields), field_names_allocator.get_cfunc(),
+        field_offset_allocator.get_cfunc(),
         field_datatype_allocator.get_cfunc(), field_count_allocator.get_cfunc(),
-        byref(raw_is_big_endian), byref(raw_point_step), byref(raw_row_step), data_allocator.get_cfunc(),
+        byref(raw_is_big_endian), byref(raw_point_step),
+        byref(raw_row_step), data_allocator.get_cfunc(),
         byref(raw_is_dense),
         c_size_t(config_buf_len), get_ro_c_buffer(config_buf),
         error_allocator.get_cfunc(), log_allocator.get_cfunc(),
@@ -112,5 +146,5 @@ def decode(compressed, topic_or_codec, config=None):
         if sys.version_info[0] == 2:
             raw.data = map(ord, raw.data)
         raw.is_dense = bool(raw_is_dense.value)
-        return raw, ""
+        return raw, ''
     return None, error_allocator.value

@@ -1,15 +1,42 @@
-# SPDX-License-Identifier: BSD-3-Clause
-# SPDX-FileCopyrightText: Czech Technical University in Prague
+# Copyright (c) 2023, Czech Technical University in Prague
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above
+#     copyright notice, this list of conditions and the following
+#     disclaimer in the documentation and/or other materials provided
+#     with the distribution.
+#   * Neither the name of the TU Darmstadt nor the names of its
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 """Subscriber automatically converting from any transport to raw."""
 
 from ctypes import c_char_p
 
+from cras import get_cfg_module, get_msg_type
+from cras.ctypes_utils import Allocator, StringAllocator
+
 import dynamic_reconfigure.server
 import rospy
-
-from cras import get_msg_type, get_cfg_module
-from cras.ctypes_utils import Allocator, StringAllocator
 
 from .common import _get_base_library, _TransportInfo
 from .decoder import decode
@@ -26,7 +53,9 @@ def _get_library():
 
     library.pointCloudTransportGetTopicToSubscribe.restype = None
     library.pointCloudTransportGetTopicToSubscribe.argtypes = [
-        c_char_p, c_char_p, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
+        c_char_p, c_char_p,
+        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
+        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
     ]
 
     return library
@@ -36,7 +65,8 @@ def _get_loadable_transports():
     transport_allocator = StringAllocator()
     name_allocator = StringAllocator()
     pct = _get_library()
-    pct.pointCloudTransportGetLoadableTransports(transport_allocator.get_cfunc(), name_allocator.get_cfunc())
+    pct.pointCloudTransportGetLoadableTransports(
+        transport_allocator.get_cfunc(), name_allocator.get_cfunc())
     return dict(zip(transport_allocator.values, name_allocator.values))
 
 
@@ -48,7 +78,8 @@ def _get_topic_to_subscribe(base_topic, transport):
     pct = _get_library()
 
     pct.pointCloudTransportGetTopicToSubscribe(
-        base_topic.encode("utf-8"), transport.encode("utf-8"), name_allocator.get_cfunc(), topic_allocator.get_cfunc(),
+        base_topic.encode('utf-8'), transport.encode('utf-8'),
+        name_allocator.get_cfunc(), topic_allocator.get_cfunc(),
         data_type_allocator.get_cfunc(), config_type_allocator.get_cfunc())
 
     if len(data_type_allocator.values) == 0:
@@ -59,17 +90,18 @@ def _get_topic_to_subscribe(base_topic, transport):
         config_type = get_cfg_module(config_type_allocator.value)
         return _TransportInfo(name_allocator.value, topic_allocator.value, data_type, config_type)
     except ImportError as e:
-        rospy.logerr("Import error: " + str(e))
+        rospy.logerr('Import error: ' + str(e))
         return None
 
 
 class Subscriber(object):
-    def __init__(self, base_topic, callback, callback_args=None, default_transport="raw",
-                 parameter_namespace="~", parameter_name="point_cloud_transport", *args, **kwargs):
+    def __init__(self, base_topic, callback, callback_args=None, default_transport='raw',
+                 parameter_namespace='~', parameter_name='point_cloud_transport', *args, **kwargs):
         self.base_topic = rospy.names.resolve_name(base_topic)
         self.callback = callback
         self.callback_args = callback_args
-        self.transport = rospy.get_param(rospy.names.ns_join(parameter_namespace, parameter_name), default_transport)
+        self.transport = rospy.get_param(
+            rospy.names.ns_join(parameter_namespace, parameter_name), default_transport)
 
         transports = _get_loadable_transports()
         if self.transport not in transports and self.transport not in transports.values():

@@ -83,6 +83,12 @@ ament_export_targets(export_${PROJECT_NAME})
 
 ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(AMENT_LINT_AUTO_FILE_EXCLUDE include/point_cloud_transport/tl/expected.hpp doc/conf.py)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 # TODO: Fix testing
 # if (CATKIN_ENABLE_TESTING)
 #   find_package(roslint REQUIRED)
@@ -113,7 +119,7 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 #     -build/header_guard,-readability/namespace,-whitespace/braces,-runtime/references,\
 #     -build/c++11,-readability/nolint,-readability/todo,-legal/copyright,-build/namespaces")
 #   roslint_cpp(${ROSLINT_INCLUDE} ${ROSLINT_SRC})
-  
+
 #   # Roslint Python
 
 #   # Run roslint on Python sources
