@@ -116,6 +116,7 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  set(AMENT_LINT_AUTO_FILE_EXCLUDE doc/conf.py)
   ament_lint_auto_find_test_dependencies()
 endif()
 
