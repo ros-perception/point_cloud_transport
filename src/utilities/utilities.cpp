@@ -42,4 +42,4 @@ bool has_option(const std::vector<std::string> & args, const std::string & optio
 
   return false;
 }
-}  // namespace image_view
+}  // namespace point_cloud_transport

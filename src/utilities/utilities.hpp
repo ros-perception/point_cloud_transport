@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UTILITIES_HPP_
-#define UTILITIES_HPP_
+#ifndef UTILITIES__UTILITIES_HPP_
+#define UTILITIES__UTILITIES_HPP_
 
 #include <string>
 #include <vector>
@@ -31,5 +31,5 @@ std::string get_option(const std::vector<std::string> & args, const std::string 
 /// param[in] option name to extract
 /// return true if the option exists or false otherwise
 bool has_option(const std::vector<std::string> & args, const std::string & option_name);
-}  // namespace image_view
-#endif  // UTILITIES_HPP_
+}  // namespace point_cloud_transport
+#endif  // UTILITIES__UTILITIES_HPP_
