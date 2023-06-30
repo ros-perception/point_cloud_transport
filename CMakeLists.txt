@@ -60,7 +60,10 @@ ament_target_dependencies(republish_node
 )
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
-add_executable(republish src/republish_program.cpp)
+add_executable(republish
+  src/republish_program.cpp
+  src/utilities/utilities.cpp
+)
 target_link_libraries(republish
   ${PROJECT_NAME}
   republish_node

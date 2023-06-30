@@ -77,7 +77,7 @@ void Republisher::initialize()
     "out",
     this->get_name(), this->get_namespace());
 
-  std::string in_transport = "/pointcloud";
+  std::string in_transport = "raw";
   this->declare_parameter<std::string>("in_transport", in_transport);
   if (!this->get_parameter(
       "in_transport", in_transport))

@@ -64,6 +64,7 @@ public:
     const std::string & default_transport = "raw",
     const std::string & parameter_name = "point_cloud_transport")
   {
+    node->declare_parameter<std::string>(parameter_name, transport_);
     node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
   }
 
