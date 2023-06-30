@@ -58,8 +58,8 @@ int main(int argc, char ** argv)
   // override default parameters with the desired transform
   options.parameter_overrides(
   {
-    {"in_transport", "in_transport"},
-    {"out_transport", "out_transport"},
+    {"in_transport", in_transport},
+    {"out_transport", out_transport},
   });
 
   std::shared_ptr<point_cloud_transport::Republisher> node;
