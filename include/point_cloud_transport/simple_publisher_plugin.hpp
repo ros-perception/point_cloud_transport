@@ -105,8 +105,7 @@ public:
   template<typename T>
   bool declareParam(const std::string parameter_name, const T value)
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       simple_impl_->node_->template declare_parameter<T>(parameter_name, value);
       return true;
     }
@@ -114,10 +113,10 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType param_change_callback)
+    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    param_change_callback)
   {
-    if (simple_impl_)
-    {
+    if (simple_impl_) {
       simple_impl_->on_set_parameters_callback_handle_ =
         simple_impl_->node_->add_on_set_parameters_callback(param_change_callback);
     }
