@@ -80,7 +80,7 @@ public:
   }
 
 private:
-  std::string transport_;
+  std::string transport_{"raw"};
 };
 
 }  // namespace point_cloud_transport
