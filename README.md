@@ -35,6 +35,12 @@ point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic
 TODO
 
 
+### Backlist point cloud transport
+
+```bash
+ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/disable_pub_plugins:=["point_cloud_transport/raw"]
+```
+
 ## Known transports
 
 - [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google Draco library.
