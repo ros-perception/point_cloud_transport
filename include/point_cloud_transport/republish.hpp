@@ -36,7 +36,7 @@
 
 #include <memory>
 
-#include "point_cloud_transport/visibility_control.h"
+#include "point_cloud_transport/visibility_control.hpp"
 
 #include <point_cloud_transport/point_cloud_transport.hpp>
 
@@ -49,7 +49,6 @@ class Republisher : public rclcpp::Node
 {
 public:
   //! Constructor
-  POINT_CLOUD_TRANSPORT_PUBLIC
   explicit Republisher(const rclcpp::NodeOptions & options);
 
 private:

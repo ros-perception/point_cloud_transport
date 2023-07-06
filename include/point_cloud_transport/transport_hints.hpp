@@ -39,6 +39,8 @@
 
 #include <rclcpp/node.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
@@ -59,6 +61,7 @@ public:
    * @param parameter_name The name of the transport parameter
    *
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   TransportHints(
     const std::shared_ptr<rclcpp::Node> node,
     const std::string & default_transport = "raw",
@@ -68,12 +71,14 @@ public:
     node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   TransportHints(
     const std::string & transport = "raw")
   : transport_(transport)
   {
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   const std::string & getTransport() const
   {
     return transport_;

@@ -46,13 +46,15 @@
 #include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
 /**
  * Base class for plugins to Subscriber.
  */
-class SubscriberPlugin
+class POINT_CLOUD_TRANSPORT_PUBLIC SubscriberPlugin
 {
 public:
   //! \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2`

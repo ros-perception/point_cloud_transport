@@ -47,6 +47,8 @@
 #include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
@@ -70,8 +72,10 @@ class Subscriber
 public:
   typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Subscriber() = default;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Subscriber(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
@@ -87,35 +91,42 @@ public:
    * The Subscriber may actually be subscribed to some transport-specific topic that
    * differs from the base topic.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopic() const;
 
   /**
    * Returns the number of publishers this subscriber is connected to.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   uint32_t getNumPublishers() const;
 
   /**
    * Returns the name of the transport being used.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransport() const;
 
   /**
    * Unsubscribe the callback associated with this Subscriber.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
 
   operator void *() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator<(const point_cloud_transport::Subscriber & rhs) const
   {
     return impl_ < rhs.impl_;
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator!=(const point_cloud_transport::Subscriber & rhs) const
   {
     return impl_ != rhs.impl_;
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator==(const point_cloud_transport::Subscriber & rhs) const
   {
     return impl_ == rhs.impl_;

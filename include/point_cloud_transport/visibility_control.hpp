@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_H_
-#define POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_H_
+#ifndef POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_HPP_
+#define POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_HPP_
 
 #ifdef __cplusplus
 extern "C"
@@ -55,4 +55,4 @@ extern "C"
 }
 #endif
 
-#endif  // POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_H_
+#endif  // POINT_CLOUD_TRANSPORT__VISIBILITY_CONTROL_HPP_

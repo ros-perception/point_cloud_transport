@@ -41,6 +41,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/simple_subscriber_plugin.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
