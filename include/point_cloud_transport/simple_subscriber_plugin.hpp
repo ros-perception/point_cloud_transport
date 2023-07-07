@@ -130,7 +130,7 @@ protected:
   /**
    * Process a message. Must be implemented by the subclass.
    */
-  virtual void callback(const typename M::ConstPtr & message, const Callback & user_cb)
+  virtual void callback(const typename std::shared_ptr<const M> & message, const Callback & user_cb)
   {
     DecodeResult res = this->decodeTyped(*message);
     if (!res) {
