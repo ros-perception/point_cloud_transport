@@ -35,16 +35,31 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "utilities/utilities.hpp"
+
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
+  std::vector<std::string> args = rclcpp::init_and_remove_ros_arguments(argc, argv);
+
+  // remove program name
+  args.erase(args.begin());
+
+  std::string in_transport{"raw"};
+  std::string out_transport{""};
+
+  if (point_cloud_transport::has_option(args, "--in_transport")) {
+    in_transport = point_cloud_transport::get_option(args, "--in_transport");
+  }
+  if (point_cloud_transport::has_option(args, "--out_transport")) {
+    out_transport = point_cloud_transport::get_option(args, "--out_transport");
+  }
 
   rclcpp::NodeOptions options;
   // override default parameters with the desired transform
   options.parameter_overrides(
   {
-    {"in_transport", "raw"},
-    {"out_transport", ""},
+    {"in_transport", in_transport},
+    {"out_transport", out_transport},
   });
 
   std::shared_ptr<point_cloud_transport::Republisher> node;
