@@ -182,7 +182,7 @@ protected:
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
-    rclcpp::PublisherOptions options)
+    const rclcpp::PublisherOptions & options)
   {
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);

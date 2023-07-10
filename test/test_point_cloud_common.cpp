@@ -31,9 +31,11 @@
 #include "point_cloud_transport/point_cloud_common.hpp"
 
 TEST(PointCloudCommon, erase_last_copy) {
-  EXPECT_EQ("image", point_cloud_transport::erase_last_copy("image_pub", "_pub"));
+  EXPECT_EQ("pointcloud", point_cloud_transport::erase_last_copy("pointcloud_pub", "_pub"));
   EXPECT_EQ(
-    "/image_pub/image",
-    point_cloud_transport::erase_last_copy("/image_pub/image_pub", "_pub"));
-  EXPECT_EQ("/image/image", point_cloud_transport::erase_last_copy("/image_pub/image", "_pub"));
+    "/pointcloud_pub/pointcloud",
+    point_cloud_transport::erase_last_copy("/pointcloud_pub/pointcloud_pub", "_pub"));
+  EXPECT_EQ(
+    "/pointcloud/pointcloud",
+    point_cloud_transport::erase_last_copy("/pointcloud_pub/pointcloud", "_pub"));
 }

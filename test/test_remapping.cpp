@@ -68,7 +68,7 @@ TEST_F(TestPublisher, RemappedPublisher) {
   const std::chrono::milliseconds sleep_per_loop = std::chrono::milliseconds(10);
 
   rclcpp::executors::SingleThreadedExecutor executor;
-  auto image = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  auto pointcloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
   // Subscribe
   bool received{false};
@@ -103,8 +103,8 @@ TEST_F(TestPublisher, RemappedPublisher) {
 
   retry = 0;
   while (retry < max_retries && !received) {
-    // generate random image and publish it
-    pub.publish(image);
+    // generate random pointcloud and publish it
+    pub.publish(pointcloud);
 
     executor.spin_node_some(node_);
     executor.spin_node_some(node_remap_);
