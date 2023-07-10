@@ -73,7 +73,7 @@ public:
   Subscriber() = default;
 
   Subscriber(
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     SubLoaderPtr loader,

@@ -31,66 +31,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_
-#define POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_
+#ifndef POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_
+#define POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_
 
-
-#include <string>
 #include <memory>
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <rclcpp/node.hpp>
 
-#include <point_cloud_transport/simple_subscriber_plugin.hpp>
+#include <point_cloud_transport/point_cloud_transport.hpp>
+#include "point_cloud_transport/visibility_control.h"
 
 namespace point_cloud_transport
 {
 
-/**
- * The default SubscriberPlugin.
- *
- * RawSubscriber is a simple wrapper for ros::Subscriber which listens for PointCloud2 messages
- * and passes them through to the callback.
- */
-class RawSubscriber
-  : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::msg::PointCloud2>
+class Republisher : public rclcpp::Node
 {
 public:
-  virtual ~RawSubscriber() {}
+  //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  explicit Republisher(const rclcpp::NodeOptions & options);
 
+private:
+  void initialize();
 
-  SubscriberPlugin::DecodeResult decodeTyped(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const
-  {
-    return compressed;
-  }
-
-  SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const
-  {
-    auto compressedPtr = std::make_shared<const sensor_msgs::msg::PointCloud2>(compressed);
-    return this->decodeTyped(compressedPtr);
-  }
-
-  std::string getTransportName() const override;
-
-protected:
-  void callback(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
-    const Callback & user_cb) override;
-
-  std::string getTopicToSubscribe(const std::string & base_topic) const override;
-
-  using SubscriberPlugin::subscribeImpl;
-
-  void subscribeImpl(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    const Callback & callback,
-    rmw_qos_profile_t custom_qos,
-    rclcpp::SubscriptionOptions options) override
-  {
-    this->subscribeImplWithOptions(node, base_topic, callback, custom_qos, options);
-  }
+  std::shared_ptr<point_cloud_transport::PointCloudTransport> pct;
+  rclcpp::TimerBase::SharedPtr timer_;
+  bool initialized_{false};
+  point_cloud_transport::Subscriber sub;
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> pub;
+  std::shared_ptr<point_cloud_transport::Publisher> simple_pub;
 };
 
 }  // namespace point_cloud_transport
-#endif  // POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_
+#endif  // POINT_CLOUD_TRANSPORT__REPUBLISH_HPP_

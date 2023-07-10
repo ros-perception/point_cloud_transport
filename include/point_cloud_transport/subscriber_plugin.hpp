@@ -79,7 +79,7 @@ public:
    * \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.
    */
   void subscribe(
-    rclcpp::Node * node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -91,7 +91,7 @@ public:
    * \brief Subscribe to an pointcloud topic, version for bare function.
    */
   void subscribe(
-    rclcpp::Node * node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -107,7 +107,7 @@ public:
    */
   template<class T>
   void subscribe(
-    rclcpp::Node * node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &), T * obj,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -146,13 +146,13 @@ protected:
    * Subscribe to a point cloud transport topic. Must be implemented by the subclass.
    */
   virtual void subscribeImpl(
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default) = 0;
 
   virtual void subscribeImpl(
-    rclcpp::Node * node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos,

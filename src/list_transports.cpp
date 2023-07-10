@@ -31,6 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
 #include <cstdio>
 #include <map>
 #include <string>
@@ -73,9 +74,9 @@ int main(int argc, char ** argv)
   StatusMap transports;
 
   for (const auto & lookup_name : pub_loader.getDeclaredClasses()) {
-    printf("Lookup name: %s\n", lookup_name.c_str());
+    std::cout << "Lookup name: " << lookup_name.c_str() << std::endl;
     std::string transport_name = point_cloud_transport::erase_last_copy(lookup_name, "_pub");
-    printf("Transport name: %s\n", transport_name.c_str());
+    std::cout << "Transport name: " << transport_name.c_str() << std::endl;
     transports[transport_name].pub_name = lookup_name;
     transports[transport_name].package_name = pub_loader.getClassPackage(lookup_name);
     try {
@@ -83,10 +84,10 @@ int main(int argc, char ** argv)
       transports[transport_name].pub_status = SUCCESS;
     } catch (const pluginlib::LibraryLoadException & e) {
       transports[transport_name].pub_status = LIB_LOAD_FAILURE;
-      printf("LibraryLoadException: %s\n", e.what());
+      std::cout << "LibraryLoadException: " << e.what() << std::endl;
     } catch (const pluginlib::CreateClassException & e) {
       transports[transport_name].pub_status = CREATE_FAILURE;
-      printf("CreateClassException: %s\n", e.what());
+      std::cout << "CreateClassException: " << e.what() << std::endl;
     }
   }
 
@@ -99,53 +100,56 @@ int main(int argc, char ** argv)
       transports[transport_name].sub_status = SUCCESS;
     } catch (const pluginlib::LibraryLoadException & e) {
       transports[transport_name].sub_status = LIB_LOAD_FAILURE;
-      printf("LibraryLoadException: %s\n", e.what());
+      std::cout << "LibraryLoadException: " << e.what() << std::endl;
     } catch (const pluginlib::CreateClassException & e) {
       transports[transport_name].sub_status = CREATE_FAILURE;
-      printf("CreateClassException: %s\n", e.what());
+      std::cout << "CreateClassException: " << e.what() << std::endl;
     }
   }
 
   bool problem_package = false;
-  printf("Declared transports:\n");
+  std::cout << "Declared transports:" << std::endl;
   for (const StatusMap::value_type & value : transports) {
     const TransportDesc & td = value.second;
-    printf("%s", value.first.c_str());
+    std::cout << value.first.c_str() << std::endl;
     if ((td.pub_status == CREATE_FAILURE || td.pub_status == LIB_LOAD_FAILURE) ||
       (td.sub_status == CREATE_FAILURE || td.sub_status == LIB_LOAD_FAILURE))
     {
-      printf(" (*): Not available. Try 'catkin_make --pkg %s'.", td.package_name.c_str());
+      std::cout << " (*): Not available. Try 'colcon build --packages-select "
+                << td.package_name.c_str() << "'." << std::endl;
       problem_package = true;
     }
-    printf("\n");
+    std::cout << std::endl;
   }
 
   if (problem_package) {
-    printf("(*) \n");
+    std::cout << "(*) " << std::endl;
   }
 
-  printf("\nDetails:\n");
+  std::cout << std::endl << "Details:" << std::endl;
   for (const auto & value : transports) {
     const TransportDesc & td = value.second;
-    printf("----------\n");
-    printf("\"%s\"\n", value.first.c_str());
+    std::cout << "----------" << std::endl;
+    std::cout << "\"" << value.first.c_str() << "\"" << std::endl;
     if (td.pub_status == CREATE_FAILURE || td.sub_status == CREATE_FAILURE) {
-      printf(
+      std::cout <<
         "*** Plugins are built, but could not be loaded. The package may need to be rebuilt "
-        "or may not be compatible with this release of point_cloud_common. ***\n");
+        "or may not be compatible with this release of point_cloud_common. ***" << std::endl;
     } else if (td.pub_status == LIB_LOAD_FAILURE || td.sub_status == LIB_LOAD_FAILURE) {
-      printf("*** Plugins are not built. ***\n");
+      std::cout << "*** Plugins are not built. ***" << std::endl;
     }
-    printf(" - Provided by package: %s\n", td.package_name.c_str());
+    std::cout << " - Provided by package: " << td.package_name.c_str() << std::endl;
     if (td.pub_status == DOES_NOT_EXIST) {
-      printf(" - No publisher provided\n");
+      std::cout << " - No publisher provided" << std::endl;
     } else {
-      printf(" - Publisher: %s\n", pub_loader.getClassDescription(td.pub_name).c_str());
+      std::cout << " - Publisher: " << pub_loader.getClassDescription(td.pub_name).c_str()
+                << std::endl;
     }
     if (td.sub_status == DOES_NOT_EXIST) {
-      printf(" - No subscriber provided\n");
+      std::cout << " - No subscriber provided" << std::endl;
     } else {
-      printf(" - Subscriber: %s\n", sub_loader.getClassDescription(td.sub_name).c_str());
+      std::cout << " - Subscriber: " << sub_loader.getClassDescription(td.sub_name).c_str()
+                << std::endl;
     }
   }
 

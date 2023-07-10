@@ -53,7 +53,7 @@ namespace point_cloud_transport
 
 struct Publisher::Impl
 {
-  explicit Impl(rclcpp::Node * node)
+  explicit Impl(std::shared_ptr<rclcpp::Node> node)
   : logger_(node->get_logger()),
     unadvertised_(false)
   {
@@ -113,7 +113,7 @@ struct Publisher::Impl
 };
 
 Publisher::Publisher(
-  rclcpp::Node * node, const std::string & base_topic,
+  std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
   PubLoaderPtr loader, rmw_qos_profile_t custom_qos)
 : impl_(std::make_shared<Impl>(node))
 {
@@ -139,6 +139,7 @@ Publisher::Publisher(
     try {
       auto pub = loader->createUniqueInstance(lookup_name);
       pub->advertise(node, point_cloud_topic, custom_qos);
+      impl_->base_topic_ = pub->getTopic();
       impl_->publishers_.push_back(std::move(pub));
     } catch (const std::runtime_error & e) {
       RCLCPP_ERROR(

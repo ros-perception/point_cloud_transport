@@ -35,50 +35,89 @@
 #include <string>
 #include <utility>
 
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/rclcpp.hpp>
 
 #include <pluginlib/class_loader.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/point_cloud_transport.hpp>
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/publisher_plugin.hpp>
-#include <point_cloud_transport/subscriber.hpp>
-#include <point_cloud_transport/exception.hpp>
+#include "point_cloud_transport/exception.hpp"
+#include "point_cloud_transport/point_cloud_transport.hpp"
+#include "point_cloud_transport/publisher.hpp"
+#include "point_cloud_transport/publisher_plugin.hpp"
+#include "point_cloud_transport/republish.hpp"
+#include "point_cloud_transport/subscriber.hpp"
 
-// TODO(anyone): Fix this
-int main(int argc, char ** argv)
+using namespace std::chrono_literals;
+
+namespace point_cloud_transport
 {
-  auto vargv = rclcpp::init_and_remove_ros_arguments(argc, argv);
+Republisher::Republisher(const rclcpp::NodeOptions & options)
+: Node("point_cloud_republisher", options)
+{
+  // Initialize Republishercomponent after construction
+  // shared_from_this can't be used in the constructor
+  this->timer_ = create_wall_timer(
+    1ms, [this]() {
+      if (initialized_) {
+        timer_->cancel();
+      } else {
+        this->initialize();
+        initialized_ = true;
+      }
+    });
+}
 
-  if (vargv.size() < 2) {
-    printf(
-      "Usage: %s in_transport out_transport --ros-args --remap in:=<input_topic> --ros-args "
-      "--remap out:=<output_topic>\n",
-      argv[0]);
-    return 0;
-  }
-
-  auto node = rclcpp::Node::make_shared("point_cloud_republisher");
-
+void Republisher::initialize()
+{
   std::string in_topic = rclcpp::expand_topic_or_service_name(
     "in",
-    node->get_name(), node->get_namespace());
+    this->get_name(), this->get_namespace());
+
   std::string out_topic = rclcpp::expand_topic_or_service_name(
     "out",
-    node->get_name(), node->get_namespace());
+    this->get_name(), this->get_namespace());
 
-  std::string in_transport = vargv[1];
+  std::string in_transport = "raw";
+  this->declare_parameter<std::string>("in_transport", in_transport);
+  if (!this->get_parameter(
+      "in_transport", in_transport))
+  {
+    RCLCPP_WARN_STREAM(
+      this->get_logger(),
+      "The 'in_transport' parameter was not defined." << in_transport);
+  } else {
+    RCLCPP_INFO_STREAM(
+      this->get_logger(),
+      "The 'in_transport' parameter is set to: " << in_transport);
+  }
 
-  point_cloud_transport::PointCloudTransport pct(node);
+  std::string out_transport = "";
+  this->declare_parameter<std::string>("out_transport", out_transport);
+  if (!this->get_parameter(
+      "out_transport", out_transport))
+  {
+    RCLCPP_WARN_STREAM(
+      this->get_logger(),
+      "The parameter 'out_transport' was not defined." << out_transport);
+  } else {
+    RCLCPP_INFO_STREAM(
+      this->get_logger(),
+      "The 'out_transport' parameter is set to: " << out_transport);
+  }
 
-  if (vargv.size() < 3) {
+  pct = std::make_shared<point_cloud_transport::PointCloudTransport>(this->shared_from_this());
+
+  if (out_transport.empty()) {
     // Use all available transports for output
-    auto pub =
+    this->simple_pub =
       std::make_shared<point_cloud_transport::Publisher>(
-      pct.advertise(
+      pct->advertise(
         out_topic,
         rmw_qos_profile_default));
+
+    RCLCPP_INFO_STREAM(
+      this->get_logger(),
+      "out topic1: " << this->simple_pub->getTopic());
 
     // Use Publisher::publish as the subscriber callback
     typedef void (point_cloud_transport::Publisher::* PublishMemFn)(
@@ -87,25 +126,24 @@ int main(int argc, char ** argv)
     PublishMemFn pub_mem_fn = &point_cloud_transport::Publisher::publish;
 
     const point_cloud_transport::TransportHints hint(in_transport);
-    auto sub = pct.subscribe(
+    this->sub = pct->subscribe(
       in_topic, static_cast<uint32_t>(1),
-      pub_mem_fn, pub, &hint);
-    // spin the node
-    rclcpp::spin(node);
+      pub_mem_fn, this->simple_pub, &hint);
   } else {
-    // Use one specific transport for output
-    std::string out_transport = vargv[2];
-
     // Load transport plugin
     typedef point_cloud_transport::PublisherPlugin Plugin;
-    auto loader = pct.getPublisherLoader();
+    auto loader = pct->getPublisherLoader();
     std::string lookup_name = Plugin::getLookupName(out_transport);
-    RCLCPP_INFO(node->get_logger(), "Loading %s publisher", lookup_name.c_str());
+    RCLCPP_INFO(this->get_logger(), "Loading %s publisher", lookup_name.c_str());
 
     auto instance = loader->createUniqueInstance(lookup_name);
     // DO NOT use instance after this line
-    std::shared_ptr<Plugin> pub = std::move(instance);
-    pub->advertise(node.get(), out_topic);
+    this->pub = std::move(instance);
+    pub->advertise(this->shared_from_this(), out_topic);
+
+    RCLCPP_INFO_STREAM(
+      this->get_logger(),
+      "out topic2: " << this->pub->getTopic());
 
     // Use PublisherPlugin::publish as the subscriber callback
     typedef void (point_cloud_transport::PublisherPlugin::* PublishMemFn)(
@@ -113,17 +151,22 @@ int main(int argc, char ** argv)
       PointCloud2::ConstSharedPtr &) const;
     PublishMemFn pub_mem_fn = &point_cloud_transport::PublisherPlugin::publish;
 
-    RCLCPP_INFO(node->get_logger(), "Loading %s subscriber");
+    RCLCPP_INFO(this->get_logger(), "Loading %s subscriber", in_topic.c_str());
 
     const point_cloud_transport::TransportHints hint(in_transport);
-    auto sub = pct.subscribe(
+    this->sub = pct->subscribe(
       in_topic, static_cast<uint32_t>(1),
       pub_mem_fn, pub, &hint);
-
-    RCLCPP_INFO(node->get_logger(), "Spinning node");
-    // spin the node
-    rclcpp::spin(node);
   }
-
-  return 0;
+  RCLCPP_INFO_STREAM(
+    this->get_logger(),
+    "in topic: " << this->sub.getTopic());
 }
+}  // namespace point_cloud_transport
+
+#include "rclcpp_components/register_node_macro.hpp"
+
+// Register the component with class_loader.
+// This acts as a sort of entry point, allowing the component to be discoverable when its library
+// is being loaded into a running process.
+RCLCPP_COMPONENTS_REGISTER_NODE(point_cloud_transport::Republisher)

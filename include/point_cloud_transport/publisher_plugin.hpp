@@ -61,7 +61,7 @@ public:
    * \brief Advertise a topic, simple version.
    */
   void advertise(
-    rclcpp::Node * nh,
+    std::shared_ptr<rclcpp::Node> nh,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default)
   {
@@ -91,7 +91,7 @@ protected:
    * \brief Advertise a topic. Must be implemented by the subclass.
    */
   virtual void advertiseImpl(
-    rclcpp::Node * nh, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
     rmw_qos_profile_t custom_qos) = 0;
 };
 

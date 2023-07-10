@@ -88,7 +88,6 @@ protected:
   point_cloud_transport::SubLoaderPtr sub_loader_;
 };
 
-
 /**
 * Advertise and subscribe to PointCloud2 topics.
 *
@@ -110,7 +109,7 @@ public:
   {
     std::string ret;
     if (nullptr == transport_hints) {
-      TransportHints th(node_.get());
+      TransportHints th(node_);
       ret = th.getTransport();
     } else {
       ret = transport_hints->getTransport();
@@ -123,7 +122,7 @@ public:
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos)
   {
-    return Publisher(node_.get(), base_topic, pub_loader_, custom_qos);
+    return Publisher(node_, base_topic, pub_loader_, custom_qos);
   }
 
   //! Advertise an PointCloud2 topic with subscriber status callbacks.
@@ -144,7 +143,7 @@ public:
     custom_qos.depth = queue_size;
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions();
     return Subscriber(
-      node_.get(), base_topic, callback, sub_loader_,
+      node_, base_topic, callback, sub_loader_,
       getTransportOrDefault(transport_hints), custom_qos, options);
   }
 
