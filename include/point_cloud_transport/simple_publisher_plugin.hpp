@@ -103,7 +103,8 @@ public:
   }
 
   template<typename T>
-  bool declareParam(const std::string parameter_name, const T value,
+  bool declareParam(
+    const std::string parameter_name, const T value,
     const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
     rcl_interfaces::msg::ParameterDescriptor())
   {
