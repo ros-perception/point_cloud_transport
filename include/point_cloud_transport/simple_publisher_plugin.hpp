@@ -103,10 +103,13 @@ public:
   }
 
   template<typename T>
-  bool declareParam(const std::string parameter_name, const T value)
+  bool declareParam(const std::string parameter_name, const T value,
+    const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
+    rcl_interfaces::msg::ParameterDescriptor())
   {
     if (simple_impl_) {
-      simple_impl_->node_->template declare_parameter<T>(parameter_name, value);
+      simple_impl_->node_->template declare_parameter<T>(
+        parameter_name, value, parameter_descriptor);
       return true;
     }
     return false;
