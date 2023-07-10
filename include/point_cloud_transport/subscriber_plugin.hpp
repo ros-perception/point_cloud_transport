@@ -133,6 +133,11 @@ public:
   virtual void shutdown() = 0;
 
   /**
+   * Declare parameter with this SubscriberPlugin.
+   */
+  virtual void declareParameters() = 0;
+
+  /**
    * Return the lookup name of the SubscriberPlugin associated with a specific
    * transport identifier.
    */

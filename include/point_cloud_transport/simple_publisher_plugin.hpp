@@ -102,6 +102,26 @@ public:
     return false;
   }
 
+  template<typename T>
+  bool declareParam(const std::string parameter_name, const T value)
+  {
+    if (simple_impl_) {
+      simple_impl_->node_->template declare_parameter<T>(parameter_name, value);
+      return true;
+    }
+    return false;
+  }
+
+  void setParamCallback(
+    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    param_change_callback)
+  {
+    if (simple_impl_) {
+      simple_impl_->on_set_parameters_callback_handle_ =
+        simple_impl_->node_->add_on_set_parameters_callback(param_change_callback);
+    }
+  }
+
   uint32_t getNumSubscribers() const override
   {
     if (simple_impl_) {
@@ -138,6 +158,14 @@ public:
     simple_impl_.reset();
   }
 
+  void declareParameters(const std::string & base_topic) override
+  {
+    auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
+      "point_cloud_transport");
+    RCLCPP_WARN(
+      logger,
+      "declareParameter method not implemented for %s transport", this->getTransportName().c_str());
+  }
 
   /**
    * \brief Encode the given raw pointcloud into a compressed message.
@@ -155,13 +183,16 @@ protected:
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos)
   {
-    base_topic_ = base_topic;
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);
 
     RCLCPP_DEBUG(simple_impl_->logger_, "getTopicToAdvertise: %s", transport_topic.c_str());
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     simple_impl_->pub_ = node->create_publisher<M>(transport_topic, qos);
+
+    base_topic_ = simple_impl_->pub_->get_topic_name();
+
+    this->declareParameters(base_topic_);
   }
 
   //! Generic function for publishing the internal message type.
@@ -210,6 +241,7 @@ private:
     }
 
     std::shared_ptr<rclcpp::Node> node_;
+    rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
     rclcpp::Logger logger_;
     typename rclcpp::Publisher<M>::SharedPtr pub_;
   };

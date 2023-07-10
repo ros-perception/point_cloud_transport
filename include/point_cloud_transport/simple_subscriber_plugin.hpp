@@ -81,6 +81,26 @@ public:
     return {};
   }
 
+  template<typename T>
+  bool declareParam(const std::string parameter_name, const T value)
+  {
+    if (impl_) {
+      impl_->node_->template declare_parameter<T>(parameter_name, value);
+      return true;
+    }
+    return false;
+  }
+
+  void setParamCallback(
+    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    param_change_callback)
+  {
+    if (impl_) {
+      impl_->on_set_parameters_callback_handle_ =
+        impl_->node_->add_on_set_parameters_callback(param_change_callback);
+    }
+  }
+
   uint32_t getNumPublishers() const override
   {
     if (impl_) {
@@ -92,6 +112,10 @@ public:
   void shutdown() override
   {
     impl_.reset();
+  }
+
+  void declareParameters() override
+  {
   }
 
   /**
@@ -140,11 +164,13 @@ protected:
     // ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
     //
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
+    impl_->node_ = node;
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
         this->callback(msg, callback);
       });
+    this->declareParameters();
   }
 
   void subscribeImplWithOptions(
@@ -158,6 +184,7 @@ protected:
     // Push each group of transport-specific parameters into a separate sub-namespace
     // ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
     //
+    impl_->node_ = node;
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
@@ -165,12 +192,15 @@ protected:
         this->callback(msg, callback);
       },
       options);
+    this->declareParameters();
   }
 
 private:
   struct Impl
   {
     rclcpp::SubscriptionBase::SharedPtr sub_;
+    std::shared_ptr<rclcpp::Node> node_;
+    rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
   };
 
   std::unique_ptr<Impl> impl_;

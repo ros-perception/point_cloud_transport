@@ -83,6 +83,9 @@ public:
   //! Shutdown any advertisements associated with this PublisherPlugin.
   virtual void shutdown() = 0;
 
+  //! Declare parameter with this PublisherPlugin.
+  virtual void declareParameters(const std::string & base_topic) = 0;
+
   //! Return the lookup name of the PublisherPlugin associated with a specific transport identifier.
   static std::string getLookupName(const std::string & transport_name);
 

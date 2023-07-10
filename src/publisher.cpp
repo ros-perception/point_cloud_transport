@@ -126,6 +126,8 @@ Publisher::Publisher(
   impl_->loader_ = loader;
 
   std::vector<std::string> blacklist_vec;
+  node->declare_parameter<std::vector<std::string>>(
+    impl_->base_topic_ + "/disable_pub_plugins", blacklist_vec);
   node->get_parameter(impl_->base_topic_ + "/disable_pub_plugins", blacklist_vec);
   // set
   std::set<std::string> blacklist(blacklist_vec.begin(), blacklist_vec.end());
