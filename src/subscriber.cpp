@@ -127,7 +127,7 @@ Subscriber::Subscriber(
 
   // Tell plugin to subscribe.
   impl_->subscriber_->subscribe(node, base_topic, callback, custom_qos, options);
-  RCLCPP_INFO(impl_->logger_, "Subscribing to: %s\n", base_topic.c_str());
+  RCLCPP_INFO(impl_->logger_, "Subscribing to: %s\n", impl_->subscriber_->getTopic().c_str());
 }
 
 std::string Subscriber::getTopic() const
