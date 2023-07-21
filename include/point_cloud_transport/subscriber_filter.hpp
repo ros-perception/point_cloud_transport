@@ -44,6 +44,8 @@
 #include <point_cloud_transport/point_cloud_transport.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
@@ -74,6 +76,7 @@ public:
    * \param queue_size The subscription queue size
    * \param transport The transport hint to pass along
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const std::string & transport)
@@ -84,10 +87,12 @@ public:
   /**
    * Empty constructor, use subscribe() to subscribe to a topic
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter()
   {
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   ~SubscriberFilter()
   {
     unsubscribe();
@@ -104,6 +109,7 @@ public:
    * \param custom_qos Custom quality of service
    * \param options Subscriber options
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
@@ -121,11 +127,13 @@ public:
   /**
    * Force immediate unsubscription of this subscriber from its topic
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void unsubscribe()
   {
     sub_.shutdown();
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopic() const
   {
     return sub_.getTopic();
@@ -134,6 +142,7 @@ public:
   /**
    * Returns the number of publishers this subscriber is connected to.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   uint32_t getNumPublishers() const
   {
     return sub_.getNumPublishers();
@@ -142,6 +151,7 @@ public:
   /**
    * Returns the name of the transport being used.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransport() const
   {
     return sub_.getTransport();
@@ -150,6 +160,7 @@ public:
   /**
    * Returns the internal point_cloud_transport::Subscriber object.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   const Subscriber & getSubscriber() const
   {
     return sub_;

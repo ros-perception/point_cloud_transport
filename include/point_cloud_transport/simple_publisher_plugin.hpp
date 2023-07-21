@@ -47,6 +47,7 @@
 #include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
@@ -129,7 +130,7 @@ public:
   uint32_t getNumSubscribers() const override
   {
     if (simple_impl_) {
-      return simple_impl_->pub_->get_subscription_count();
+      return static_cast<uint32_t>(simple_impl_->pub_->get_subscription_count());
     }
     return 0;
   }
@@ -177,6 +178,7 @@ public:
    * \return The output shapeshifter holding the compressed cloud message
    * (if encoding succeeds), or an error message.
    */
+  POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
 

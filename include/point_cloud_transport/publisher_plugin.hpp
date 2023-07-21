@@ -42,12 +42,13 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
 
 //! Base class for plugins to Publisher.
-class PublisherPlugin
+class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 {
 public:
   PublisherPlugin() = default;
@@ -100,10 +101,10 @@ protected:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };
 
-class SingleTopicPublisherPlugin : public PublisherPlugin
-{
-public:
-};
+//  class SingleTopicPublisherPlugin : public PublisherPlugin
+//  {
+//  public:
+//  };
 
 }  // namespace point_cloud_transport
 #endif  // POINT_CLOUD_TRANSPORT__PUBLISHER_PLUGIN_HPP_

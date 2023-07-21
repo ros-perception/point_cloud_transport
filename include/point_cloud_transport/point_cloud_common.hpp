@@ -35,22 +35,28 @@
 #include <string>
 #include <vector>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
 /**
  * \brief Replacement for uses of boost::erase_last_copy
  */
+POINT_CLOUD_TRANSPORT_PUBLIC
 std::string erase_last_copy(const std::string & input, const std::string & search);
 
+POINT_CLOUD_TRANSPORT_PUBLIC
 std::vector<std::string> split(
   const std::string & str, const std::string & delimiter,
   int maxSplits);
 
 // from cras::string_utils
+POINT_CLOUD_TRANSPORT_PUBLIC
 bool endsWith(const std::string & str, const std::string & suffix);
 
 // from cras::string_utils
+POINT_CLOUD_TRANSPORT_PUBLIC
 std::string removeSuffix(const std::string & str, const std::string & suffix, bool * hadSuffix);
 
 }  // namespace point_cloud_transport

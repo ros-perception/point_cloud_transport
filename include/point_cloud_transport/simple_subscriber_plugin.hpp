@@ -104,7 +104,7 @@ public:
   uint32_t getNumPublishers() const override
   {
     if (impl_) {
-      return impl_->sub_->get_publisher_count();
+      return static_cast<uint32_t>(impl_->sub_->get_publisher_count());
     }
     return 0;
   }

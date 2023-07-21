@@ -36,10 +36,11 @@
 
 #include <memory>
 
-#include <rclcpp/node.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 #include <point_cloud_transport/point_cloud_transport.hpp>
-#include "point_cloud_transport/visibility_control.h"
+
+#include <rclcpp/node.hpp>
 
 namespace point_cloud_transport
 {

@@ -49,6 +49,7 @@
 #include <point_cloud_transport/subscriber.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
@@ -64,26 +65,35 @@ class PointCloudTransportLoader
 {
 public:
   //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
   PointCloudTransportLoader();
 
   //! Destructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
   virtual ~PointCloudTransportLoader();
 
   //! Returns the names of all transports declared in the system. Declared
   //! transports are not necessarily built or loadable.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::vector<std::string> getDeclaredTransports() const;
 
   //! Returns the names of all transports that are loadable in the system
   // (keys are lookup names, values are names).
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::unordered_map<std::string, std::string> getLoadableTransports() const;
 
   //! The loader that can load publisher plugins.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   PubLoaderPtr getPublisherLoader() const;
 
   //! The loader that can load subscriber plugins.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SubLoaderPtr getSubscriberLoader() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::PubLoaderPtr getPubLoader();
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::SubLoaderPtr getSubLoader();
 
 protected:
@@ -94,6 +104,7 @@ protected:
 /*!
  * \brief Advertise an image topic, free function version.
  */
+POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
@@ -103,6 +114,7 @@ Publisher create_publisher(
 /**
  * \brief Subscribe to an image topic, free function version.
  */
+POINT_CLOUD_TRANSPORT_PUBLIC
 Subscriber create_subscription(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
@@ -124,10 +136,13 @@ class PointCloudTransport : public PointCloudTransportLoader
 
 public:
   //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
   explicit PointCloudTransport(rclcpp::Node::SharedPtr node);
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   ~PointCloudTransport() override = default;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransportOrDefault(const TransportHints * transport_hints)
   {
     std::string ret;
@@ -141,6 +156,7 @@ public:
   }
 
   //! Advertise a PointCloud2 topic, simple version.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher advertise(
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
@@ -157,6 +173,7 @@ public:
   //  const ros::VoidPtr& tracked_object = {}, bool latch = false);
 
   //! Subscribe to a point cloud topic, version for arbitrary std::function object.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,
     const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> & callback,
@@ -172,6 +189,7 @@ public:
   }
 
   //! Subscribe to a point cloud topic, version for bare function.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),

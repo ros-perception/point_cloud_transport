@@ -47,6 +47,8 @@
 #include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
@@ -54,8 +56,10 @@ class Publisher
 {
 public:
   //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher() = default;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
@@ -64,32 +68,41 @@ public:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
   //! get total number of subscribers to all advertised topics.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   uint32_t getNumSubscribers() const;
 
   //! get base topic of this Publisher
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopic() const;
 
   //! Publish a point cloud on the topics associated with this Publisher.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void publish(const sensor_msgs::msg::PointCloud2 & message) const;
 
   //! Publish a point cloud on the topics associated with this Publisher.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
 
   //! Shutdown the advertisements associated with this Publisher.
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   operator void *() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator<(const point_cloud_transport::Publisher & rhs) const
   {
     return impl_ < rhs.impl_;
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator!=(const point_cloud_transport::Publisher & rhs) const
   {
     return impl_ != rhs.impl_;
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   bool operator==(const point_cloud_transport::Publisher & rhs) const
   {
     return impl_ == rhs.impl_;

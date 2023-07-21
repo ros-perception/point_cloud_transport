@@ -40,6 +40,8 @@
 
 #include <point_cloud_transport/simple_publisher_plugin.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 

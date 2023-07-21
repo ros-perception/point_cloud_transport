@@ -40,6 +40,8 @@
 #include "rclcpp/macros.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include "point_cloud_transport/visibility_control.hpp"
+
 namespace point_cloud_transport
 {
 
@@ -54,18 +56,25 @@ public:
   SingleSubscriberPublisher(const SingleSubscriberPublisher &) = delete;
   SingleSubscriberPublisher & operator=(const SingleSubscriberPublisher &) = delete;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SingleSubscriberPublisher(
     const std::string & caller_id, const std::string & topic,
     const GetNumSubscribersFn & num_subscribers_fn,
     const PublishFn & publish_fn);
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getSubscriberName() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopic() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   uint32_t getNumSubscribers() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void publish(const sensor_msgs::msg::PointCloud2 & message) const;
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
 
 private:

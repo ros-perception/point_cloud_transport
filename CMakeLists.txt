@@ -1,8 +1,16 @@
 cmake_minimum_required(VERSION 3.10.2)
 
-set(CMAKE_CXX_STANDARD 17)
-
 project(point_cloud_transport)
+
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 find_package(ament_cmake_ros REQUIRED)
 
@@ -49,6 +57,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME} PRIVATE
   pluginlib::pluginlib)
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
+
 # Build libpoint_cloud_transport_plugins
 add_library(${PROJECT_NAME}_plugins
   src/manifest.cpp
@@ -63,11 +73,16 @@ add_library(republish_node SHARED src/republish.cpp)
 target_link_libraries(republish_node
   ${PROJECT_NAME}
 )
+target_compile_definitions(republish_node PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
 ament_target_dependencies(republish_node
   pluginlib
   rclcpp_components
   rclcpp
 )
+target_include_directories(republish_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
 add_executable(republish
@@ -83,10 +98,6 @@ ament_target_dependencies(republish
   rclcpp_components
   rclcpp
 )
-
-target_include_directories(${PROJECT_NAME} PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 # Build list_transports
 add_executable(list_transports src/list_transports.cpp)
@@ -106,12 +117,16 @@ install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME})
 
 # Install executables
 install(
-  TARGETS list_transports republish
+  TARGETS
+    list_transports
+    republish
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 # Install include directories
-install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY include/ $<BUILD_INTERFACE:${expected_SOURCE_DIR}/include/> DESTINATION include/${PROJECT_NAME})
+
+ament_export_include_directories("include/${PROJECT_NAME}")
 
 ament_export_targets(export_${PROJECT_NAME})
 
