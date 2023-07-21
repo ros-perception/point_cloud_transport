@@ -124,7 +124,9 @@ install(
 )
 
 # Install include directories
-install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY include/ $<BUILD_INTERFACE:${expected_SOURCE_DIR}/include/> DESTINATION include/${PROJECT_NAME})
+
+ament_export_include_directories("include/${PROJECT_NAME}")
 
 ament_export_targets(export_${PROJECT_NAME})
 
