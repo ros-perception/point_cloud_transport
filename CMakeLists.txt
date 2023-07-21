@@ -73,11 +73,16 @@ add_library(republish_node SHARED src/republish.cpp)
 target_link_libraries(republish_node
   ${PROJECT_NAME}
 )
+target_compile_definitions(republish_node PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
 ament_target_dependencies(republish_node
   pluginlib
   rclcpp_components
   rclcpp
 )
+target_include_directories(republish_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
 add_executable(republish

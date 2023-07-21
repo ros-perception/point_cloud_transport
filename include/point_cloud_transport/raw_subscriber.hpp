@@ -71,13 +71,16 @@ public:
     return this->decodeTyped(compressedPtr);
   }
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransportName() const override;
 
 protected:
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void callback(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
     const Callback & user_cb) override;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopicToSubscribe(const std::string & base_topic) const override;
 
   using SubscriberPlugin::subscribeImpl;

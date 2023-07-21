@@ -49,6 +49,7 @@ class Republisher : public rclcpp::Node
 {
 public:
   //! Constructor
+  POINT_CLOUD_TRANSPORT_PUBLIC
   explicit Republisher(const rclcpp::NodeOptions & options);
 
 private:
