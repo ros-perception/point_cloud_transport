@@ -69,17 +69,16 @@ public:
   /**
    * Constructor
    *
-   * \param nh The ros::NodeHandle to use to subscribe.
+   * \param node The rclcpp node to use to subscribe.
    * \param base_topic The topic to subscribe to.
    * \param queue_size The subscription queue size
    * \param transport The transport hint to pass along
    */
   SubscriberFilter(
-    PointCloudTransport & pct,
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const std::string & transport)
   {
-    subscribe(pct, node, base_topic, transport);
+    subscribe(node, base_topic, transport);
   }
 
   /**
@@ -99,11 +98,13 @@ public:
    *
    * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
    *
-   * \param nh The ros::NodeHandle to use to subscribe.
+   * \param node The rclcpp Node to use to subscribe.
    * \param base_topic The topic to subscribe to.
+   * \param transport The transport hint to pass along
+   * \param custom_qos Custom quality of service
+   * \param options Subscriber options
    */
   void subscribe(
-    PointCloudTransport & pct,
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const std::string & transport,
@@ -111,11 +112,10 @@ public:
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     unsubscribe();
-    // TODO(anyone): Not quite right
-    sub_ = pct.subscribe(
-      base_topic, 1, std::bind(
-        &SubscriberFilter::cb, this,
-        std::placeholders::_1));
+    sub_ = point_cloud_transport::create_subscription(
+      node, base_topic,
+      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
+      transport, custom_qos, options);
   }
 
   /**
