@@ -62,8 +62,42 @@ PointCloudTransportLoader::PointCloudTransportLoader()
 {
 }
 
+point_cloud_transport::PubLoaderPtr PointCloudTransportLoader::getPubLoader()
+{
+  return pub_loader_;
+}
+
+point_cloud_transport::SubLoaderPtr PointCloudTransportLoader::getSubLoader()
+{
+  return sub_loader_;
+}
+
 PointCloudTransportLoader::~PointCloudTransportLoader()
 {
+}
+
+static PointCloudTransportLoader * kImpl = new PointCloudTransportLoader();
+
+Publisher create_publisher(
+  std::shared_ptr<rclcpp::Node> node,
+  const std::string & base_topic,
+  rmw_qos_profile_t custom_qos,
+  const rclcpp::PublisherOptions & options)
+{
+  return Publisher(node, base_topic, kImpl->getPubLoader(), custom_qos, options);
+}
+
+Subscriber create_subscription(
+  std::shared_ptr<rclcpp::Node> node,
+  const std::string & base_topic,
+  const Subscriber::Callback & callback,
+  const std::string & transport,
+  rmw_qos_profile_t custom_qos,
+  rclcpp::SubscriptionOptions options)
+{
+  return Subscriber(
+    node, base_topic, callback,
+    kImpl->getSubLoader(), transport, custom_qos, options);
 }
 
 std::vector<std::string> PointCloudTransportLoader::getDeclaredTransports() const

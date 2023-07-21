@@ -121,46 +121,61 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(AMENT_LINT_AUTO_FILE_EXCLUDE doc/conf.py)
   ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest)
+
+  ament_add_gtest(${PROJECT_NAME}-point_cloud_common test/test_point_cloud_common.cpp)
+  if(TARGET ${PROJECT_NAME}-point_cloud_common)
+    target_link_libraries(${PROJECT_NAME}-point_cloud_common ${PROJECT_NAME})
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-publisher test/test_publisher.cpp)
+  if(TARGET ${PROJECT_NAME}-publisher)
+    target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-publisher
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-subscriber test/test_subscriber.cpp)
+  if(TARGET ${PROJECT_NAME}-subscriber)
+    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-subscriber
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-message_passing test/test_message_passing.cpp)
+  if(TARGET ${PROJECT_NAME}-message_passing)
+    target_link_libraries(${PROJECT_NAME}-message_passing ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-message_passing
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-qos_override test/test_qos_override.cpp)
+  if(TARGET ${PROJECT_NAME}-qos_override)
+    target_link_libraries(${PROJECT_NAME}-qos_override ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-qos_override
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-remapping test/test_remapping.cpp)
+  if(TARGET ${PROJECT_NAME}-remapping)
+    target_link_libraries(${PROJECT_NAME}-remapping ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-remapping
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-single_subscriber_publisher test/test_single_subscriber_publisher.cpp)
+  if(TARGET ${PROJECT_NAME}-single_subscriber_publisher)
+    target_link_libraries(${PROJECT_NAME}-single_subscriber_publisher ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-single_subscriber_publisher
+      pluginlib
+    )
+  endif()
 endif()
-
-# TODO: Fix testing
-# if (CATKIN_ENABLE_TESTING)
-#   find_package(roslint REQUIRED)
-
-#   # catkin_lint - checks validity of package.xml and CMakeLists.txt
-#   # ROS buildfarm calls this without any environment and with empty rosdep cache,
-#   # so we have problems reading the list of packages from env
-#   # see https://github.com/ros-infrastructure/ros_buildfarm/issues/923
-#   if(DEFINED ENV{ROS_HOME})
-#     #catkin_lint: ignore_once env_var
-#     set(ROS_HOME "$ENV{ROS_HOME}")
-#   else()
-#     #catkin_lint: ignore_once env_var
-#     set(ROS_HOME "$ENV{HOME}/.ros")
-#   endif()
-#   #catkin_lint: ignore_once env_var
-#   if(DEFINED ENV{ROS_ROOT} AND EXISTS "${ROS_HOME}/rosdep/sources.cache")
-#     roslint_custom(catkin_lint "-W2" .)
-#   endif()
-
-#   # Roslint C++ - checks formatting and some other rules for C++ files
-
-#   file(GLOB_RECURSE ROSLINT_INCLUDE include/*.h include/*.hpp)
-#   file(GLOB_RECURSE ROSLINT_SRC src/*.cpp src/*.hpp src/*.h)
-#   #file(GLOB_RECURSE ROSLINT_TEST test/*.cpp)
-
-#   set(ROSLINT_CPP_OPTS "--extensions=h,hpp,hh,c,cpp,cc;--linelength=120;--filter=\
-#     -build/header_guard,-readability/namespace,-whitespace/braces,-runtime/references,\
-#     -build/c++11,-readability/nolint,-readability/todo,-legal/copyright,-build/namespaces")
-#   roslint_cpp(${ROSLINT_INCLUDE} ${ROSLINT_SRC})
-
-#   # Roslint Python
-
-#   # Run roslint on Python sources
-#   file(GLOB_RECURSE python_files src/*.py)
-#   roslint_python("${python_files}")
-
-#   roslint_add_test()
-# endif()
 
 ament_package()

@@ -60,7 +60,8 @@ public:
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     PubLoaderPtr loader,
-    rmw_qos_profile_t custom_qos);
+    rmw_qos_profile_t custom_qos,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
   //! get total number of subscribers to all advertised topics.
   uint32_t getNumSubscribers() const;

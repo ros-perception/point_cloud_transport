@@ -83,10 +83,33 @@ public:
   //! The loader that can load subscriber plugins.
   SubLoaderPtr getSubscriberLoader() const;
 
+  point_cloud_transport::PubLoaderPtr getPubLoader();
+  point_cloud_transport::SubLoaderPtr getSubLoader();
+
 protected:
   point_cloud_transport::PubLoaderPtr pub_loader_;
   point_cloud_transport::SubLoaderPtr sub_loader_;
 };
+
+/*!
+ * \brief Advertise an image topic, free function version.
+ */
+Publisher create_publisher(
+  std::shared_ptr<rclcpp::Node> node,
+  const std::string & base_topic,
+  rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+  const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
+
+/**
+ * \brief Subscribe to an image topic, free function version.
+ */
+Subscriber create_subscription(
+  std::shared_ptr<rclcpp::Node> node,
+  const std::string & base_topic,
+  const Subscriber::Callback & callback,
+  const std::string & transport,
+  rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+  rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
 /**
 * Advertise and subscribe to PointCloud2 topics.
@@ -120,9 +143,10 @@ public:
   //! Advertise a PointCloud2 topic, simple version.
   Publisher advertise(
     const std::string & base_topic,
-    rmw_qos_profile_t custom_qos)
+    rmw_qos_profile_t custom_qos,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
-    return Publisher(node_, base_topic, pub_loader_, custom_qos);
+    return Publisher(node_, base_topic, pub_loader_, custom_qos, options);
   }
 
   //! Advertise an PointCloud2 topic with subscriber status callbacks.

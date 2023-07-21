@@ -63,9 +63,10 @@ public:
   void advertise(
     std::shared_ptr<rclcpp::Node> nh,
     const std::string & base_topic,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default)
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
-    advertiseImpl(nh, base_topic, custom_qos);
+    advertiseImpl(nh, base_topic, custom_qos, options);
   }
 
   //! Returns the number of subscribers that are currently connected to this PublisherPlugin
@@ -95,7 +96,8 @@ protected:
    */
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
-    rmw_qos_profile_t custom_qos) = 0;
+    rmw_qos_profile_t custom_qos,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };
 
 class SingleTopicPublisherPlugin : public PublisherPlugin
