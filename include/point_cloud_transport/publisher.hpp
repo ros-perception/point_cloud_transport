@@ -65,7 +65,7 @@ public:
     const std::string & base_topic,
     PubLoaderPtr loader,
     rmw_qos_profile_t custom_qos,
-    rclcpp::PublisherOptions options = rclcpp::PublisherOptions());
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
   //! get total number of subscribers to all advertised topics.
   POINT_CLOUD_TRANSPORT_PUBLIC

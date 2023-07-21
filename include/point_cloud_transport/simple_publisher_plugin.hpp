@@ -104,10 +104,14 @@ public:
   }
 
   template<typename T>
-  bool declareParam(const std::string parameter_name, const T value)
+  bool declareParam(
+    const std::string parameter_name, const T value,
+    const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
+    rcl_interfaces::msg::ParameterDescriptor())
   {
     if (simple_impl_) {
-      simple_impl_->node_->template declare_parameter<T>(parameter_name, value);
+      simple_impl_->node_->template declare_parameter<T>(
+        parameter_name, value, parameter_descriptor);
       return true;
     }
     return false;
@@ -161,6 +165,11 @@ public:
 
   void declareParameters(const std::string & base_topic) override
   {
+    auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
+      "point_cloud_transport");
+    RCLCPP_WARN(
+      logger,
+      "declareParameter method not implemented for %s transport", this->getTransportName().c_str());
   }
 
   /**
@@ -179,7 +188,7 @@ protected:
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
-    rclcpp::PublisherOptions options)
+    const rclcpp::PublisherOptions & options)
   {
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);

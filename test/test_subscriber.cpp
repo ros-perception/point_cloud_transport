@@ -53,7 +53,7 @@ TEST_F(TestSubscriber, construction_and_destruction)
       (void)msg;
     };
 
-  auto sub = point_cloud_transport::create_subscription(node_, "camera/image", fcn, "raw");
+  auto sub = point_cloud_transport::create_subscription(node_, "camera/pointcloud", fcn, "raw");
 
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.spin_node_some(node_);
@@ -64,10 +64,10 @@ TEST_F(TestSubscriber, shutdown)
   std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
     [](const auto & msg) {(void)msg;};
 
-  auto sub = point_cloud_transport::create_subscription(node_, "camera/image", fcn, "raw");
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("camera/image"), 1u);
+  auto sub = point_cloud_transport::create_subscription(node_, "camera/pointcloud", fcn, "raw");
+  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("camera/pointcloud"), 1u);
   sub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("camera/image"), 0u);
+  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("camera/pointcloud"), 0u);
 }
 
 int main(int argc, char ** argv)

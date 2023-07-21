@@ -82,7 +82,7 @@ Publisher create_publisher(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
   rmw_qos_profile_t custom_qos,
-  rclcpp::PublisherOptions options)
+  const rclcpp::PublisherOptions & options)
 {
   return Publisher(node, base_topic, kImpl->getPubLoader(), custom_qos, options);
 }

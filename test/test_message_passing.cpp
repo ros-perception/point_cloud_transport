@@ -41,32 +41,31 @@
 
 using namespace std::chrono_literals;
 
-int total_images_received = 0;
+int total_pointclouds_received = 0;
 
 class MessagePassingTesting : public ::testing::Test
 {
 public:
   sensor_msgs::msg::PointCloud2::UniquePtr generate_random_cloudpoint()
   {
-    auto image = std::make_unique<sensor_msgs::msg::PointCloud2>();
-    return image;
+    auto pointcloud = std::make_unique<sensor_msgs::msg::PointCloud2>();
+    return pointcloud;
   }
 
 protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_message_passing");
-    total_images_received = 0;
+    total_pointclouds_received = 0;
   }
 
   rclcpp::Node::SharedPtr node_;
 };
 
-
-void imageCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
+void pointcloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
 {
   (void) msg;
-  total_images_received++;
+  total_pointclouds_received++;
 }
 
 TEST_F(MessagePassingTesting, one_message_passing)
@@ -79,31 +78,33 @@ TEST_F(MessagePassingTesting, one_message_passing)
 
   auto pub = point_cloud_transport::create_publisher(node_, "camera/pointcloud");
   auto sub =
-    point_cloud_transport::create_subscription(node_, "camera/pointcloud", imageCallback, "raw");
+    point_cloud_transport::create_subscription(
+    node_, "camera/pointcloud", pointcloudCallback,
+    "raw");
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
 
-  ASSERT_EQ(0, total_images_received);
+  ASSERT_EQ(0, total_pointclouds_received);
   ASSERT_EQ(1u, pub.getNumSubscribers());
   ASSERT_EQ(1u, sub.getNumPublishers());
 
   executor.spin_node_some(node_);
-  ASSERT_EQ(0, total_images_received);
+  ASSERT_EQ(0, total_pointclouds_received);
 
   size_t retry = 0;
-  while (retry < max_retries && total_images_received == 0) {
-    // generate random image and publish it
+  while (retry < max_retries && total_pointclouds_received == 0) {
+    // generate random pointcloud and publish it
     pub.publish(generate_random_cloudpoint());
 
     executor.spin_node_some(node_);
     size_t loop = 0;
-    while ((total_images_received != 1) && (loop++ < max_loops)) {
+    while ((total_pointclouds_received != 1) && (loop++ < max_loops)) {
       std::this_thread::sleep_for(sleep_per_loop);
       executor.spin_node_some(node_);
     }
   }
 
-  ASSERT_EQ(1, total_images_received);
+  ASSERT_EQ(1, total_pointclouds_received);
 }
 
 int main(int argc, char ** argv)

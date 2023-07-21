@@ -35,7 +35,7 @@ point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic
 TODO
 
 
-### Backlist point cloud transport
+### Blacklist point cloud transport
 
 ```bash
 ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/disable_pub_plugins:=["point_cloud_transport/raw"]

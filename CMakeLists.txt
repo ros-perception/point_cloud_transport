@@ -24,6 +24,15 @@ include_directories(
   include
 )
 
+include(FetchContent)
+fetchcontent_declare(
+  expected
+  GIT_REPOSITORY https://github.com/TartanLlama/expected
+  GIT_TAG        v1.1.0
+)
+
+fetchcontent_makeavailable(expected)
+
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
   # src/point_cloud_codec.cpp # TODO: This is needed for exposing the encode/decode functions without spinning an node
@@ -39,7 +48,8 @@ add_library(${PROJECT_NAME}
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
 target_link_libraries(${PROJECT_NAME} PUBLIC
   message_filters::message_filters
   rclcpp::rclcpp
@@ -117,7 +127,7 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  set(AMENT_LINT_AUTO_FILE_EXCLUDE include/point_cloud_transport/tl/expected.hpp doc/conf.py)
+  set(AMENT_LINT_AUTO_FILE_EXCLUDE doc/conf.py)
   ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gtest)

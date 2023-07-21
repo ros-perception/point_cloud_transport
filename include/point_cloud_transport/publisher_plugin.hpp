@@ -65,7 +65,7 @@ public:
     std::shared_ptr<rclcpp::Node> nh,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    rclcpp::PublisherOptions options = rclcpp::PublisherOptions())
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
     advertiseImpl(nh, base_topic, custom_qos, options);
   }
@@ -85,7 +85,7 @@ public:
   //! Shutdown any advertisements associated with this PublisherPlugin.
   virtual void shutdown() = 0;
 
-  //! Declare parameter with this SubscriberPlugin.
+  //! Declare parameter with this PublisherPlugin.
   virtual void declareParameters(const std::string & base_topic) = 0;
 
   //! Return the lookup name of the PublisherPlugin associated with a specific transport identifier.
@@ -98,7 +98,7 @@ protected:
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
-    rclcpp::PublisherOptions options = rclcpp::PublisherOptions()) = 0;
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };
 
 //  class SingleTopicPublisherPlugin : public PublisherPlugin
