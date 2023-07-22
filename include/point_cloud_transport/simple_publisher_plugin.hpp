@@ -200,7 +200,7 @@ public:
     }
     if (!res.value())
     {
-      return cras::nullopt;
+      return std::nullopt;
     }
 
     // publish the message (of some unknown type) as a serialized message

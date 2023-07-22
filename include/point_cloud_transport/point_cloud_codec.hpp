@@ -65,28 +65,6 @@ public:
   //! Destructor
   virtual ~PointCloudCodec();
 
-  /**
-   * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
-   * e.g. if you want the raw encoder, call getEncoderByName("raw").
-   * @param name The name of the transport to load.
-  */
-  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string & name)
-  const;
-
-  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
-    const std::string & topic, const std::string & datatype) const;
-
-  /**
-   * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
-   * e.g. if you want the raw decoder, call getDecoderByName("raw").
-   * @param name The name of the transport to load.
-  */
-  std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
-    const std::string & name) const;
-
-  std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
-    const std::string & topic, const std::string & datatype) const;
-
   point_cloud_transport::PubLoaderPtr enc_loader_;
   point_cloud_transport::SubLoaderPtr dec_loader_;
 
@@ -94,6 +72,27 @@ public:
   std::unordered_map<std::string, std::string> decoders_for_topics_;
 
 };
+
+/**
+ * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
+ * e.g. if you want the raw encoder, call getEncoderByName("raw").
+ * @param name The name of the transport to load.
+*/
+std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string & name);
+
+std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
+  const std::string & topic, const std::string & datatype);
+
+/**
+ * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
+ * e.g. if you want the raw decoder, call getDecoderByName("raw").
+ * @param name The name of the transport to load.
+*/
+std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
+  const std::string & name);
+
+std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
+  const std::string & topic, const std::string & datatype);
 
 
 extern "C" bool pointCloudTransportCodecsEncode(

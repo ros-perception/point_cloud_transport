@@ -161,7 +161,7 @@ namespace point_cloud_transport
       const std::string &transport_name, const sensor_msgs::msg::PointCloud2 &msg,
       rclcpp::SerializedMessage &serialized_msg)
   {
-    auto encoder = kImpl->getEncoderByName(transport_name);
+    auto encoder = getEncoderByName(transport_name);
     if (!encoder)
     {
       return false;
@@ -189,7 +189,7 @@ namespace point_cloud_transport
   {
 
     // decode the serialized msg into a pointcloud
-    auto decoder = kImpl->getDecoderByName(transport_name);
+    auto decoder = getDecoderByName(transport_name);
 
     if (!decoder)
     {
