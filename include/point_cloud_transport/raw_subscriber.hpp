@@ -63,6 +63,8 @@ public:
 
   SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const;
 
+  std::string getDataType() const override;
+
   POINT_CLOUD_TRANSPORT_PUBLIC
   bool matchesTopic(const std::string& topic, const std::string& datatype) const override;
 

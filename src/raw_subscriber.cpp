@@ -54,6 +54,11 @@ std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) co
   return base_topic;
 }
 
+std::string RawSubscriber::getDataType() const
+{
+  return "sensor_msgs/msg/PointCloud2";
+}
+
 SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(
   const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const
 {
