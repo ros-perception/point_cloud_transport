@@ -78,6 +78,11 @@ public:
   virtual std::string getTopic() const = 0;
 
   /**
+   * Return the datatype of the transported messages (as text in the form `package/Message`).
+   */
+  virtual std::string getDataType() const = 0;
+
+  /**
    * Whether the given topic and datatype match this transport.
    */
   virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
@@ -123,11 +128,6 @@ public:
    * Defaults to \<base topic\>/\<transport name\>.
    */
   virtual std::string getTopicToAdvertise(const std::string& base_topic) const = 0;
-
-  /**
-   * Return the datatype of the transported messages (as text in the form `package/Message`).
-   */
-  virtual std::string getDataType() const = 0;
 
   /**
    * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
