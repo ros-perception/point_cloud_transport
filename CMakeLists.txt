@@ -24,14 +24,14 @@ include_directories(
   include
 )
 
-include(FetchContent)
-fetchcontent_declare(
-  expected
-  GIT_REPOSITORY https://github.com/TartanLlama/expected
-  GIT_TAG        v1.1.0
-)
+# include(FetchContent)
+# fetchcontent_declare(
+#   expected
+#   GIT_REPOSITORY https://github.com/TartanLlama/expected
+#   GIT_TAG        v1.1.0
+# )
 
-fetchcontent_makeavailable(expected)
+# fetchcontent_makeavailable(expected)
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
@@ -48,8 +48,7 @@ add_library(${PROJECT_NAME}
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
-  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 target_link_libraries(${PROJECT_NAME} PUBLIC
   message_filters::message_filters
   rclcpp::rclcpp
@@ -81,8 +80,7 @@ ament_target_dependencies(republish_node
 )
 target_include_directories(republish_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
-  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
 add_executable(republish
@@ -124,7 +122,7 @@ install(
 )
 
 # Install include directories
-install(DIRECTORY include/ $<BUILD_INTERFACE:${expected_SOURCE_DIR}/include/> DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
 ament_export_include_directories("include/${PROJECT_NAME}")
 

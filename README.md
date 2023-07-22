@@ -35,7 +35,14 @@ point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic
 TODO
 
 
+### Python
+
+
+
+
 ### Blacklist point cloud transport
+
+This allows you to specify plugins you do not want to load (a.k.a. blacklist them).
 
 ```bash
 ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/disable_pub_plugins:=["point_cloud_transport/raw"]
@@ -43,7 +50,8 @@ ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google Draco library.
+- [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](???): Lossless compression via Zlib compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors

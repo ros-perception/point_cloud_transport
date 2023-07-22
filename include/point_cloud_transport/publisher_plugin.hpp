@@ -83,9 +83,9 @@ public:
   virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
 
   /**
-   * \brief Encode the given raw pointcloud into the given rmw serialized msg object.
+   * \brief Encode the given raw pointcloud into EncodeResult
    * \param[in] raw The input raw pointcloud.
-   * \return The output rmw serialized msg holding the compressed cloud message (if encoding succeeds), or an error message.
+   * \return The output EncodeResult holding the compressed cloud message (if encoding succeeds), or an error message.
    */
   virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const;
 
