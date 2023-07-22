@@ -34,8 +34,6 @@
 #ifndef POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
 #define POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
 
-#include <point_cloud_transport/c_api.h>
-
 #include <memory>
 #include <string>
 #include <vector>
