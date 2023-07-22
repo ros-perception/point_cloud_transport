@@ -94,46 +94,12 @@ private:
 }  // namespace point_cloud_transport
 
 extern "C" bool pointCloudTransportCodecsEncode(
-  const char * codec,
-  sensor_msgs::msg::PointCloud2::_height_type rawHeight,
-  sensor_msgs::msg::PointCloud2::_width_type rawWidth,
-  size_t rawNumFields,
-  const char * rawFieldNames[],
-  sensor_msgs::msg::PointField::_offset_type rawFieldOffsets[],
-  sensor_msgs::msg::PointField::_datatype_type rawFieldDatatypes[],
-  sensor_msgs::msg::PointField::_count_type rawFieldCounts[],
-  sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
-  sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
-  sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
-  size_t rawDataLength,
-  const uint8_t rawData[],
-  sensor_msgs::msg::PointCloud2::_is_dense_type rawIsDense,
-  cras::allocator_t compressedTypeAllocator,
-  cras::allocator_t compressedMd5SumAllocator,
-  cras::allocator_t compressedDataAllocator,
-  cras::allocator_t errorStringAllocator,
-  cras::allocator_t logMessagesAllocator
-);
+    const std::string &transport_name,
+    const sensor_msgs::msg::PointCloud2 &msg,
+    rclcpp::SerializedMessage &serialized_msg);
 
 extern "C" bool pointCloudTransportCodecsDecode(
-  const char * topicOrCodec,
-  const char * compressedType,
-  const char * compressedMd5sum,
-  size_t compressedDataLength,
-  const uint8_t compressedData[],
-  sensor_msgs::msg::PointCloud2::_height_type & rawHeight,
-  sensor_msgs::msg::PointCloud2::_width_type & rawWidth,
-  uint32_t & rawNumFields,
-  cras::allocator_t rawFieldNamesAllocator,
-  cras::allocator_t rawFieldOffsetsAllocator,
-  cras::allocator_t rawFieldDatatypesAllocator,
-  cras::allocator_t rawFieldCountsAllocator,
-  sensor_msgs::msg::PointCloud2::_is_bigendian_type & rawIsBigEndian,
-  sensor_msgs::msg::PointCloud2::_point_step_type & rawPointStep,
-  sensor_msgs::msg::PointCloud2::_row_step_type & rawRowStep,
-  cras::allocator_t rawDataAllocator,
-  sensor_msgs::msg::PointCloud2::_is_dense_type & rawIsDense,
-  cras::allocator_t errorStringAllocator,
-  cras::allocator_t logMessagesAllocator
-);
+    const std::string &transport_name,
+    const rclcpp::SerializedMessage &serialized_msg,
+    sensor_msgs::msg::PointCloud2 &msg);
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_

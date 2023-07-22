@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <limits>
+
 #include "point_cloud_transport/point_cloud_common.hpp"
 
 namespace point_cloud_transport
@@ -56,10 +58,12 @@ std::vector<std::string> split(
   std::string token;
   std::vector<std::string> result;
 
+  size_t split_limit = maxSplits >= 0 ? maxSplits : std::numeric_limits<size_t>::max();
+
   while ((end =
     str.find(
       delimiter,
-      start)) != std::string::npos && (maxSplits == -1 || result.size() < maxSplits))
+      start)) != std::string::npos && (result.size() < split_limit))
   {
     token = str.substr(start, end - start);
     start = end + delimiterLength;

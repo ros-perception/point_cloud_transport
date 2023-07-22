@@ -57,7 +57,7 @@ bool endsWith(const std::string & str, const std::string & suffix);
 
 // from cras::string_utils
 POINT_CLOUD_TRANSPORT_PUBLIC
-std::string removeSuffix(const std::string & str, const std::string & suffix, bool * hadSuffix);
+std::string removeSuffix(const std::string & str, const std::string & suffix, bool * hadSuffix = nullptr);
 
 }  // namespace point_cloud_transport
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_COMMON_HPP_
