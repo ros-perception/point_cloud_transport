@@ -37,7 +37,7 @@
 #include <string>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <sensor_msgs/msg/point_cloud2__traits.hpp>
+#include <sensor_msgs/msg/detail/point_cloud2__traits.hpp>
 
 #include <point_cloud_transport/simple_publisher_plugin.hpp>
 
@@ -60,11 +60,6 @@ public:
   }
 
   RawPublisher::TypedEncodeResult 
-  
-  
-  
-  
-  
   (
     const sensor_msgs::msg::PointCloud2 & raw) const
   {

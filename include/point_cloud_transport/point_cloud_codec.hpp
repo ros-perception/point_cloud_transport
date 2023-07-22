@@ -38,6 +38,9 @@
 #include <string>
 #include <vector>
 
+#include <pluginlib/class_loader.hpp>
+#include <pluginlib/exceptions.hpp>
+
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/publisher_plugin.hpp>
@@ -57,7 +60,10 @@ class PointCloudCodec
 {
 public:
   //! Constructor
-  explicit PointCloudCodec();
+  PointCloudCodec();
+
+  //! Destructor
+  virtual ~PointCloudCodec();
 
   /**
    * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
@@ -81,15 +87,14 @@ public:
   std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
     const std::string & topic, const std::string & datatype) const;
 
-private:
-  struct Impl;
-  typedef std::shared_ptr<Impl> ImplPtr;
-  typedef std::weak_ptr<Impl> ImplWPtr;
+  point_cloud_transport::PubLoaderPtr enc_loader_;
+  point_cloud_transport::SubLoaderPtr dec_loader_;
 
-  ImplPtr impl_;
+  std::unordered_map<std::string, std::string> encoders_for_topics_;
+  std::unordered_map<std::string, std::string> decoders_for_topics_;
+
 };
 
-}  // namespace point_cloud_transport
 
 extern "C" bool pointCloudTransportCodecsEncode(
     const std::string &transport_name,
@@ -100,4 +105,8 @@ extern "C" bool pointCloudTransportCodecsDecode(
     const std::string &transport_name,
     const rclcpp::SerializedMessage &serialized_msg,
     sensor_msgs::msg::PointCloud2 &msg);
+
+
+}  // namespace point_cloud_transport
+
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_

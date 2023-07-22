@@ -62,7 +62,7 @@ from point_cloud_transport.subscriber import Subscriber
 
 if __name__ == '__main__':
     def main():
-        import rospy
+        import rclpy
         import time
         from sensor_msgs.msg import PointCloud2, PointField
 

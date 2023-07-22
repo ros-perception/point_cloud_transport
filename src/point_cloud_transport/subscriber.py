@@ -30,35 +30,10 @@
 
 """Subscriber automatically converting from any transport to raw."""
 
-from ctypes import c_char_p
-
-from cras import get_cfg_module, get_msg_type
-from cras.ctypes_utils import Allocator, StringAllocator
-
-import dynamic_reconfigure.server
-import rospy
+import rclpy
 
 from .common import _get_base_library, _TransportInfo
 from .decoder import decode
-
-
-def _get_library():
-    library = _get_base_library()
-    # Add function signatures
-
-    library.pointCloudTransportGetLoadableTransports.restype = None
-    library.pointCloudTransportGetLoadableTransports.argtypes = [
-        Allocator.ALLOCATOR,
-    ]
-
-    library.pointCloudTransportGetTopicToSubscribe.restype = None
-    library.pointCloudTransportGetTopicToSubscribe.argtypes = [
-        c_char_p, c_char_p,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-    ]
-
-    return library
 
 
 def _get_loadable_transports():

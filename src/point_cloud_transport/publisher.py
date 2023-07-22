@@ -29,35 +29,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 """Publisher that automatically publishes to all declared transports."""
 
-from ctypes import c_char_p
+import rclpy
 
-from cras import get_cfg_module, get_msg_type
-from cras.ctypes_utils import Allocator, StringAllocator
-
-import dynamic_reconfigure.server
-import rospy
-
-from .common import _get_base_library, _TransportInfo
 from .encoder import encode
-
-
-def _get_library():
-    library = _get_base_library()
-
-    library.pointCloudTransportGetLoadableTransports.restype = None
-    library.pointCloudTransportGetLoadableTransports.argtypes = [
-        Allocator.ALLOCATOR,
-    ]
-
-    library.pointCloudTransportGetTopicsToPublish.restype = None
-    library.pointCloudTransportGetTopicsToPublish.argtypes = [
-        c_char_p,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-        Allocator.ALLOCATOR,
-    ]
-
-    return library
 
 
 def _get_topics_to_publish(base_topic):

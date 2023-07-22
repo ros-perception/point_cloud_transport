@@ -94,7 +94,7 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    rclcpp::node_interfaces::NodeParametersInterface::OnParametersSetCallbackType
     param_change_callback)
   {
     if (impl_) {
@@ -137,7 +137,7 @@ public:
   DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage>& compressed) const override
   {
     // TODO (john-maidbot): Fix conversion from serialized msg to template
-    typename M::ConstSharedPtr msg;
+    typename M::SharedPtr msg;
     try
     {
       auto serializer = rclcpp::Serialization<M>();
@@ -148,7 +148,7 @@ public:
       return cras::make_unexpected("Error deserializing message for transport decoder: "+std::string(e.what())+".");
     }
 
-    return this->decodeTyped(msg);
+    return this->decodeTyped(*msg);
   }
 
 protected:

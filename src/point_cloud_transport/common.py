@@ -1,3 +1,4 @@
+# Copyright (c) 2023, John D'Angelo
 # Copyright (c) 2023, Czech Technical University in Prague
 # All rights reserved.
 #
@@ -29,24 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """Common definitions."""
-
-from ctypes import RTLD_GLOBAL
-
-from cras.ctypes_utils import load_library
-
-
-__library = None
-
-
-def _get_base_library():
-    global __library
-    if __library is None:
-        __library = load_library('point_cloud_transport', mode=RTLD_GLOBAL)
-        if __library is None:
-            return None
-
-    return __library
-
 
 class _TransportInfo(object):
 

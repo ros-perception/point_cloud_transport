@@ -94,4 +94,20 @@ std::string removeSuffix(const std::string & str, const std::string & suffix, bo
   return hasSuffix ? str.substr(0, str.length() - suffix.length()) : str;
 }
 
+bool transportNameMatches(const std::string &lookup_name,
+                          const std::string &name, const std::string &suffix) {
+  if (lookup_name == name) {
+    return true;
+  }
+  const std::string transport_name = removeSuffix(lookup_name, suffix);
+  if (transport_name == name) {
+    return true;
+  }
+  const auto parts = split(transport_name, "/");
+  if (parts.size() == 2 && parts[1] == name) {
+    return true;
+  }
+  return false;
+}
+
 }  // namespace point_cloud_transport

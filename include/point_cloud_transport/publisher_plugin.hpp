@@ -69,10 +69,7 @@ public:
     std::shared_ptr<rclcpp::Node> nh,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
-  {
-    advertiseImpl(nh, base_topic, custom_qos, options);
-  }
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
   //! Returns the number of subscribers that are currently connected to this PublisherPlugin
   virtual uint32_t getNumSubscribers() const = 0;

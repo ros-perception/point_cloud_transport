@@ -30,37 +30,7 @@
 
 """Encoding and decoding of point clouds compressed with any point cloud transport."""
 
-from ctypes import byref, c_bool, c_char_p, c_size_t, c_uint32, c_uint8, POINTER
-
-from cras.ctypes_utils import Allocator, BytesAllocator, LogMessagesAllocator
-from cras.ctypes_utils import get_ro_c_buffer, ScalarAllocator, StringAllocator
-from cras.message_utils import dict_to_dynamic_config_msg
-from cras.string_utils import BufferStringIO
-
 from sensor_msgs.msg import PointCloud2, PointField
-
-from .common import _get_base_library
-
-
-def _get_library():
-    library = _get_base_library()
-    # Add function signatures
-
-    library.pointCloudTransportCodecsDecode.restype = c_bool
-    library.pointCloudTransportCodecsDecode.argtypes = [
-        c_char_p,
-        c_char_p, c_char_p, c_size_t, POINTER(c_uint8),
-        POINTER(c_uint32), POINTER(c_uint32),
-        POINTER(c_size_t), Allocator.ALLOCATOR,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-        POINTER(c_uint8), POINTER(c_uint32), POINTER(c_uint32),
-        Allocator.ALLOCATOR,
-        POINTER(c_uint8),
-        c_size_t, POINTER(c_uint8),
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-    ]
-
-    return library
 
 
 def decode(compressed, topic_or_codec, config=None):
@@ -76,25 +46,8 @@ def decode(compressed, topic_or_codec, config=None):
              and error string is filled.
     :rtype: (sensor_msgs.msg.PointCloud2 or None, str)
     """
-    codec = _get_library()
     if codec is None:
         return None, 'Could not load the codec library.'
-
-    field_names_allocator = StringAllocator()
-    field_offset_allocator = ScalarAllocator(c_uint32)
-    field_datatype_allocator = ScalarAllocator(c_uint8)
-    field_count_allocator = ScalarAllocator(c_uint32)
-    data_allocator = BytesAllocator()
-    error_allocator = StringAllocator()
-    log_allocator = LogMessagesAllocator()
-
-    raw_height = c_uint32()
-    raw_width = c_uint32()
-    raw_is_big_endian = c_uint8()
-    raw_num_fields = c_size_t()
-    raw_point_step = c_uint32()
-    raw_row_step = c_uint32()
-    raw_is_dense = c_uint8()
 
     compressed_buf = BufferStringIO()
     compressed.serialize(compressed_buf)

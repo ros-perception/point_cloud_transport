@@ -30,35 +30,6 @@
 
 """Encoding and decoding of point clouds compressed with any point cloud transport."""
 
-from ctypes import c_bool, c_char_p, c_size_t, c_uint32, c_uint8, POINTER
-
-from cras import get_msg_type
-from cras.ctypes_utils import Allocator, BytesAllocator, LogMessagesAllocator, StringAllocator
-from cras.ctypes_utils import c_array, get_ro_c_buffer
-from cras.message_utils import dict_to_dynamic_config_msg
-from cras.string_utils import BufferStringIO
-
-from .common import _get_base_library
-
-
-def _get_library():
-    library = _get_base_library()
-    # Add function signatures
-
-    library.pointCloudTransportCodecsEncode.restype = c_bool
-    library.pointCloudTransportCodecsEncode.argtypes = [
-        c_char_p,
-        c_uint32, c_uint32, c_size_t, POINTER(c_char_p), POINTER(c_uint32),
-        POINTER(c_uint8), POINTER(c_uint32),
-        c_uint8, c_uint32, c_uint32, c_size_t, POINTER(c_uint8), c_uint8,
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-        c_size_t, POINTER(c_uint8),
-        Allocator.ALLOCATOR, Allocator.ALLOCATOR,
-    ]
-
-    return library
-
-
 def encode(raw, topic_or_codec, config=None):
     """
     Encode the given raw point_cloud into a compressed point_cloud with a suitable codec.
@@ -72,9 +43,6 @@ def encode(raw, topic_or_codec, config=None):
              and error string is filled.
     :rtype: (genpy.Message or None, str)
     """
-    codec = _get_library()
-    if codec is None:
-        return None, 'Could not load the codec library.'
 
     config = dict_to_dynamic_config_msg(config)
     config_buf = BufferStringIO()

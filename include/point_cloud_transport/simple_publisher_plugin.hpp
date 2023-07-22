@@ -120,7 +120,7 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    rclcpp::node_interfaces::NodeParametersInterface::OnParametersSetCallbackType
     param_change_callback)
   {
     if (simple_impl_) {
