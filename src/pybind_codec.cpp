@@ -105,5 +105,5 @@ PYBIND11_MODULE(_codec, m)
             std::string buffer;
             pointCloud2ToString(msg, buffer);
             return buffer; }
-        )
+        );
 }
