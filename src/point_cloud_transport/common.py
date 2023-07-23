@@ -31,17 +31,21 @@
 
 """Common definitions."""
 
+from rclpy.serialization import serialize_message, deserialize_message
 from sensor_msgs.msg import PointCloud2
 
 class _TransportInfo(object):
 
-    def __init__(self, name, topic, data_type, config_data_type=None):
+    def __init__(self, name : str, topic : str, data_type : str, config_data_type=None):
         self.name = name
         self.topic = topic
         self.data_type = data_type
         self.config_data_type = config_data_type
 
-def stringToPointCloud2(buffer):
-    cloud = PointCloud2()
+def stringToPointCloud2(buffer : str):
+    cloud = deserialize_message(buffer, "sensor_msgs/msg/PointCloud2")
+    return cloud
 
-    return 
+def pointCloud2ToString(msg: PointCloud2):
+    buffer = serialize_message(msg)    
+    return buffer

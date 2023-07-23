@@ -31,10 +31,9 @@
 """Subscriber automatically converting from any transport to raw."""
 
 from rclpy import Node
-from sensor_msgs.msg import PointCloud2
 
-from .common import _TransportInfo
-from .point_cloud_transport import PointCloudCodec
+from .common import _TransportInfo, stringToPointCloud2
+from point_cloud_transport import PointCloudCodec
 
 def _get_loadable_transports(pct):
     transports = []
@@ -43,19 +42,12 @@ def _get_loadable_transports(pct):
     return dict(zip(transports, names))
 
 def _get_topic_to_subscribe(pct, base_topic, transport_name, logger):
-    topic = ""
-    name = ""
-    data_type = ""
-    pct.getTopicToSubscribe(base_topic, transport_name, topic, name, data_type)
+    (topic, name, data_type) = pct.getTopicToSubscribe(base_topic, transport_name)
 
     if len(data_type) == 0:
         return None
 
-    try:
-        return _TransportInfo(name.value, topic, data_type)
-    except ImportError as e:
-        logger.error('Import error: ' + str(e))
-        return None
+    return _TransportInfo(name.value, topic, data_type)
 
 class Subscriber(Node):
     def __init__(self):
@@ -71,12 +63,12 @@ class Subscriber(Node):
         if self.transport_info is None:
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
-        self.subscriber = self.create_subscription(self.transport_info.topic, self.transport_info.data_type, self.cb)
+        # subscribe to compressed, serialized msg
+        self.subscriber = self.create_subscription(self.transport_info.topic, self.transport_info.data_type, self.cb, raw=True)
 
-
-    def cb(self, msg):
-        raw = PointCloud2()
-        raw, err = self.pct.decode(self.transport_info.name, msg, raw)
+    def cb(self, serialized_buffer):
+        cloud_buffer = self.pct.decode(self.transport_info.name, serialized_buffer)
+        cloud = stringToPointCloud2(cloud_buffer)
 
 if __name__ == "__main__":
     import rclpy

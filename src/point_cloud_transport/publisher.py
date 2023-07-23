@@ -30,9 +30,10 @@
 """Publisher that automatically publishes to all declared transports."""
 
 from rclpy import Node
+from sensor_msgs.msg import PointCloud2
 
-from .common import _TransportInfo
-from .point_cloud_transport import PointCloudCodec
+from .common import _TransportInfo, pointCloud2ToString, stringToPointCloud2
+from point_cloud_transport._codec import PointCloudCodec
 
 def _get_topics_to_publish(pct, base_topic, logger):
     transports = []
@@ -70,14 +71,14 @@ class Publisher(Node):
             topic_to_publish = self.transports[transport]
             self.publishers[transport] = self.create_publisher(topic_to_publish.topic, topic_to_publish.data_type)
 
-    def publish(self, raw):
+    def publish(self, raw : PointCloud2):
         for transport, transport_info in self.transports.items():
-            compressed = None
-            err = self.pct.encode(transport_info.name, raw, compressed)
-            if compressed is not None:
+            compressed_buffer = self.pct.encode(transport_info.name, pointCloud2ToString(raw))            
+            if compressed_buffer:
+                compressed = stringToPointCloud2(compressed_buffer)
                 self.publishers[transport].publish(compressed)
             else:
-                self.get_logger().error('Error encoding message: ' + err)
+                self.get_logger().error('Error encoding message!')
 
 
 if __name__ == "__main__":
