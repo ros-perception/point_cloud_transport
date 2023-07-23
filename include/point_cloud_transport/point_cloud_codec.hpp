@@ -70,9 +70,6 @@ namespace point_cloud_transport
      */
     std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string &name);
 
-    std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
-        const std::string &topic, const std::string &datatype);
-
     /**
      * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
      * e.g. if you want the raw decoder, call getDecoderByName("raw").
@@ -81,29 +78,54 @@ namespace point_cloud_transport
     std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
         const std::string &name);
 
-    std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
-        const std::string &topic, const std::string &datatype);
-
+    /**
+     * @brief Get a list of all the transports that can be loaded.
+     * @param[out] transports Vector of the loadable transport plugins.
+     * @param[out] names Vector of string identifieries for the transport provided by each plugin
+     */
     void getLoadableTransports(std::vector<std::string> &transports,
                                std::vector<std::string> &names);
 
+    /**
+     * @brief Get a list of all the transport plugins, topics, transport names, and their data types that can be loaded.
+     * @param[in] baseTopic The base topic to use for the transport.
+     * @param[out] transports Vector of the loadable transport plugins.
+     * @param[out] topics Vector of the topics that can be published.
+     * @param[out] names Vector of string identifieries for the transport provided by each plugin
+     * @param[out] dataTypes Vector of the data types the transports encode a PointCloud2 into
+     */
     void getTopicsToPublish(const std::string &baseTopic,
                             std::vector<std::string> &transports,
                             std::vector<std::string> &topics,
                             std::vector<std::string> &names,
                             std::vector<std::string> &dataTypes);
 
+    /**
+     * @brief Get the topic, transport name, and data type that a given topic is published on for a particular transport plugin.
+     */
     void getTopicToSubscribe(const std::string &baseTopic,
                              const std::string &transport,
                              std::string &topic,
                              std::string &name,
                              std::string &dataType);
 
+    /**
+     * @brief Encode a PointCloud2 message into a serialized message
+     * using the specified transport plugin. The underlying type
+     * of the serialized message is determined by the transport plugin,
+     * but doesnt need to be known by this function.
+     */
     bool encode(
         const std::string &transport_name,
         const sensor_msgs::msg::PointCloud2 &msg,
         rclcpp::SerializedMessage &serialized_msg);
 
+    /**
+     * @brief Dencode a serialized message into a PointCloud2
+     * using the specified transport plugin. The underlying type
+     * of the serialized message is determined by the transport plugin,
+     * but doesnt need to be known by this function.
+     */
     bool decode(
         const std::string &transport_name,
         const rclcpp::SerializedMessage &serialized_msg,

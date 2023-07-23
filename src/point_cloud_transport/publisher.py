@@ -76,8 +76,9 @@ class Publisher(Node):
         for transport, transport_info in self.transports.items():
             compressed_buffer = self.codec.encode(transport_info.name, pointCloud2ToString(raw))            
             if compressed_buffer:
-                compressed = stringToPointCloud2(compressed_buffer)
-                self.publishers[transport].publish(compressed)
+                # rclpy is smart and will publish the correct type even though we are giving it a serialized array
+                # of bytes
+                self.publishers[transport].publish(compressed_buffer)
             else:
                 self.get_logger().error('Error encoding message!')
 
