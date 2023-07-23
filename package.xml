@@ -21,6 +21,7 @@
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
   <depend>message_filters</depend>
+  <depend>pybind11_vendor</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp_components</depend>
   <depend>rclcpp</depend>

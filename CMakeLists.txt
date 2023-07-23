@@ -16,6 +16,9 @@ find_package(ament_cmake_ros REQUIRED)
 
 find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(python_cmake_module REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -102,6 +105,22 @@ add_executable(list_transports src/list_transports.cpp)
 target_link_libraries(list_transports
   ${PROJECT_NAME}
   pluginlib::pluginlib)
+
+
+# Python bindings
+pybind11_add_module(_codec SHARED
+  src/pybind_codec.cpp
+)
+target_link_libraries(_codec PRIVATE
+  ${PROJECT_NAME}
+  pluginlib::pluginlib)
+
+# Install cython modules as sub-modules of the project
+install(
+  TARGETS
+    _codec
+  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
+)
 
 # Install plugin descriptions
 pluginlib_export_plugin_description_file(${PROJECT_NAME} default_plugins.xml)

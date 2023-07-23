@@ -31,6 +31,8 @@
 
 """Common definitions."""
 
+from sensor_msgs.msg import PointCloud2
+
 class _TransportInfo(object):
 
     def __init__(self, name, topic, data_type, config_data_type=None):
@@ -38,3 +40,8 @@ class _TransportInfo(object):
         self.topic = topic
         self.data_type = data_type
         self.config_data_type = config_data_type
+
+def stringToPointCloud2(buffer):
+    cloud = PointCloud2()
+
+    return 

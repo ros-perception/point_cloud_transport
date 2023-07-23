@@ -88,29 +88,35 @@ namespace point_cloud_transport
   }
 
   void PointCloudCodec::getLoadableTransports(std::vector<std::string> &transports,
-                             std::vector<std::string> &names)
+                                              std::vector<std::string> &names)
   {
-    for (const auto & transportPlugin : dec_loader_->getDeclaredClasses()) {
+    for (const auto &transportPlugin : dec_loader_->getDeclaredClasses())
+    {
       // If the plugin loads without throwing an exception, add its transport name to the list of
       // valid plugins, otherwise ignore it.
-      try {
+      try
+      {
         auto sub = dec_loader_->createSharedInstance(transportPlugin);
         // Remove the "_sub" at the end of each class name.
         transports.push_back(erase_last_copy(transportPlugin, "_sub"));
         names.push_back(sub->getTransportName());
-      } catch (const pluginlib::LibraryLoadException & e) {
-        (void) e;
-      } catch (const pluginlib::CreateClassException & e) {
-        (void) e;
+      }
+      catch (const pluginlib::LibraryLoadException &e)
+      {
+        (void)e;
+      }
+      catch (const pluginlib::CreateClassException &e)
+      {
+        (void)e;
       }
     }
   }
 
   void PointCloudCodec::getTopicsToPublish(const std::string &baseTopic,
-                          std::vector<std::string> &transports,
-                          std::vector<std::string> &topics,
-                          std::vector<std::string> &names,
-                          std::vector<std::string> &dataTypes)
+                                           std::vector<std::string> &transports,
+                                           std::vector<std::string> &topics,
+                                           std::vector<std::string> &names,
+                                           std::vector<std::string> &dataTypes)
   {
     for (const auto &transportPlugin : enc_loader_->getDeclaredClasses())
     {
@@ -138,10 +144,10 @@ namespace point_cloud_transport
   }
 
   void PointCloudCodec::getTopicToSubscribe(const std::string &baseTopic,
-                           const std::string &transport,
-                           std::string &topic,
-                           std::string &name,
-                           std::string &dataType)
+                                            const std::string &transport,
+                                            std::string &topic,
+                                            std::string &name,
+                                            std::string &dataType)
   {
     for (const auto &transportPlugin : dec_loader_->getDeclaredClasses())
     {
