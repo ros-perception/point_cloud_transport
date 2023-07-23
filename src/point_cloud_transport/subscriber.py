@@ -42,13 +42,13 @@ def _get_loadable_transports(codec : PointCloudCodec):
     codec.getLoadableTransports(transports, names)
     return dict(zip(transports, names))
 
-def _get_topic_to_subscribe(codec, base_topic, transport_name, logger):
+def _get_topic_to_subscribe(codec, base_topic, transport_name):
     (topic, name, data_type) = codec.getTopicToSubscribe(base_topic, transport_name)
 
     if len(data_type) == 0:
         return None
 
-    return TransportInfo(name.value, topic, data_type)
+    return TransportInfo(name, topic, data_type)
 
 class Subscriber(Node):
     def __init__(self):
@@ -60,7 +60,7 @@ class Subscriber(Node):
         if self.transport not in transports and self.transport not in transports.values():
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
-        self.transport_info = _get_topic_to_subscribe(self.codec, self.base_topic, self.transport, self.get_logger())
+        self.transport_info = _get_topic_to_subscribe(self.codec, self.base_topic, self.transport)
         if self.transport_info is None:
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
