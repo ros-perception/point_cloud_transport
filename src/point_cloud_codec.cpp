@@ -40,6 +40,8 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/point_cloud_codec.hpp>
+#include <point_cloud_transport/simple_publisher_plugin.hpp>
+#include <point_cloud_transport/simple_subscriber_plugin.hpp>
 #include <point_cloud_transport/point_cloud_common.hpp>
 
 namespace point_cloud_transport
@@ -202,6 +204,33 @@ namespace point_cloud_transport
     return true;
   }
 
+  template<class M>
+  bool PointCloudCodec::encodeTyped(
+      const std::string &transport_name, const sensor_msgs::msg::PointCloud2 &msg,
+      M &compressed_msg)
+  {
+    auto encoder = getEncoderByName(transport_name);
+    if (!encoder)
+    {
+      return false;
+    }
+
+    auto typed_encoder = reinterpret_cast<point_cloud_transport::SimplePublisherPlugin<M> *>(encoder.get());
+    const auto compressed = typed_encoder->encodeTyped(msg);
+
+    if (!compressed)
+    {
+      return false;
+    }
+    if (!compressed.value())
+    {
+      return false;
+    }
+
+    compressed_msg = *(compressed.value()->get());
+    return true;
+  }
+
   bool PointCloudCodec::decode(
       const std::string &transport_name,
       const rclcpp::SerializedMessage &serialized_msg,
@@ -218,6 +247,38 @@ namespace point_cloud_transport
 
     const auto decompressed = decoder->decode(
         std::make_shared<rclcpp::SerializedMessage>(serialized_msg));
+
+    if (!decompressed)
+    {
+      return false;
+    }
+    if (!decompressed.value())
+    {
+      return false;
+    }
+
+    msg = *(decompressed.value()->get());
+    return true;
+  }
+
+  template<class M>
+  bool PointCloudCodec::decodeTyped(
+      const std::string &transport_name,
+      const M &compressed_msg,
+      sensor_msgs::msg::PointCloud2 &msg)
+  {
+
+    // decode the serialized msg into a pointcloud
+    auto decoder = getDecoderByName(transport_name);
+
+    if (!decoder)
+    {
+      return false;
+    }
+
+    auto typed_decoder = reinterpret_cast<point_cloud_transport::SimpleSubscriberPlugin<M> *>(decoder.get());
+
+    const auto decompressed = typed_decoder->decodeTyped(compressed_msg);
 
     if (!decompressed)
     {

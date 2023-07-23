@@ -28,12 +28,13 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
 """Publisher that automatically publishes to all declared transports."""
 
 from rclpy import Node
 from sensor_msgs.msg import PointCloud2
 
-from .common import TransportInfo, pointCloud2ToString, stringToPointCloud2
+from .common import TransportInfo, pointCloud2ToString
 from point_cloud_transport._codec import PointCloudCodec
 
 def _get_topics_to_publish(codec, base_topic, logger):

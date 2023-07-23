@@ -121,6 +121,17 @@ namespace point_cloud_transport
         rclcpp::SerializedMessage &serialized_msg);
 
     /**
+     * @brief Encode a PointCloud2 message into some compressed message type
+     * using the specified transport plugin. The compressed message type
+     * is determined by the transport plugin.
+     */
+    template <class M>
+    bool encodeTyped(
+        const std::string &transport_name,
+        const sensor_msgs::msg::PointCloud2 &msg,
+        M &compressed_msg);
+
+    /**
      * @brief Dencode a serialized message into a PointCloud2
      * using the specified transport plugin. The underlying type
      * of the serialized message is determined by the transport plugin,
@@ -129,6 +140,17 @@ namespace point_cloud_transport
     bool decode(
         const std::string &transport_name,
         const rclcpp::SerializedMessage &serialized_msg,
+        sensor_msgs::msg::PointCloud2 &msg);
+
+    /**
+     * @brief Decode some compressed message type
+     * into a PointCloud2 based on the specified transport plugin. The compressed message type
+     * is determined by the transport plugin.
+     */
+    template <class M>
+    bool decodeTyped(
+        const std::string &transport_name,
+        const M &compressed_msg,
         sensor_msgs::msg::PointCloud2 &msg);
 
   private:
