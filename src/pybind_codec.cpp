@@ -83,7 +83,7 @@ PYBIND11_MODULE(_codec, m)
             std::string name;
             std::string dataType;
             codec.getTopicToSubscribe(baseTopic, transport, topic, name, dataType);
-            return std::make_tuple(transport, topic, name, dataType); })
+            return std::make_tuple(topic, name, dataType); })
         .def("encode", [](PointCloudCodec &codec, const std::string &transport_name, const std::string &pointcloud_buffer)
              {
             sensor_msgs::msg::PointCloud2 msg;
