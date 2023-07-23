@@ -84,7 +84,6 @@ public:
   /**
    * \brief Decode the given compressed pointcloud into a raw cloud.
    * \param[in] compressed The rclcpp::SerializedMessage of the compressed pointcloud to be decoded.
-   * \param[in] config Config of the decompression (if it has any parameters).
    * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
    */
   virtual DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage>& compressed) const = 0;

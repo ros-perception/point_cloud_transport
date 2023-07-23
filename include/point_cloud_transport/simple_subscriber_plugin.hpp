@@ -129,7 +129,6 @@ public:
   /**
    * \brief Decode the given compressed pointcloud into a raw message.
    * \param[in] compressed The input compressed pointcloud.
-   * \param[in] config Config of the decompression (if it has any parameters).
    * \return The raw cloud message (if encoding succeeds), or an error message.
    */
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;

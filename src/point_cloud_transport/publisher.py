@@ -1,3 +1,4 @@
+# Copyright (c) 2023, John D'Angelo
 # Copyright (c) 2023, Czech Technical University in Prague
 # All rights reserved.
 #
@@ -32,16 +33,16 @@
 from rclpy import Node
 from sensor_msgs.msg import PointCloud2
 
-from .common import _TransportInfo, pointCloud2ToString, stringToPointCloud2
+from .common import TransportInfo, pointCloud2ToString, stringToPointCloud2
 from point_cloud_transport._codec import PointCloudCodec
 
-def _get_topics_to_publish(pct, base_topic, logger):
+def _get_topics_to_publish(codec, base_topic, logger):
     transports = []
     names = []
     topics = []
     data_types = []
 
-    pct.getTopicsToPublish(
+    codec.getTopicsToPublish(
         base_topic, transports,
         topics, names, data_types)
 
@@ -50,7 +51,7 @@ def _get_topics_to_publish(pct, base_topic, logger):
     for i in range(len(transports)):
         try:
             topics[transports[i]] = \
-                _TransportInfo(names[i], topics[i], data_types[i])
+                TransportInfo(names[i], topics[i], data_types[i])
         except ImportError as e:
             logger.error('Import error: ' + str(e))
 
@@ -59,8 +60,8 @@ def _get_topics_to_publish(pct, base_topic, logger):
 class Publisher(Node):
 
     def __init__(self):
-        self.pct = PointCloudCodec()
-        self.topics_to_publish = _get_topics_to_publish(self.pct, "point_cloud", self.get_logger())
+        self.codec = PointCloudCodec()
+        self.topics_to_publish = _get_topics_to_publish(self.codec, "point_cloud", self.get_logger())
 
         blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
 
@@ -73,7 +74,7 @@ class Publisher(Node):
 
     def publish(self, raw : PointCloud2):
         for transport, transport_info in self.transports.items():
-            compressed_buffer = self.pct.encode(transport_info.name, pointCloud2ToString(raw))            
+            compressed_buffer = self.codec.encode(transport_info.name, pointCloud2ToString(raw))            
             if compressed_buffer:
                 compressed = stringToPointCloud2(compressed_buffer)
                 self.publishers[transport].publish(compressed)

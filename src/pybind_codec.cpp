@@ -90,10 +90,12 @@ PYBIND11_MODULE(_codec, m)
             stringToPointCloud2(pointcloud_buffer, msg);
 
             rclcpp::SerializedMessage serialized_msg;
-            codec.encode(transport_name, msg, serialized_msg);
+            bool success = codec.encode(transport_name, msg, serialized_msg);
 
             std::string serialized_buffer;
-            serializedMsgToString(serialized_msg, serialized_buffer);
+            if(success){
+                serializedMsgToString(serialized_msg, serialized_buffer);
+            }
             return serialized_buffer; }
             )
         .def("decode", [](PointCloudCodec &codec, const std::string &transport_name, const std::string &serialized_buffer)
@@ -102,10 +104,12 @@ PYBIND11_MODULE(_codec, m)
             stringToSerializedMsg(serialized_buffer, serialized_msg);
 
             sensor_msgs::msg::PointCloud2 msg;
-            codec.decode(transport_name, serialized_msg, msg);
+            bool success = codec.decode(transport_name, serialized_msg, msg);
 
             std::string buffer;
-            pointCloud2ToString(msg, buffer);
+            if(success){
+                pointCloud2ToString(msg, buffer);
+            }
             return buffer; }
         );
 }

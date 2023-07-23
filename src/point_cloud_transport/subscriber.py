@@ -1,3 +1,4 @@
+# Copyright (c) 2023, John D'Angelo
 # Copyright (c) 2023, Czech Technical University in Prague
 # All rights reserved.
 #
@@ -32,34 +33,34 @@
 
 from rclpy import Node
 
-from .common import _TransportInfo, stringToPointCloud2
+from .common import TransportInfo, stringToPointCloud2
 from point_cloud_transport import PointCloudCodec
 
-def _get_loadable_transports(pct):
+def _get_loadable_transports(codec : PointCloudCodec):
     transports = []
     names = []
-    pct.getLoadableTransports(transports, names)
+    codec.getLoadableTransports(transports, names)
     return dict(zip(transports, names))
 
-def _get_topic_to_subscribe(pct, base_topic, transport_name, logger):
-    (topic, name, data_type) = pct.getTopicToSubscribe(base_topic, transport_name)
+def _get_topic_to_subscribe(codec, base_topic, transport_name, logger):
+    (topic, name, data_type) = codec.getTopicToSubscribe(base_topic, transport_name)
 
     if len(data_type) == 0:
         return None
 
-    return _TransportInfo(name.value, topic, data_type)
+    return TransportInfo(name.value, topic, data_type)
 
 class Subscriber(Node):
     def __init__(self):
         self.base_topic = "point_cloud"
         self.transport = self.get_parameter_or("transport", "raw")
-        self.pct = PointCloudCodec()
+        self.codec = PointCloudCodec()
 
-        transports = _get_loadable_transports(self.pct)
+        transports = _get_loadable_transports(self.codec)
         if self.transport not in transports and self.transport not in transports.values():
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
-        self.transport_info = _get_topic_to_subscribe(self.pct, self.base_topic, self.transport, self.get_logger())
+        self.transport_info = _get_topic_to_subscribe(self.codec, self.base_topic, self.transport, self.get_logger())
         if self.transport_info is None:
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
@@ -67,7 +68,7 @@ class Subscriber(Node):
         self.subscriber = self.create_subscription(self.transport_info.topic, self.transport_info.data_type, self.cb, raw=True)
 
     def cb(self, serialized_buffer):
-        cloud_buffer = self.pct.decode(self.transport_info.name, serialized_buffer)
+        cloud_buffer = self.codec.decode(self.transport_info.name, serialized_buffer)
         cloud = stringToPointCloud2(cloud_buffer)
 
 if __name__ == "__main__":

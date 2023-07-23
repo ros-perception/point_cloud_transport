@@ -73,7 +73,6 @@ namespace point_cloud_transport
  * It defaults to \<base topic\>/\<transport name\>.
  *
  * \tparam M Type of the published messages.
- * \tparam Config Type of the publisher dynamic configuration.
  */
 template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
