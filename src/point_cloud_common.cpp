@@ -111,17 +111,4 @@ bool transportNameMatches(const std::string &lookup_name,
   return false;
 }
 
-// taken from cras::c_api.cpp
-char* outputString(allocator_t allocator, const char* string, std::size_t length)
-{
-  const auto buffer = static_cast<char*>(allocator(length));
-  std::strncpy(buffer, string, length);
-  return buffer;
-}
-
-char* outputString(allocator_t allocator, const std::string& string)
-{
-  return outputString(allocator, string.c_str(), string.size() + 1);
-}
-
 }  // namespace point_cloud_transport

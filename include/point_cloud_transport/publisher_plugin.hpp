@@ -106,6 +106,8 @@ public:
   //! Declare parameter with this PublisherPlugin.
   virtual void declareParameters(const std::string & base_topic) = 0;
 
+  virtual std::string getTopicToAdvertise(const std::string & base_topic) const = 0;
+
   //! Return the lookup name of the PublisherPlugin associated with a specific transport identifier.
   static std::string getLookupName(const std::string & transport_name);
 
@@ -117,24 +119,6 @@ protected:
     std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
-};
-
-class SingleTopicPublisherPlugin : public PublisherPlugin
-{
-public:
-  /**
-   * Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
-  virtual std::string getTopicToAdvertise(const std::string& base_topic) const = 0;
-
-  /**
-   * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
-   * 
-   * Return empty string if no reconfiguration is supported.
-   */
-  virtual std::string getConfigDataType() const = 0;
 };
 
 }  // namespace point_cloud_transport

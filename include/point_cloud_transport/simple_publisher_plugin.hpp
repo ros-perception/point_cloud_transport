@@ -238,7 +238,7 @@ protected:
    * the subclass.
    *
    * The PublishFn publishes the transport-specific message type. This indirection allows
-   * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
+   * SimplePublisherPlugin to use this function for both normal broadcast publishing and
    * single subscriber publishing (in subscription callbacks).
    */
   virtual void publish(
@@ -261,7 +261,7 @@ protected:
    *
    * Defaults to \<base topic\>/\<transport name\>.
    */
-  virtual std::string getTopicToAdvertise(const std::string & base_topic) const
+  std::string getTopicToAdvertise(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
   }

@@ -160,22 +160,21 @@ PointCloudTransport::PointCloudTransport(rclcpp::Node::SharedPtr node)
   node_ = node;
 }
 
-void pointCloudTransportGetLoadableTransports(
-allocator_t transportAllocator, allocator_t nameAllocator)
+void pointCloudTransportGetLoadableTransports(std::vector<std::string>& transports,
+                                              std::vector<std::string>& names)
 {
   for (const auto& transport : getLoader().getLoadableTransports())
   {
-    outputString(transportAllocator, transport.first);
-    outputString(nameAllocator, transport.second);
+    transports.push_back(transport.first);
+    names.push_back(transport.second);
   }
 }
 
-void pointCloudTransportGetTopicsToPublish(const char* baseTopic,
-                                           allocator_t transportAllocator,
-                                           allocator_t nameAllocator,
-                                           allocator_t topicAllocator,
-                                           allocator_t dataTypeAllocator,
-                                           allocator_t configTypeAllocator)
+void pointCloudTransportGetTopicsToPublish(const std::string& baseTopic,
+                                           std::vector<std::string>& transports,
+                                           std::vector<std::string>& topics,
+                                           std::vector<std::string>& names,
+                                           std::vector<std::string>& dataTypes)
 {
   auto pubLoader = getLoader().getPublisherLoader();
   for (const auto& transportPlugin : pubLoader->getDeclaredClasses())
@@ -183,29 +182,30 @@ void pointCloudTransportGetTopicsToPublish(const char* baseTopic,
     try
     {
       auto pub = pubLoader->createSharedInstance(transportPlugin);
-      auto singleTopicPub =
-std::dynamic_pointer_cast<point_cloud_transport::SingleTopicPublisherPlugin>(pub);
-      if (singleTopicPub == nullptr)
+
+      if (pub == nullptr)
+      {
         continue;
+      }
+
       // Remove the "_pub" at the end of each class name.
-      outputString(transportAllocator, erase_last_copy(transportPlugin, "_pub"));
-      outputString(nameAllocator, singleTopicPub->getTransportName());
-      outputString(topicAllocator, singleTopicPub->getTopicToAdvertise(baseTopic));
-      outputString(dataTypeAllocator, singleTopicPub->getDataType());
-      outputString(configTypeAllocator, singleTopicPub->getConfigDataType());
+      transports.push_back(erase_last_copy(transportPlugin, "_pub"));
+      names.push_back(pub->getTransportName());
+      topics.push_back(pub->getTopicToAdvertise(baseTopic));
+      dataTypes.push_back(pub->getDataType());
     }
     catch (const pluginlib::PluginlibException& e)
     {
+      std::cout << "pointCloudTransportGetTopicsToPublish: " << e.what() << "\n" << std::endl;
     }
   }
 }
 
-void pointCloudTransportGetTopicToSubscribe(const char* baseTopic,
-                                            const char* transport,
-                                            allocator_t nameAllocator,
-                                            allocator_t topicAllocator,
-                                            allocator_t dataTypeAllocator,
-                                            allocator_t configTypeAllocator)
+void pointCloudTransportGetTopicToSubscribe(const std::string& baseTopic,
+                                            const std::string& transport,
+                                            std::string& topic,
+                                            std::string& name,
+                                            std::string& dataType)
 {
   auto subLoader = getLoader().getSubscriberLoader();
   for (const auto& transportPlugin : subLoader->getDeclaredClasses())
@@ -218,19 +218,18 @@ void pointCloudTransportGetTopicToSubscribe(const char* baseTopic,
       if (transportClass != transport && sub->getTransportName() != transport)
         continue;
 
-      auto singleTopicSub =
-std::dynamic_pointer_cast<point_cloud_transport::SingleTopicSubscriberPlugin>(sub);
-      if (singleTopicSub == nullptr)
+      if (sub == nullptr){
         continue;
+      }
 
-      outputString(nameAllocator, singleTopicSub->getTransportName());
-      outputString(topicAllocator, singleTopicSub->getTopicToSubscribe(baseTopic));
-      outputString(dataTypeAllocator, singleTopicSub->getDataType());
-      outputString(configTypeAllocator, singleTopicSub->getConfigDataType());
+      topic = sub->getTopicToSubscribe(baseTopic);
+      name = sub->getTransportName();
+      dataType = sub->getDataType();
       return;
     }
     catch (const pluginlib::PluginlibException& e)
     {
+      std::cout << "pointCloudTransportGetTopicToSubscribe: " << e.what() << "\n" << std::endl;
     }
   }
 }

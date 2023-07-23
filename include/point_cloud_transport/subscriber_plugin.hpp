@@ -156,6 +156,8 @@ public:
    */
   virtual void declareParameters() = 0;
 
+  virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
+
   /**
    * Return the lookup name of the SubscriberPlugin associated with a specific
    * transport identifier.
@@ -188,24 +190,6 @@ protected:
       "SubscriberPlugin::subscribeImpl with five arguments has not been overridden");
     this->subscribeImpl(node, base_topic, callback, custom_qos);
   }
-};
-
-class SingleTopicSubscriberPlugin : public SubscriberPlugin
-{
-public:
-  /**
-   * Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
-  virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
-
-  /**
-   * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
-   *
-   * Return empty string if no reconfiguration is supported.
-   */
-  virtual std::string getConfigDataType() const = 0;
 };
 
 }  // namespace point_cloud_transport

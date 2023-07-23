@@ -35,17 +35,38 @@ from rclpy import Node
 from .common import _TransportInfo
 from .decoder import decode
 
+def _get_loadable_transports(pct):
+    transports = []
+    names = []
+    pct.pointCloudTransportGetLoadableTransports(transports, names)
+    return dict(zip(transports, names))
+
+def _get_topic_to_subscribe(pct, base_topic, transport_name, logger):
+    topic = ""
+    name = ""
+    data_type = ""
+    pct.pointCloudTransportGetTopicToSubscribe(base_topic, transport_name, topic, name, data_type)
+
+    if len(data_type) == 0:
+        return None
+
+    try:
+        return _TransportInfo(name.value, topic, data_type)
+    except ImportError as e:
+        logger.error('Import error: ' + str(e))
+        return None
 
 class Subscriber(Node):
     def __init__(self):
         self.base_topic = "point_cloud"
         self.transport = self.get_parameter_or("transport", "raw")
+        self.pct = PointCloudTransport()
 
-        transports = _get_loadable_transports()
+        transports = _get_loadable_transports(self.pct)
         if self.transport not in transports and self.transport not in transports.values():
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 
-        self.transport_info = _get_topic_to_subscribe(self.base_topic, self.transport)
+        self.transport_info = _get_topic_to_subscribe(self.pct, self.base_topic, self.transport, self.get_logger())
         if self.transport_info is None:
             raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
 

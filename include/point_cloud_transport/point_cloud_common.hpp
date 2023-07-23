@@ -64,14 +64,5 @@ bool transportNameMatches(const std::string &lookup_name,
                           const std::string &name, const std::string &suffix);
 
 
-// taken from cras::c_api.cpp
-typedef void* (*allocator_t)(std::size_t);
-
-POINT_CLOUD_TRANSPORT_PUBLIC
-char* outputString(allocator_t allocator, const char* string, std::size_t length);
-
-POINT_CLOUD_TRANSPORT_PUBLIC
-char* outputString(allocator_t allocator, const std::string& string);
-
 }  // namespace point_cloud_transport
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_COMMON_HPP_

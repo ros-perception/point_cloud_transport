@@ -173,7 +173,7 @@ protected:
    *
    * Defaults to \<base topic\>/\<transport name\>.
    */
-  virtual std::string getTopicToSubscribe(const std::string & base_topic) const
+  std::string getTopicToSubscribe(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
   }

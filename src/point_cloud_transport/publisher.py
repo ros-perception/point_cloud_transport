@@ -34,17 +34,38 @@ from rclpy import Node
 from .common import _TransportInfo
 from .encoder import encode
 
+def _get_topics_to_publish(base_topic, logger):
+    transports = []
+    names = []
+    topics = []
+    data_types = []
+
+    pct = PointCloudTransport()
+
+    pct.pointCloudTransportGetTopicsToPublish(
+        base_topic, transports,
+        topics, names, data_types)
+
+    topics = {}
+
+    for i in range(len(transports)):
+        try:
+            topics[transports[i]] = \
+                _TransportInfo(names[i], topics[i], data_types[i])
+        except ImportError as e:
+            logger.error('Import error: ' + str(e))
+
+    return topics
 
 class Publisher(Node):
 
     def __init__(self):
-        self.transports = _get_topics_to_publish("point_cloud", self.get_logger())
+        self.topics_to_publish = _get_topics_to_publish("point_cloud", self.get_logger())
 
         blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
 
         self.publishers = {}
-        self.config_servers = {}
-        for transport in self.transports:
+        for transport in self.topics_to_publish:
             if transport in blacklist:
                 continue
             topic_to_publish = self.transports[transport]
@@ -52,9 +73,7 @@ class Publisher(Node):
 
     def publish(self, raw):
         for transport, transport_info in self.transports.items():
-            config = (self.config_servers[transport].config if transport in
-                      self.config_servers else None)
-            compressed, err = encode(raw, transport_info.name, config)
+            compressed, err = encode(raw, transport_info.name)
             if compressed is not None:
                 self.publishers[transport].publish(compressed)
             else:

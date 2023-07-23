@@ -30,7 +30,7 @@
 
 """Encoding and decoding of point clouds compressed with any point cloud transport."""
 
-def encode(raw, topic_or_codec, config=None):
+def encode(raw, transport_name, config=None):
     """
     Encode the given raw point_cloud into a compressed point_cloud with a suitable codec.
 
@@ -44,43 +44,9 @@ def encode(raw, topic_or_codec, config=None):
     :rtype: (genpy.Message or None, str)
     """
 
-    config = dict_to_dynamic_config_msg(config)
-    config_buf = BufferStringIO()
-    config.serialize(config_buf)
-    config_buf_len = config_buf.tell()
-    config_buf.seek(0)
+    compressed = None
+    ret = pointCloudTransportCodecsEncode(transport_name, raw, compressed)
 
-    type_allocator = StringAllocator()
-    md5sum_allocator = StringAllocator()
-    data_allocator = BytesAllocator()
-    error_allocator = StringAllocator()
-    log_allocator = LogMessagesAllocator()
-
-    args = [
-        topic_or_codec.encode('utf-8'),
-        raw.height, raw.width,
-        len(raw.fields),
-        c_array([f.name.encode('utf-8') for f in raw.fields], c_char_p),
-        c_array([f.offset for f in raw.fields], c_uint32),
-        c_array([f.datatype for f in raw.fields], c_uint8),
-        c_array([f.count for f in raw.fields], c_uint32),
-        raw.is_bigendian, raw.point_step, raw.row_step,
-        len(raw.data), get_ro_c_buffer(raw.data), raw.is_dense,
-        type_allocator.get_cfunc(), md5sum_allocator.get_cfunc(), data_allocator.get_cfunc(),
-        c_size_t(config_buf_len), get_ro_c_buffer(config_buf),
-        error_allocator.get_cfunc(), log_allocator.get_cfunc(),
-    ]
-
-    ret = codec.pointCloudTransportCodecsEncode(*args)
-
-    log_allocator.print_log_messages()
     if ret:
-        msg_type = get_msg_type(type_allocator.value)
-        compressed = msg_type()
-        if md5sum_allocator.value != compressed._md5sum:
-            return None, 'MD5 sum mismatch for %s: %s vs %s' % (
-                type_allocator.value, md5sum_allocator.value, compressed._md5sum)
-        compressed.deserialize(data_allocator.value)
-        compressed.header = raw.header
         return compressed, ''
-    return None, error_allocator.value
+    return None, 'Failed to encode message!'
