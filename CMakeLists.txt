@@ -150,6 +150,14 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-codec test/test_point_cloud_codec.cpp)
+  if(TARGET ${PROJECT_NAME}-codec)
+    target_link_libraries(${PROJECT_NAME}-codec ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-codec
+      pluginlib
+    )
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-subscriber)
     target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME})

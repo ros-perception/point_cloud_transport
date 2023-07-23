@@ -39,11 +39,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/point_cloud_codec.hpp>
 #include <point_cloud_transport/point_cloud_common.hpp>
-#include <point_cloud_transport/publisher_plugin.hpp>
-#include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
 {

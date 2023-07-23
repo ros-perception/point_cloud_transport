@@ -156,6 +156,9 @@ public:
    */
   virtual void declareParameters() = 0;
 
+  /**
+   * Get the name of the topic that this SubscriberPlugin will subscribe to.
+   */
   virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
   /**

@@ -43,6 +43,7 @@
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
@@ -50,10 +51,7 @@ namespace point_cloud_transport
 {
 
   /**
-   * Advertise and subscribe to PointCloud2 topics.
-   *
-   * PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-   * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
+   * Class to expose all the functionality of pointcloud transport (encode/decode msgs) without needing to spin a node.
    */
 
   class PointCloudCodec
@@ -87,19 +85,19 @@ namespace point_cloud_transport
         const std::string &topic, const std::string &datatype);
 
     void getLoadableTransports(std::vector<std::string> &transports,
-                                                  std::vector<std::string> &names);
+                               std::vector<std::string> &names);
 
     void getTopicsToPublish(const std::string &baseTopic,
-                                               std::vector<std::string> &transports,
-                                               std::vector<std::string> &topics,
-                                               std::vector<std::string> &names,
-                                               std::vector<std::string> &dataTypes);
+                            std::vector<std::string> &transports,
+                            std::vector<std::string> &topics,
+                            std::vector<std::string> &names,
+                            std::vector<std::string> &dataTypes);
 
     void getTopicToSubscribe(const std::string &baseTopic,
-                                                const std::string &transport,
-                                                std::string &topic,
-                                                std::string &name,
-                                                std::string &dataType);
+                             const std::string &transport,
+                             std::string &topic,
+                             std::string &name,
+                             std::string &dataType);
 
     bool encode(
         const std::string &transport_name,
@@ -114,9 +112,6 @@ namespace point_cloud_transport
   private:
     point_cloud_transport::PubLoaderPtr enc_loader_;
     point_cloud_transport::SubLoaderPtr dec_loader_;
-
-    std::unordered_map<std::string, std::string> encoders_for_topics_;
-    std::unordered_map<std::string, std::string> decoders_for_topics_;
   };
 
 } // namespace point_cloud_transport
