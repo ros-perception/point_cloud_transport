@@ -136,7 +136,6 @@ public:
 
   DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage>& compressed) const override
   {
-    // TODO (john-maidbot): Fix conversion from serialized msg to template
     auto msg = std::make_shared<M>();
     try
     {
