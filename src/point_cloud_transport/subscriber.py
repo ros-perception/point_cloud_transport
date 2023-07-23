@@ -31,21 +31,22 @@
 """Subscriber automatically converting from any transport to raw."""
 
 from rclpy import Node
+from sensor_msgs.msg import PointCloud2
 
 from .common import _TransportInfo
-from .decoder import decode
+from .point_cloud_transport import PointCloudCodec
 
 def _get_loadable_transports(pct):
     transports = []
     names = []
-    pct.pointCloudTransportGetLoadableTransports(transports, names)
+    pct.getLoadableTransports(transports, names)
     return dict(zip(transports, names))
 
 def _get_topic_to_subscribe(pct, base_topic, transport_name, logger):
     topic = ""
     name = ""
     data_type = ""
-    pct.pointCloudTransportGetTopicToSubscribe(base_topic, transport_name, topic, name, data_type)
+    pct.getTopicToSubscribe(base_topic, transport_name, topic, name, data_type)
 
     if len(data_type) == 0:
         return None
@@ -60,7 +61,7 @@ class Subscriber(Node):
     def __init__(self):
         self.base_topic = "point_cloud"
         self.transport = self.get_parameter_or("transport", "raw")
-        self.pct = PointCloudTransport()
+        self.pct = PointCloudCodec()
 
         transports = _get_loadable_transports(self.pct)
         if self.transport not in transports and self.transport not in transports.values():
@@ -74,7 +75,8 @@ class Subscriber(Node):
 
 
     def cb(self, msg):
-        raw, err = decode(msg, self.transport_info.name)
+        raw = PointCloud2()
+        raw, err = self.pct.decode(self.transport_info.name, msg, raw)
 
 if __name__ == "__main__":
     import rclpy

@@ -235,19 +235,4 @@ private:
 
 }  // namespace point_cloud_transport
 
-extern "C" void pointCloudTransportGetLoadableTransports(std::vector<std::string>& transports,
-                                              std::vector<std::string>& names);
-
-extern "C" void pointCloudTransportGetTopicsToPublish(const std::string& baseTopic,
-                                           std::vector<std::string>& transports,
-                                           std::vector<std::string>& topics,
-                                           std::vector<std::string>& names,
-                                           std::vector<std::string>& dataTypes);
-
-extern "C" void pointCloudTransportGetTopicToSubscribe(const std::string& baseTopic,
-                                            const std::string& transport,
-                                            std::string& topic,
-                                            std::string& name,
-                                            std::string& dataType);
-
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_TRANSPORT_HPP_

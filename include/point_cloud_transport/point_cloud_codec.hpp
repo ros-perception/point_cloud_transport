@@ -49,63 +49,76 @@
 namespace point_cloud_transport
 {
 
-/**
-* Advertise and subscribe to PointCloud2 topics.
-*
-* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
-*/
+  /**
+   * Advertise and subscribe to PointCloud2 topics.
+   *
+   * PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
+   * subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
+   */
 
-class PointCloudCodec
-{
-public:
-  //! Constructor
-  PointCloudCodec();
+  class PointCloudCodec
+  {
+  public:
+    //! Constructor
+    PointCloudCodec();
 
-  //! Destructor
-  virtual ~PointCloudCodec();
+    //! Destructor
+    virtual ~PointCloudCodec();
 
-  point_cloud_transport::PubLoaderPtr enc_loader_;
-  point_cloud_transport::SubLoaderPtr dec_loader_;
+    /**
+     * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
+     * e.g. if you want the raw encoder, call getEncoderByName("raw").
+     * @param name The name of the transport to load.
+     */
+    std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string &name);
 
-  std::unordered_map<std::string, std::string> encoders_for_topics_;
-  std::unordered_map<std::string, std::string> decoders_for_topics_;
+    std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
+        const std::string &topic, const std::string &datatype);
 
-};
+    /**
+     * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
+     * e.g. if you want the raw decoder, call getDecoderByName("raw").
+     * @param name The name of the transport to load.
+     */
+    std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
+        const std::string &name);
 
-/**
- * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
- * e.g. if you want the raw encoder, call getEncoderByName("raw").
- * @param name The name of the transport to load.
-*/
-std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string & name);
+    std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
+        const std::string &topic, const std::string &datatype);
 
-std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
-  const std::string & topic, const std::string & datatype);
+    void getLoadableTransports(std::vector<std::string> &transports,
+                                                  std::vector<std::string> &names);
 
-/**
- * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
- * e.g. if you want the raw decoder, call getDecoderByName("raw").
- * @param name The name of the transport to load.
-*/
-std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
-  const std::string & name);
+    void getTopicsToPublish(const std::string &baseTopic,
+                                               std::vector<std::string> &transports,
+                                               std::vector<std::string> &topics,
+                                               std::vector<std::string> &names,
+                                               std::vector<std::string> &dataTypes);
 
-std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
-  const std::string & topic, const std::string & datatype);
+    void getTopicToSubscribe(const std::string &baseTopic,
+                                                const std::string &transport,
+                                                std::string &topic,
+                                                std::string &name,
+                                                std::string &dataType);
 
+    bool encode(
+        const std::string &transport_name,
+        const sensor_msgs::msg::PointCloud2 &msg,
+        rclcpp::SerializedMessage &serialized_msg);
 
-extern "C" bool pointCloudTransportCodecsEncode(
-    const std::string &transport_name,
-    const sensor_msgs::msg::PointCloud2 &msg,
-    rclcpp::SerializedMessage &serialized_msg);
+    bool decode(
+        const std::string &transport_name,
+        const rclcpp::SerializedMessage &serialized_msg,
+        sensor_msgs::msg::PointCloud2 &msg);
 
-extern "C" bool pointCloudTransportCodecsDecode(
-    const std::string &transport_name,
-    const rclcpp::SerializedMessage &serialized_msg,
-    sensor_msgs::msg::PointCloud2 &msg);
+  private:
+    point_cloud_transport::PubLoaderPtr enc_loader_;
+    point_cloud_transport::SubLoaderPtr dec_loader_;
 
+    std::unordered_map<std::string, std::string> encoders_for_topics_;
+    std::unordered_map<std::string, std::string> decoders_for_topics_;
+  };
 
-}  // namespace point_cloud_transport
+} // namespace point_cloud_transport
 
-#endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
+#endif // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_

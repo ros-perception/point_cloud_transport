@@ -56,16 +56,14 @@ namespace point_cloud_transport
 
   PointCloudCodec::~PointCloudCodec() {}
 
-  static PointCloudCodec *kImpl = new PointCloudCodec();
-
   std::shared_ptr<point_cloud_transport::PublisherPlugin>
-  getEncoderByName(const std::string &name)
+  PointCloudCodec::getEncoderByName(const std::string &name)
   {
-    for (const auto &lookup_name : kImpl->enc_loader_->getDeclaredClasses())
+    for (const auto &lookup_name : enc_loader_->getDeclaredClasses())
     {
       if (transportNameMatches(lookup_name, name, "_pub"))
       {
-        auto encoder = kImpl->enc_loader_->createSharedInstance(lookup_name);
+        auto encoder = enc_loader_->createSharedInstance(lookup_name);
         return encoder;
       }
     }
@@ -75,46 +73,14 @@ namespace point_cloud_transport
     return nullptr;
   }
 
-  std::shared_ptr<point_cloud_transport::PublisherPlugin>
-  getEncoderByTopic(const std::string &topic,
-                    const std::string &datatype)
-  {
-    if (kImpl->encoders_for_topics_.find(topic) !=
-        kImpl->encoders_for_topics_.end())
-    {
-      auto encoder = kImpl->enc_loader_->createSharedInstance(
-          kImpl->encoders_for_topics_[topic]);
-      return encoder;
-    }
-
-    for (const auto &lookup_name : kImpl->enc_loader_->getDeclaredClasses())
-    {
-      const auto &encoder = kImpl->enc_loader_->createSharedInstance(lookup_name);
-      if (!encoder)
-      {
-        continue;
-      }
-      if (encoder->matchesTopic(topic, datatype))
-      {
-        kImpl->encoders_for_topics_[topic] = lookup_name;
-        return encoder;
-      }
-    }
-
-    RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"),
-                 "Failed to find encoder for topic %s with data type %s.",
-                 topic.c_str(), datatype.c_str());
-    return nullptr;
-  }
-
   std::shared_ptr<point_cloud_transport::SubscriberPlugin>
-  getDecoderByName(const std::string &name)
+  PointCloudCodec::getDecoderByName(const std::string &name)
   {
-    for (const auto &lookup_name : kImpl->dec_loader_->getDeclaredClasses())
+    for (const auto &lookup_name : dec_loader_->getDeclaredClasses())
     {
       if (transportNameMatches(lookup_name, name, "_sub"))
       {
-        auto decoder = kImpl->dec_loader_->createSharedInstance(lookup_name);
+        auto decoder = dec_loader_->createSharedInstance(lookup_name);
         return decoder;
       }
     }
@@ -124,40 +90,91 @@ namespace point_cloud_transport
     return nullptr;
   }
 
-  std::shared_ptr<point_cloud_transport::SubscriberPlugin>
-  getDecoderByTopic(const std::string &topic,
-                    const std::string &datatype)
+  void PointCloudCodec::getLoadableTransports(std::vector<std::string> &transports,
+                             std::vector<std::string> &names)
   {
-    if (kImpl->decoders_for_topics_.find(topic) !=
-        kImpl->decoders_for_topics_.end())
-    {
-      auto decoder = kImpl->dec_loader_->createSharedInstance(
-          kImpl->decoders_for_topics_[topic]);
-      return decoder;
-    }
-
-    for (const auto &lookup_name : kImpl->dec_loader_->getDeclaredClasses())
-    {
-      const auto &decoder = kImpl->dec_loader_->createSharedInstance(lookup_name);
-      if (!decoder)
-      {
-        continue;
-      }
-      if (decoder->matchesTopic(topic, datatype))
-      {
-        kImpl->decoders_for_topics_[topic] = lookup_name;
-        return decoder;
+    for (const auto & transportPlugin : dec_loader_->getDeclaredClasses()) {
+      // If the plugin loads without throwing an exception, add its transport name to the list of
+      // valid plugins, otherwise ignore it.
+      try {
+        auto sub = dec_loader_->createSharedInstance(transportPlugin);
+        // Remove the "_sub" at the end of each class name.
+        transports.push_back(erase_last_copy(transportPlugin, "_sub"));
+        names.push_back(sub->getTransportName());
+      } catch (const pluginlib::LibraryLoadException & e) {
+        (void) e;
+      } catch (const pluginlib::CreateClassException & e) {
+        (void) e;
       }
     }
-
-    RCLCPP_DEBUG(rclcpp::get_logger("point_cloud_transport"),
-                 "Failed to find decoder for topic %s with data type %s.",
-                 topic.c_str(), datatype.c_str());
-
-    return nullptr;
   }
 
-  bool pointCloudTransportCodecsEncode(
+  void PointCloudCodec::getTopicsToPublish(const std::string &baseTopic,
+                          std::vector<std::string> &transports,
+                          std::vector<std::string> &topics,
+                          std::vector<std::string> &names,
+                          std::vector<std::string> &dataTypes)
+  {
+    for (const auto &transportPlugin : enc_loader_->getDeclaredClasses())
+    {
+      try
+      {
+        auto pub = enc_loader_->createSharedInstance(transportPlugin);
+
+        if (pub == nullptr)
+        {
+          continue;
+        }
+
+        // Remove the "_pub" at the end of each class name.
+        transports.push_back(erase_last_copy(transportPlugin, "_pub"));
+        names.push_back(pub->getTransportName());
+        topics.push_back(pub->getTopicToAdvertise(baseTopic));
+        dataTypes.push_back(pub->getDataType());
+      }
+      catch (const pluginlib::PluginlibException &e)
+      {
+        std::cout << "pointCloudTransportGetTopicsToPublish: " << e.what() << "\n"
+                  << std::endl;
+      }
+    }
+  }
+
+  void PointCloudCodec::getTopicToSubscribe(const std::string &baseTopic,
+                           const std::string &transport,
+                           std::string &topic,
+                           std::string &name,
+                           std::string &dataType)
+  {
+    for (const auto &transportPlugin : dec_loader_->getDeclaredClasses())
+    {
+      try
+      {
+        auto sub = dec_loader_->createSharedInstance(transportPlugin);
+
+        const auto transportClass = erase_last_copy(transportPlugin, "_sub");
+        if (transportClass != transport && sub->getTransportName() != transport)
+          continue;
+
+        if (sub == nullptr)
+        {
+          continue;
+        }
+
+        topic = sub->getTopicToSubscribe(baseTopic);
+        name = sub->getTransportName();
+        dataType = sub->getDataType();
+        return;
+      }
+      catch (const pluginlib::PluginlibException &e)
+      {
+        std::cout << "pointCloudTransportGetTopicToSubscribe: " << e.what() << "\n"
+                  << std::endl;
+      }
+    }
+  }
+
+  bool PointCloudCodec::encode(
       const std::string &transport_name, const sensor_msgs::msg::PointCloud2 &msg,
       rclcpp::SerializedMessage &serialized_msg)
   {
@@ -182,7 +199,7 @@ namespace point_cloud_transport
     return true;
   }
 
-  bool pointCloudTransportCodecsDecode(
+  bool PointCloudCodec::decode(
       const std::string &transport_name,
       const rclcpp::SerializedMessage &serialized_msg,
       sensor_msgs::msg::PointCloud2 &msg)

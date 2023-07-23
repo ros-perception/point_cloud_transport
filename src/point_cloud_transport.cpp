@@ -145,93 +145,10 @@ SubLoaderPtr PointCloudTransportLoader::getSubscriberLoader() const
 
 thread_local std::unique_ptr<point_cloud_transport::PointCloudTransportLoader> loader;
 
-point_cloud_transport::PointCloudTransportLoader & getLoader()
-{
-  if (point_cloud_transport::loader == nullptr) {
-    point_cloud_transport::loader =
-      std::make_unique<point_cloud_transport::PointCloudTransportLoader>();
-  }
-  return *point_cloud_transport::loader;
-}
-
 PointCloudTransport::PointCloudTransport(rclcpp::Node::SharedPtr node)
 {
   PointCloudTransportLoader();
   node_ = node;
-}
-
-void pointCloudTransportGetLoadableTransports(std::vector<std::string>& transports,
-                                              std::vector<std::string>& names)
-{
-  for (const auto& transport : getLoader().getLoadableTransports())
-  {
-    transports.push_back(transport.first);
-    names.push_back(transport.second);
-  }
-}
-
-void pointCloudTransportGetTopicsToPublish(const std::string& baseTopic,
-                                           std::vector<std::string>& transports,
-                                           std::vector<std::string>& topics,
-                                           std::vector<std::string>& names,
-                                           std::vector<std::string>& dataTypes)
-{
-  auto pubLoader = getLoader().getPublisherLoader();
-  for (const auto& transportPlugin : pubLoader->getDeclaredClasses())
-  {
-    try
-    {
-      auto pub = pubLoader->createSharedInstance(transportPlugin);
-
-      if (pub == nullptr)
-      {
-        continue;
-      }
-
-      // Remove the "_pub" at the end of each class name.
-      transports.push_back(erase_last_copy(transportPlugin, "_pub"));
-      names.push_back(pub->getTransportName());
-      topics.push_back(pub->getTopicToAdvertise(baseTopic));
-      dataTypes.push_back(pub->getDataType());
-    }
-    catch (const pluginlib::PluginlibException& e)
-    {
-      std::cout << "pointCloudTransportGetTopicsToPublish: " << e.what() << "\n" << std::endl;
-    }
-  }
-}
-
-void pointCloudTransportGetTopicToSubscribe(const std::string& baseTopic,
-                                            const std::string& transport,
-                                            std::string& topic,
-                                            std::string& name,
-                                            std::string& dataType)
-{
-  auto subLoader = getLoader().getSubscriberLoader();
-  for (const auto& transportPlugin : subLoader->getDeclaredClasses())
-  {
-    try
-    {
-      auto sub = subLoader->createSharedInstance(transportPlugin);
-
-      const auto transportClass = erase_last_copy(transportPlugin, "_sub");
-      if (transportClass != transport && sub->getTransportName() != transport)
-        continue;
-
-      if (sub == nullptr){
-        continue;
-      }
-
-      topic = sub->getTopicToSubscribe(baseTopic);
-      name = sub->getTransportName();
-      dataType = sub->getDataType();
-      return;
-    }
-    catch (const pluginlib::PluginlibException& e)
-    {
-      std::cout << "pointCloudTransportGetTopicToSubscribe: " << e.what() << "\n" << std::endl;
-    }
-  }
 }
 
 }  // namespace point_cloud_transport

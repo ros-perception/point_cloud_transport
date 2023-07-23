@@ -32,17 +32,15 @@
 from rclpy import Node
 
 from .common import _TransportInfo
-from .encoder import encode
+from .point_cloud_transport import PointCloudCodec
 
-def _get_topics_to_publish(base_topic, logger):
+def _get_topics_to_publish(pct, base_topic, logger):
     transports = []
     names = []
     topics = []
     data_types = []
 
-    pct = PointCloudTransport()
-
-    pct.pointCloudTransportGetTopicsToPublish(
+    pct.getTopicsToPublish(
         base_topic, transports,
         topics, names, data_types)
 
@@ -60,7 +58,8 @@ def _get_topics_to_publish(base_topic, logger):
 class Publisher(Node):
 
     def __init__(self):
-        self.topics_to_publish = _get_topics_to_publish("point_cloud", self.get_logger())
+        self.pct = PointCloudCodec()
+        self.topics_to_publish = _get_topics_to_publish(self.pct, "point_cloud", self.get_logger())
 
         blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
 
@@ -73,7 +72,8 @@ class Publisher(Node):
 
     def publish(self, raw):
         for transport, transport_info in self.transports.items():
-            compressed, err = encode(raw, transport_info.name)
+            compressed = None
+            err = self.pct.encode(transport_info.name, raw, compressed)
             if compressed is not None:
                 self.publishers[transport].publish(compressed)
             else:
