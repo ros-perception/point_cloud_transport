@@ -29,14 +29,14 @@ include_directories(
   include
 )
 
-# include(FetchContent)
-# fetchcontent_declare(
-#   expected
-#   GIT_REPOSITORY https://github.com/TartanLlama/expected
-#   GIT_TAG        v1.1.0
-# )
+include(FetchContent)
+fetchcontent_declare(
+  expected
+  GIT_REPOSITORY https://github.com/TartanLlama/expected
+  GIT_TAG        v1.1.0
+)
 
-# fetchcontent_makeavailable(expected)
+fetchcontent_makeavailable(expected)
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
