@@ -66,7 +66,7 @@ namespace point_cloud_transport
     /**
      * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
      * e.g. if you want the raw encoder, call getEncoderByName("raw").
-     * @param name The name of the transport to load.
+     * @param name[int] The name of the transport to load.
      */
     std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string &name);
 
