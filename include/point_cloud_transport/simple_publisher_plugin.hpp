@@ -119,7 +119,7 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnParametersSetCallbackType
+    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
     param_change_callback)
   {
     if (simple_impl_) {
@@ -199,7 +199,7 @@ public:
     // publish the message (of some unknown type) as a serialized message
     auto serialized_msg_ptr = std::make_shared<rclcpp::SerializedMessage>();
     static rclcpp::Serialization<M> serializer;
-    serializer.serialize_message(&(res.value().value()), serialized_msg_ptr.get());    
+    serializer.serialize_message(&(res.value().value()), serialized_msg_ptr.get());
     return serialized_msg_ptr;
   }
 
