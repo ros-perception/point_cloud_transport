@@ -52,7 +52,8 @@ namespace point_cloud_transport
 class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 {
 public:
-  //! \brief Result of cloud encoding. Either an holding the compressed cloud, empty value or error message.
+  //! \brief Result of cloud encoding. Either an holding the compressed cloud,
+  // empty value or error message.
   typedef cras::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
       std::string> EncodeResult;
 

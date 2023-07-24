@@ -194,6 +194,6 @@ private:
   point_cloud_transport::SubLoaderPtr dec_loader_;
 };
 
-} // namespace point_cloud_transport
+}  // namespace point_cloud_transport
 
-#endif // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
+#endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_

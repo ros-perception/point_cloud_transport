@@ -42,7 +42,7 @@
 #include <point_cloud_transport/point_cloud_codec.hpp>
 
 namespace py = pybind11;
-using namespace point_cloud_transport;
+namespace point_cloud_transport;
 
 // Utilities for handling the transfer of information to/from python
 namespace point_cloud_transport
@@ -93,7 +93,7 @@ void pointCloud2ToString(const sensor_msgs::msg::PointCloud2 & cloud, std::strin
   serializer.serialize_message(&(cloud), serialized_msg_ptr.get());
   serializedMsgToString(*serialized_msg_ptr, buffer);
 }
-}
+}  // namespace point_cloud_transport
 
 // Bindings for STL vector of strings
 PYBIND11_MAKE_OPAQUE(std::vector<std::string>);

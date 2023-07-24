@@ -98,25 +98,20 @@ bool arePointCloudsEqual(
 }
 
 TEST_F(TestCodec, listTransports) {
-
   std::vector<std::string> transports;
   std::vector<std::string> names;
   codec.getLoadableTransports(transports, names);
-
   for (size_t i = 0; i < transports.size(); ++i) {
     std::cout << "Transport: " << transports[i] << std::endl;
     std::cout << "Name: " << names[i] << std::endl;
   }
-
   EXPECT_TRUE(true);
 }
 
 TEST_F(TestCodec, listSubscribedTopics) {
-
   std::vector<std::string> transports;
   std::vector<std::string> names;
   codec.getLoadableTransports(transports, names);
-
   const std::string base_topic = "point_cloud";
   for (const auto & transport : transports) {
     std::string topic, name, dataType;
@@ -126,7 +121,6 @@ TEST_F(TestCodec, listSubscribedTopics) {
     std::cout << "Name: " << name << std::endl;
     std::cout << "DataType: " << dataType << std::endl;
   }
-
   EXPECT_TRUE(true);
 }
 
@@ -149,14 +143,13 @@ TEST_F(TestCodec, listPublishedTopisc) {
 }
 
 TEST_F(TestCodec, encodeMesssage) {
-
   auto msg = std::make_shared<sensor_msgs::msg::PointCloud2>();
   rclcpp::SerializedMessage serialized_msg;
 
   // populate the pointcloud with some random data
 
   // Set the PointCloud2 header
-  msg->header.frame_id = "base_link"; // Replace with the appropriate frame ID
+  msg->header.frame_id = "base_link";  // Replace with the appropriate frame ID
 
   // Set the PointCloud2 dimensions and fields
   msg->height = 1;

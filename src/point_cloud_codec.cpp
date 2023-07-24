@@ -218,7 +218,6 @@ bool PointCloudCodec::decode(
   const rclcpp::SerializedMessage & serialized_msg,
   sensor_msgs::msg::PointCloud2 & msg)
 {
-
   // decode the serialized msg into a pointcloud
   auto decoder = getDecoderByName(transport_name);
 
@@ -246,7 +245,6 @@ bool PointCloudCodec::decodeTyped(
   const M & compressed_msg,
   sensor_msgs::msg::PointCloud2 & msg)
 {
-
   // decode the serialized msg into a pointcloud
   auto decoder = getDecoderByName(transport_name);
 
@@ -270,4 +268,4 @@ bool PointCloudCodec::decodeTyped(
   return true;
 }
 
-} // namespace point_cloud_transport
+}  // namespace point_cloud_transport
