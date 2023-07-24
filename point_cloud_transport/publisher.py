@@ -39,6 +39,7 @@ from sensor_msgs.msg import PointCloud2
 from point_cloud_transport.common import TransportInfo, pointCloud2ToString, stringToMsgType
 from point_cloud_transport._codec import PointCloudCodec, VectorString
 
+
 def _get_topics_to_publish(codec, base_topic, logger):
     transports = VectorString()
     names = VectorString()
@@ -60,6 +61,7 @@ def _get_topics_to_publish(codec, base_topic, logger):
 
     return topics_to_publish
 
+
 class Publisher(Node):
 
     def __init__(self):
@@ -68,7 +70,8 @@ class Publisher(Node):
 
         self.codec = PointCloudCodec()
         print("Codec created")
-        self.topics_to_publish = _get_topics_to_publish(self.codec, "point_cloud", self.get_logger())
+        self.topics_to_publish = _get_topics_to_publish(
+            self.codec, "point_cloud", self.get_logger())
         print("Topics to publish: \n", self.topics_to_publish)
 
         blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
@@ -79,14 +82,16 @@ class Publisher(Node):
             if transport in blacklist:
                 continue
             topic_to_publish = self.topics_to_publish[transport]
-            self.transport_publishers[transport] = self.create_publisher(stringToMsgType(topic_to_publish.data_type), topic_to_publish.topic, 1)
+            self.transport_publishers[transport] = self.create_publisher(
+                stringToMsgType(topic_to_publish.data_type), topic_to_publish.topic, 1)
 
-    def publish(self, raw : PointCloud2):
+    def publish(self, raw: PointCloud2):
         for transport, transport_info in self.topics_to_publish.items():
-            compressed_buffer = self.codec.encode(transport_info.name, pointCloud2ToString(raw))            
+            compressed_buffer = self.codec.encode(
+                transport_info.name, pointCloud2ToString(raw))
             if compressed_buffer:
-                # rclpy is smart and will publish the correct type even though we are giving it a serialized array
-                # of bytes
+                # rclpy is smart and will publish the correct type even though we
+                # are giving it a serialized array of bytes
                 self.transport_publishers[transport].publish(compressed_buffer)
             else:
                 self.get_logger().error('Error encoding message!')

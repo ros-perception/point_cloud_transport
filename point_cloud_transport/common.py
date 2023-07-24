@@ -35,25 +35,30 @@ from rclpy.serialization import serialize_message, deserialize_message
 from sensor_msgs.msg import PointCloud2
 from importlib import import_module
 
+
 class TransportInfo(object):
 
-    def __init__(self, name : str, topic : str, data_type : str):
+    def __init__(self, name: str, topic: str, data_type: str):
         self.name = name
         self.topic = topic
         self.data_type = data_type
 
-def stringToPointCloud2(buffer : str):
+
+def stringToPointCloud2(buffer: str):
     cloud = deserialize_message(buffer, "sensor_msgs/msg/PointCloud2")
     return cloud
 
+
 def pointCloud2ToString(msg: PointCloud2):
-    buffer = serialize_message(msg)    
+    buffer = serialize_message(msg)
     return buffer
+
 
 def stringToMsgType(message_type_str):
     try:
         # Dynamically import the message type
-        package_name, message_type = message_type_str.replace("/",".").rsplit(".", 1)
+        package_name, message_type = message_type_str.replace(
+            "/", ".").rsplit(".", 1)
         module = import_module(package_name)
         message_class = getattr(module, message_type)
         # Return the subscription object
