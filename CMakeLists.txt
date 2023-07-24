@@ -53,7 +53,8 @@ add_library(${PROJECT_NAME}
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
 target_link_libraries(${PROJECT_NAME} PUBLIC
   message_filters::message_filters
   rclcpp::rclcpp
@@ -85,7 +86,8 @@ ament_target_dependencies(republish_node
 )
 target_include_directories(republish_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
 add_executable(republish
@@ -153,7 +155,7 @@ install(
 )
 
 # Install include directories
-install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY include/ "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>" DESTINATION include/${PROJECT_NAME})
 
 ament_export_include_directories("include/${PROJECT_NAME}")
 
