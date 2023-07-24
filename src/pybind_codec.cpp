@@ -70,7 +70,6 @@ PYBIND11_MAKE_OPAQUE(std::vector<std::string>);
 // Bindings for the PointCloudCodec class
 PYBIND11_MODULE(_codec, m)
 {
-
     py::bind_vector<std::vector<std::string>>(m, "VectorString");
 
     py::class_<PointCloudCodec>(m, "PointCloudCodec")
