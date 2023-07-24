@@ -121,7 +121,8 @@ pybind11_add_module(_codec SHARED
 )
 target_link_libraries(_codec PRIVATE
   ${PROJECT_NAME}
-  pluginlib::pluginlib)
+  pluginlib::pluginlib
+)
 
 # Install cython modules as sub-modules of the project
 install(
