@@ -49,7 +49,7 @@ std::string erase_last_copy(const std::string & input, const std::string & searc
 POINT_CLOUD_TRANSPORT_PUBLIC
 std::vector<std::string> split(
   const std::string & str, const std::string & delimiter,
-  int maxSplits=-1);
+  int maxSplits = -1);
 
 // from cras::string_utils
 POINT_CLOUD_TRANSPORT_PUBLIC
@@ -57,11 +57,14 @@ bool endsWith(const std::string & str, const std::string & suffix);
 
 // from cras::string_utils
 POINT_CLOUD_TRANSPORT_PUBLIC
-std::string removeSuffix(const std::string & str, const std::string & suffix, bool * hadSuffix = nullptr);
+std::string removeSuffix(
+  const std::string & str, const std::string & suffix,
+  bool * hadSuffix = nullptr);
 
 POINT_CLOUD_TRANSPORT_PUBLIC
-bool transportNameMatches(const std::string &lookup_name,
-                          const std::string &name, const std::string &suffix);
+bool transportNameMatches(
+  const std::string & lookup_name,
+  const std::string & name, const std::string & suffix);
 
 
 }  // namespace point_cloud_transport

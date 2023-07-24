@@ -43,7 +43,7 @@ std::string RawSubscriber::getTransportName() const
   return "raw";
 }
 
-std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) const
+std::string RawSubscriber::getTopicToSubscribe(const std::string & base_topic) const
 {
   return base_topic;
 }
@@ -59,7 +59,8 @@ SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(
   return compressed;
 }
 
-SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const
+SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(
+  const sensor_msgs::msg::PointCloud2 & compressed) const
 {
   auto compressedPtr = std::make_shared<const sensor_msgs::msg::PointCloud2>(compressed);
   return this->decodeTyped(compressedPtr);
