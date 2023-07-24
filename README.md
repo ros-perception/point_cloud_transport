@@ -52,7 +52,6 @@ bool success = codec.encode("draco", msg, serialized_msg);
 // for draco that is a point_cloud_interfaces::msg::CompressedPointCloud2)
 point_cloud_interfaces::msg::CompressedPointCloud2 compressed_msg;
 bool success = codec.encode("draco", msg, compressed_msg);
-
 ```
 
 ### Republish rclcpp component
