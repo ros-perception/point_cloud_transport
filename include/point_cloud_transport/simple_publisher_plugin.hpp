@@ -282,7 +282,7 @@ private:
    * Returns a function object for publishing the transport-specific message type
    * through some ROS publisher type.
    *
-   * @param pub An object with method void publish(const M&)
+   * \param pub An object with method void publish(const M&)
    */
   template<class PubT>
   PublishFn bindInternalPublisher(PubT * pub) const
