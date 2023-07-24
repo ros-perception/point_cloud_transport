@@ -40,7 +40,8 @@
 namespace point_cloud_transport
 {
 
-PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::msg::PointCloud2& raw) const
+PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::msg::PointCloud2 & raw)
+const
 {
   return this->encode(raw);
 }

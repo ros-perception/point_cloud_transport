@@ -33,16 +33,22 @@
 
 """Subscriber automatically converting from any transport to raw."""
 
+
+import sys
+
+from point_cloud_transport._codec import PointCloudCodec, VectorString
+from point_cloud_transport.common import stringToMsgType, stringToPointCloud2, TransportInfo
+
+import rclpy
 from rclpy.node import Node
 
-from point_cloud_transport.common import TransportInfo, stringToPointCloud2, stringToMsgType
-from point_cloud_transport._codec import PointCloudCodec, VectorString
 
-def _get_loadable_transports(codec : PointCloudCodec):
+def _get_loadable_transports(codec: PointCloudCodec):
     transports = VectorString()
     names = VectorString()
     codec.getLoadableTransports(transports, names)
     return dict(zip(transports, names))
+
 
 def _get_topic_to_subscribe(codec, base_topic, transport_name):
     (topic, name, data_type) = codec.getTopicToSubscribe(base_topic, transport_name)
@@ -52,36 +58,39 @@ def _get_topic_to_subscribe(codec, base_topic, transport_name):
 
     return TransportInfo(name, topic, data_type)
 
+
 class Subscriber(Node):
+
     def __init__(self):
-        node_name = "point_cloud_transport_subscriber"
+        node_name = 'point_cloud_transport_subscriber'
         super().__init__(node_name)
 
-        self.base_topic = "point_cloud"
-        self.transport = self.get_parameter_or("transport", "raw")
+        self.base_topic = 'point_cloud'
+        self.transport = self.get_parameter_or('transport', 'raw')
         self.codec = PointCloudCodec()
 
         transports = _get_loadable_transports(self.codec)
         if self.transport not in transports and self.transport not in transports.values():
-            raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
+            raise RuntimeError('Point cloud transport "%s" not found.' % (self.transport,))
 
         self.transport_info = _get_topic_to_subscribe(self.codec, self.base_topic, self.transport)
         if self.transport_info is None:
-            raise RuntimeError("Point cloud transport '%s' not found." % (self.transport,))
+            raise RuntimeError('Point cloud transport "%s" not found.' % (self.transport))
 
         # subscribe to compressed, serialized msg
-        self.subscriber = self.create_subscription(stringToMsgType(self.transport_info.data_type), self.transport_info.topic, self.cb, 1, raw=True)
+        self.subscriber = self.create_subscription(
+            stringToMsgType(self.transport_info.data_type),
+            self.transport_info.topic, self.cb, 1, raw=True)
 
     def cb(self, serialized_buffer):
         cloud_buffer = self.codec.decode(self.transport_info.name, serialized_buffer)
         cloud = stringToPointCloud2(cloud_buffer)
+        print('point cloud recieved "%d"' % (cloud.data.size()))
 
-if __name__ == "__main__":
-    import rclpy
-    import sys
 
+if __name__ == '__main__':
     rclpy.init(args=sys.argv)
-    
+
     subscriber_node = None
     try:
         subscriber_node = Subscriber()

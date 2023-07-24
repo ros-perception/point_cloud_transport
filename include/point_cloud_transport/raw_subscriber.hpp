@@ -61,7 +61,8 @@ public:
   SubscriberPlugin::DecodeResult decodeTyped(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const;
 
-  SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const;
+  SubscriberPlugin::DecodeResult decodeTyped(
+    const sensor_msgs::msg::PointCloud2 & compressed) const;
 
   std::string getDataType() const override;
 

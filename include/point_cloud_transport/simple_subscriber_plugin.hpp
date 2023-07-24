@@ -127,17 +127,16 @@ public:
    */
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;
 
-  DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage>& compressed) const override
+  DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const override
   {
     auto msg = std::make_shared<M>();
-    try
-    {
+    try {
       auto serializer = rclcpp::Serialization<M>();
       serializer.deserialize_message(compressed.get(), msg.get());
-    }
-    catch (const std::exception& e)
-    {
-      return cras::make_unexpected("Error deserializing message for transport decoder: "+std::string(e.what())+".");
+    } catch (const std::exception & e) {
+      return cras::make_unexpected(
+        "Error deserializing message for transport decoder: " + std::string(
+          e.what()) + ".");
     }
 
     return this->decodeTyped(*msg);

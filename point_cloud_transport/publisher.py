@@ -33,11 +33,12 @@
 
 """Publisher that automatically publishes to all declared transports."""
 
+from point_cloud_transport._codec import PointCloudCodec, VectorString
+from point_cloud_transport.common import pointCloud2ToString, stringToMsgType, TransportInfo
+
 from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
 
-from point_cloud_transport.common import TransportInfo, pointCloud2ToString, stringToMsgType
-from point_cloud_transport._codec import PointCloudCodec, VectorString
 
 def _get_topics_to_publish(codec, base_topic, logger):
     transports = VectorString()
@@ -60,39 +61,43 @@ def _get_topics_to_publish(codec, base_topic, logger):
 
     return topics_to_publish
 
+
 class Publisher(Node):
 
     def __init__(self):
-        node_name = "point_cloud_transport_publisher"
+        node_name = 'point_cloud_transport_publisher'
         super().__init__(node_name)
 
         self.codec = PointCloudCodec()
-        print("Codec created")
-        self.topics_to_publish = _get_topics_to_publish(self.codec, "point_cloud", self.get_logger())
-        print("Topics to publish: \n", self.topics_to_publish)
+        print('Codec created')
+        self.topics_to_publish = _get_topics_to_publish(
+            self.codec, 'point_cloud', self.get_logger())
+        print('Topics to publish: \n', self.topics_to_publish)
 
         blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
-        print("Blacklist: \n" + str(blacklist))
+        print('Blacklist: \n' + str(blacklist))
 
         self.transport_publishers = {}
         for transport in self.topics_to_publish:
             if transport in blacklist:
                 continue
             topic_to_publish = self.topics_to_publish[transport]
-            self.transport_publishers[transport] = self.create_publisher(stringToMsgType(topic_to_publish.data_type), topic_to_publish.topic, 1)
+            self.transport_publishers[transport] = self.create_publisher(
+                stringToMsgType(topic_to_publish.data_type),
+                topic_to_publish.topic, 1)
 
-    def publish(self, raw : PointCloud2):
+    def publish(self, raw: PointCloud2):
         for transport, transport_info in self.topics_to_publish.items():
-            compressed_buffer = self.codec.encode(transport_info.name, pointCloud2ToString(raw))            
+            compressed_buffer = self.codec.encode(transport_info.name, pointCloud2ToString(raw))
             if compressed_buffer:
-                # rclpy is smart and will publish the correct type even though we are giving it a serialized array
-                # of bytes
+                # rclpy is smart and will publish the correct type even though we
+                # are giving it a serialized array of bytes
                 self.transport_publishers[transport].publish(compressed_buffer)
             else:
                 self.get_logger().error('Error encoding message!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import rclpy
     import sys
 
@@ -103,7 +108,7 @@ if __name__ == "__main__":
         publisher_node = Publisher()
         rclpy.spin(publisher_node)
     except Exception as e:
-        print("Error in publisher node!")
+        print('Error in publisher node!')
         print(e)
     finally:
         if publisher_node is not None:

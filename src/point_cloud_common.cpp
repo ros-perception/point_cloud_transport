@@ -95,8 +95,10 @@ std::string removeSuffix(const std::string & str, const std::string & suffix, bo
   return hasSuffix ? str.substr(0, str.length() - suffix.length()) : str;
 }
 
-bool transportNameMatches(const std::string &lookup_name,
-                          const std::string &name, const std::string &suffix) {
+bool transportNameMatches(
+  const std::string & lookup_name,
+  const std::string & name, const std::string & suffix)
+{
   if (lookup_name == name) {
     return true;
   }

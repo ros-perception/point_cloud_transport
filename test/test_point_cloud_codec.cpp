@@ -43,76 +43,67 @@ class TestCodec : public ::testing::Test
 public:
   // dont do this in real code
   point_cloud_transport::PointCloudCodec codec;
-
 };
 
 // utility function for verifying the raw encode/decode process works
 // (doesnt really make sense to use this with a lossy compression algo though, so its only
 // applicable to test raw or zlib)
-bool arePointCloudsEqual(const sensor_msgs::msg::PointCloud2& msg1, const sensor_msgs::msg::PointCloud2& msg2)
+bool arePointCloudsEqual(
+  const sensor_msgs::msg::PointCloud2 & msg1,
+  const sensor_msgs::msg::PointCloud2 & msg2)
 {
-    if (msg1.width != msg2.width || msg1.height != msg2.height)
+  if (msg1.width != msg2.width || msg1.height != msg2.height) {
+    return false;
+  }
+
+  // Compare fields
+  if (msg1.fields.size() != msg2.fields.size()) {
+    return false;
+  }
+
+  for (size_t i = 0; i < msg1.fields.size(); ++i) {
+    if (msg1.fields[i].name != msg2.fields[i].name ||
+      msg1.fields[i].offset != msg2.fields[i].offset ||
+      msg1.fields[i].datatype != msg2.fields[i].datatype ||
+      msg1.fields[i].count != msg2.fields[i].count)
     {
+      return false;
+    }
+  }
+
+  // Compare data
+  for (const std::string field_name : {"r", "g", "b"}) {
+    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter1(msg1, field_name);
+    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter2(msg2, field_name);
+
+    for (; iter1 != iter1.end() && iter2 != iter2.end(); ++iter1, ++iter2) {
+      if (*iter1 != *iter2) {
         return false;
-    }
-
-    // Compare fields
-    if (msg1.fields.size() != msg2.fields.size())
-    {
-        return false;
-    }
-
-    for (size_t i = 0; i < msg1.fields.size(); ++i)
-    {
-        if (msg1.fields[i].name != msg2.fields[i].name ||
-            msg1.fields[i].offset != msg2.fields[i].offset ||
-            msg1.fields[i].datatype != msg2.fields[i].datatype ||
-            msg1.fields[i].count != msg2.fields[i].count)
-        {
-            return false;
-        }
-    }
-
-    // Compare data
-    for(const std::string field_name : {"r", "g", "b"})
-    {
-      sensor_msgs::PointCloud2ConstIterator<uint8_t> iter1(msg1, field_name);
-      sensor_msgs::PointCloud2ConstIterator<uint8_t> iter2(msg2, field_name);
-
-      for (; iter1 != iter1.end() && iter2 != iter2.end(); ++iter1, ++iter2)
-      {
-          if (*iter1 != *iter2)
-          {
-              return false;
-          }
       }
     }
+  }
 
-    for(const std::string field_name : {"x", "y", "z"})
-    {
-      sensor_msgs::PointCloud2ConstIterator<float> iter1(msg1, field_name);
-      sensor_msgs::PointCloud2ConstIterator<float> iter2(msg2, field_name);
+  for (const std::string field_name : {"x", "y", "z"}) {
+    sensor_msgs::PointCloud2ConstIterator<float> iter1(msg1, field_name);
+    sensor_msgs::PointCloud2ConstIterator<float> iter2(msg2, field_name);
 
-      for (; iter1 != iter1.end() && iter2 != iter2.end(); ++iter1, ++iter2)
-      {
-          if (*iter1 != *iter2)
-          {
-              return false;
-          }
+    for (; iter1 != iter1.end() && iter2 != iter2.end(); ++iter1, ++iter2) {
+      if (*iter1 != *iter2) {
+        return false;
       }
     }
+  }
 
-    return true;
+  return true;
 }
 
-TEST_F(TestCodec, listTransports) {
-
+TEST_F(TestCodec, listTransports)
+{
   std::vector<std::string> transports;
   std::vector<std::string> names;
   codec.getLoadableTransports(transports, names);
 
-  for(size_t i = 0; i < transports.size(); ++i)
-  {
+  for (size_t i = 0; i < transports.size(); ++i) {
     std::cout << "Transport: " << transports[i] << std::endl;
     std::cout << "Name: " << names[i] << std::endl;
   }
@@ -120,14 +111,14 @@ TEST_F(TestCodec, listTransports) {
   EXPECT_TRUE(true);
 }
 
-TEST_F(TestCodec, listSubscribedTopics) {
-
+TEST_F(TestCodec, listSubscribedTopics)
+{
   std::vector<std::string> transports;
   std::vector<std::string> names;
   codec.getLoadableTransports(transports, names);
 
   const std::string base_topic = "point_cloud";
-  for(const auto& transport : transports){
+  for (const auto & transport : transports) {
     std::string topic, name, dataType;
     codec.getTopicToSubscribe(base_topic, transport, topic, name, dataType);
     std::cout << "Transport: " << transport << std::endl;
@@ -147,8 +138,7 @@ TEST_F(TestCodec, listPublishedTopisc) {
 
   const std::string base_topic = "point_cloud";
   codec.getTopicsToPublish(base_topic, transports, topics, names, dataTypes);
-  for(size_t i = 0; i < transports.size(); ++i)
-  {
+  for (size_t i = 0; i < transports.size(); ++i) {
     std::cout << "Transport: " << transports[i] << std::endl;
     std::cout << "Topic: " << topics[i] << std::endl;
     std::cout << "Name: " << names[i] << std::endl;
@@ -158,15 +148,15 @@ TEST_F(TestCodec, listPublishedTopisc) {
   EXPECT_TRUE(true);
 }
 
-TEST_F(TestCodec, encodeMesssage) {
-
+TEST_F(TestCodec, encodeMesssage)
+{
   auto msg = std::make_shared<sensor_msgs::msg::PointCloud2>();
   rclcpp::SerializedMessage serialized_msg;
 
   // populate the pointcloud with some random data
 
   // Set the PointCloud2 header
-  msg->header.frame_id = "base_link"; // Replace with the appropriate frame ID
+  msg->header.frame_id = "base_link";  // Replace with the appropriate frame ID
 
   // Set the PointCloud2 dimensions and fields
   msg->height = 1;
@@ -188,22 +178,21 @@ TEST_F(TestCodec, encodeMesssage) {
   float points[] = {1.0, 2.0, 3.0, 4.0};
   uint8_t colors[] = {255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 0};
 
-  for (int i = 0; i < 4; ++i)
-  {
-      *iter_x = points[i];
-      *iter_y = points[i] * 2;
-      *iter_z = points[i] * 3;
+  for (int i = 0; i < 4; ++i) {
+    *iter_x = points[i];
+    *iter_y = points[i] * 2;
+    *iter_z = points[i] * 3;
 
-      *iter_r = colors[i * 3];
-      *iter_g = colors[i * 3 + 1];
-      *iter_b = colors[i * 3 + 2];
+    *iter_r = colors[i * 3];
+    *iter_g = colors[i * 3 + 1];
+    *iter_b = colors[i * 3 + 2];
 
-      ++iter_x;
-      ++iter_y;
-      ++iter_z;
-      ++iter_r;
-      ++iter_g;
-      ++iter_b;
+    ++iter_x;
+    ++iter_y;
+    ++iter_z;
+    ++iter_r;
+    ++iter_g;
+    ++iter_b;
   }
 
   // encode that data

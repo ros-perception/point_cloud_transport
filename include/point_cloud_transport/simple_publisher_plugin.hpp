@@ -144,8 +144,8 @@ public:
     return {};
   }
 
-  // TODO: Ask about this
-  void publish(const sensor_msgs::msg::PointCloud2& message) const override
+  // TODO(anyone): Ask about this
+  void publish(const sensor_msgs::msg::PointCloud2 & message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_) {
       auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
@@ -183,16 +183,14 @@ public:
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
 
-  EncodeResult encode(const sensor_msgs::msg::PointCloud2& raw) const override
+  EncodeResult encode(const sensor_msgs::msg::PointCloud2 & raw) const override
   {
     // encode the message using the expected transport method
     auto res = this->encodeTyped(raw);
-    if (!res)
-    {
+    if (!res) {
       return cras::make_unexpected(res.error());
     }
-    if (!res.value())
-    {
+    if (!res.value()) {
       return std::nullopt;
     }
 
