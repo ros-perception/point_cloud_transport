@@ -73,7 +73,7 @@ namespace point_cloud_transport
     /**
      * @brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
      * e.g. if you want the raw decoder, call getDecoderByName("raw").
-     * @param name The name of the transport to load.
+     * @param[in] name The name of the transport to load.
      */
     std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
         const std::string &name);
