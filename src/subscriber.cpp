@@ -119,8 +119,7 @@ Subscriber::Subscriber(
         "[point_cloud_transport] It looks like you are trying to subscribe directly to a "
         "transport-specific point_cloud topic '%s', in which case you will likely get a  "
         "connection error. Try subscribing to the base topic '%s' instead with parameter "
-        "~point_cloud_transport set to '%s' (on the command line, _point_cloud_transport:=%s). "
-        "See http://ros.org/wiki/point_cloud_transport for details.",
+        "~point_cloud_transport set to '%s' (on the command line, _point_cloud_transport:=%s). ",
         clean_topic.c_str(), real_base_topic.c_str(), transport.c_str(), transport.c_str());
     }
   }

@@ -15,7 +15,6 @@
   <license>BSD</license>
 
   <url type="repository">https://github.com/ctu-vras/point_cloud_transport</url>
-  <url type="website">https://wiki.ros.org/point_cloud_transport</url>
   <url type="bugtracker">https://github.com/ctu-vras/point_cloud_transport/issues</url>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>

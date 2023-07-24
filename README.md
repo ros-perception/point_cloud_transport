@@ -79,8 +79,8 @@ ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google
-- [zlib_point_cloud_transport](???): Lossless compression via Zlib compression.
+- [draco_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/zlib_point_cloud_transport): Lossless compression via Zlib compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors
@@ -102,7 +102,7 @@ This project is licensed under the BSD License - see the [LICENSE](https://githu
 
 ## Acknowledgments
 
-* [image_transport](http://wiki.ros.org/image_transport) - Provided template of plugin interface
+* [image_transport](https://github.com/ros-perception/image_common) - Provided template of plugin interface
 * [Draco](https://github.com/google/draco) - Provided compression functionality
 
 Support
