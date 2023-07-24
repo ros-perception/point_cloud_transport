@@ -144,7 +144,6 @@ public:
     return {};
   }
 
-  // TODO: Ask about this
   void publish(const sensor_msgs::msg::PointCloud2 & message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_) {
