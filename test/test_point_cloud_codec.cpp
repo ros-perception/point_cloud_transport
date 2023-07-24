@@ -43,7 +43,6 @@ class TestCodec : public ::testing::Test
 public:
   // dont do this in real code
   point_cloud_transport::PointCloudCodec codec;
-
 };
 
 // utility function for verifying the raw encode/decode process works
