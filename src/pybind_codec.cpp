@@ -42,7 +42,7 @@
 #include <point_cloud_transport/point_cloud_codec.hpp>
 
 namespace py = pybind11;
-namespace point_cloud_transport;
+using namespace point_cloud_transport;  // NOLINT
 
 // Utilities for handling the transfer of information to/from python
 namespace point_cloud_transport
