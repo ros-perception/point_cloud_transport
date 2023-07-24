@@ -43,12 +43,6 @@ std::string RawSubscriber::getTransportName() const
   return "raw";
 }
 
-bool RawSubscriber::matchesTopic(const std::string& topic, const std::string& datatype) const
-{
-  (void)topic;
-  return datatype == std::string(rosidl_generator_traits::data_type<sensor_msgs::msg::PointCloud2>());
-}
-
 std::string RawSubscriber::getTopicToSubscribe(const std::string& base_topic) const
 {
   return base_topic;

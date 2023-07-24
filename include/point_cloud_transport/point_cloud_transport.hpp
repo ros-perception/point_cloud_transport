@@ -126,8 +126,8 @@ Subscriber create_subscription(
 /**
 * Advertise and subscribe to PointCloud2 topics.
 *
-* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
+* PointCloudTransport is analogous to rclcpp::Node in that it contains create_publisher() and
+* create_subscription() functions for creating publishers and subscriptions of PointCloud2 topics.
 */
 
 class PointCloudTransport : public PointCloudTransportLoader

@@ -116,12 +116,6 @@ public:
     impl_.reset();
   }
 
-  bool matchesTopic(const std::string& topic, const std::string& datatype) const override
-  {
-    return datatype == rosidl_generator_traits::data_type<M>() &&
-        endsWith(topic, std::string("/" + getTransportName()));
-  }
-
   void declareParameters() override
   {
   }

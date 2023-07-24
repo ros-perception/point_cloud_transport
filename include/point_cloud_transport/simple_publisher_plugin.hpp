@@ -144,12 +144,6 @@ public:
     return {};
   }
 
-  bool matchesTopic(const std::string& topic, const std::string& datatype) const override
-  {
-    return datatype == rosidl_generator_traits::data_type<M>() &&
-        endsWith(topic, std::string("/" + getTransportName()));
-  }
-
   // TODO: Ask about this
   void publish(const sensor_msgs::msg::PointCloud2& message) const override
   {

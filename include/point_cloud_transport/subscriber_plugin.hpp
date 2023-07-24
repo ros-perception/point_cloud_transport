@@ -71,11 +71,6 @@ public:
   typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
 
   /**
-   * Whether the given topic and datatype match this transport.
-   */
-  virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
-
-  /**
    * Get a string identifier for the transport provided by
    * this plugin.
    */

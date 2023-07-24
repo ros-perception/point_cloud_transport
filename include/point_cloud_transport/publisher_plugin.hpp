@@ -62,9 +62,7 @@ public:
   //! Get a string identifier for the transport provided by this plugin
   virtual std::string getTransportName() const = 0;
 
-  /**
-   * \brief Advertise a topic, simple version.
-   */
+  //! \brief Advertise a topic, simple version.
   void advertise(
     std::shared_ptr<rclcpp::Node> nh,
     const std::string & base_topic,
@@ -77,15 +75,8 @@ public:
   //! Returns the topic that this PublisherPlugin will publish on.
   virtual std::string getTopic() const = 0;
 
-  /**
-   * Return the datatype of the transported messages (as text in the form `package/Message`).
-   */
+  //! Return the datatype of the transported messages (as text in the form `package/Message`).
   virtual std::string getDataType() const = 0;
-
-  /**
-   * Whether the given topic and datatype match this transport.
-   */
-  virtual bool matchesTopic(const std::string& topic, const std::string& datatype) const = 0;
 
   /**
    * \brief Encode the given raw pointcloud into EncodeResult
@@ -112,9 +103,7 @@ public:
   static std::string getLookupName(const std::string & transport_name);
 
 protected:
-  /**
-   * \brief Advertise a topic. Must be implemented by the subclass.
-   */
+  //! Advertise a topic. Must be implemented by the subclass.
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
