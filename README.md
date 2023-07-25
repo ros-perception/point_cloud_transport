@@ -30,12 +30,48 @@ point_cloud_transport::Subscriber sub = pct.subscribe("in_point_cloud_base_topic
 point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic", 1);
 ```
 
+Alternatively, you can use point_cloud_transport outside of ROS2.
+
+```cpp
+#include <sensor_msgs/msg/point_cloud2.hpp>
+
+#include <point_cloud_transport/point_cloud_codec.hpp>
+
+point_cloud_transport::PointCloudCodec codec;
+
+sensor_msgs::msg::PointCloud2 msg;
+// ... do some cool pointcloud generation stuff ...
+
+// untyped version (outputs an rclcpp::SerializedMessage)
+rclcpp::SerializedMessage serialized_msg;
+bool success = codec.encode("draco", msg, serialized_msg);
+
+// OR
+
+// typed version (outputs whatever message your selected transport returns, 
+// for draco that is a point_cloud_interfaces::msg::CompressedPointCloud2)
+point_cloud_interfaces::msg::CompressedPointCloud2 compressed_msg;
+bool success = codec.encode("draco", msg, compressed_msg);
+```
+
 ### Republish rclcpp component
 
-TODO
+We provide a process to republish any topic speaking in a given transport to a different topic speaking a different transport.
+e.g. have it subscribe to a topic you recorded encoded using draco and publish it as a raw, decoded message
 
+```bash
+ros2 run point_cloud_transport republish --in_transport draco --out_transport raw --ros-args --remap in:=input_topic_name --remap out:=ouput_topic_name
+```
+
+### Python
+
+The functionality of `point_cloud_transport` is also exposed to python via `pybind11` and `rclpy` serialization.
+
+Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.py) and [point_cloud_transport/subscriber.py](point_cloud_transport/subscriber.py) for example usage.
 
 ### Blacklist point cloud transport
+
+This allows you to specify plugins you do not want to load (a.k.a. blacklist them).
 
 ```bash
 ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/disable_pub_plugins:=["point_cloud_transport/raw"]
@@ -43,7 +79,8 @@ ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://wiki.ros.org/draco_point_cloud_transport): Lossy compression via Google Draco library.
+- [draco_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/zlib_point_cloud_transport): Lossless compression via Zlib compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors
@@ -65,7 +102,7 @@ This project is licensed under the BSD License - see the [LICENSE](https://githu
 
 ## Acknowledgments
 
-* [image_transport](http://wiki.ros.org/image_transport) - Provided template of plugin interface
+* [image_transport](https://github.com/ros-perception/image_common) - Provided template of plugin interface
 * [Draco](https://github.com/google/draco) - Provided compression functionality
 
 Support

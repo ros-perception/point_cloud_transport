@@ -1,3 +1,4 @@
+# Copyright (c) 2023, John D'Angelo
 # Copyright (c) 2023, Czech Technical University in Prague
 # All rights reserved.
 #
@@ -30,28 +31,38 @@
 
 """Common definitions."""
 
-from ctypes import RTLD_GLOBAL
-
-from cras.ctypes_utils import load_library
-
-
-__library = None
+from rclpy.serialization import serialize_message, deserialize_message
+from sensor_msgs.msg import PointCloud2
+from importlib import import_module
 
 
-def _get_base_library():
-    global __library
-    if __library is None:
-        __library = load_library('point_cloud_transport', mode=RTLD_GLOBAL)
-        if __library is None:
-            return None
+class TransportInfo(object):
 
-    return __library
-
-
-class _TransportInfo(object):
-
-    def __init__(self, name, topic, data_type, config_data_type=None):
+    def __init__(self, name: str, topic: str, data_type: str):
         self.name = name
         self.topic = topic
         self.data_type = data_type
-        self.config_data_type = config_data_type
+
+
+def stringToPointCloud2(buffer: str):
+    cloud = deserialize_message(buffer, "sensor_msgs/msg/PointCloud2")
+    return cloud
+
+
+def pointCloud2ToString(msg: PointCloud2):
+    buffer = serialize_message(msg)
+    return buffer
+
+
+def stringToMsgType(message_type_str):
+    try:
+        # Dynamically import the message type
+        package_name, message_type = message_type_str.replace(
+            "/", ".").rsplit(".", 1)
+        module = import_module(package_name)
+        message_class = getattr(module, message_type)
+        # Return the subscription object
+        return message_class
+    except Exception as e:
+        print(f"Error creating subscription: {e}")
+        return None

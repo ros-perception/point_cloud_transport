@@ -42,9 +42,11 @@
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
+#include "rclcpp/serialization.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/expected.hpp>
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
@@ -71,7 +73,6 @@ namespace point_cloud_transport
  * It defaults to \<base topic\>/\<transport name\>.
  *
  * \tparam M Type of the published messages.
- * \tparam Config Type of the publisher dynamic configuration.
  */
 template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
@@ -143,7 +144,6 @@ public:
     return {};
   }
 
-  // TODO(anyone): Ask about this
   void publish(const sensor_msgs::msg::PointCloud2 & message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_) {
@@ -175,12 +175,30 @@ public:
   /**
    * \brief Encode the given raw pointcloud into a compressed message.
    * \param[in] raw The input raw pointcloud.
-   * \return The output shapeshifter holding the compressed cloud message
+   * \return The output rmw serialized msg holding the compressed cloud message
    * (if encoding succeeds), or an error message.
    */
   POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
+
+  EncodeResult encode(const sensor_msgs::msg::PointCloud2 & raw) const override
+  {
+    // encode the message using the expected transport method
+    auto res = this->encodeTyped(raw);
+    if (!res) {
+      return cras::make_unexpected(res.error());
+    }
+    if (!res.value()) {
+      return std::nullopt;
+    }
+
+    // publish the message (of some unknown type) as a serialized message
+    auto serialized_msg_ptr = std::make_shared<rclcpp::SerializedMessage>();
+    static rclcpp::Serialization<M> serializer;
+    serializer.serialize_message(&(res.value().value()), serialized_msg_ptr.get());
+    return serialized_msg_ptr;
+  }
 
 protected:
   std::string base_topic_;
@@ -210,7 +228,7 @@ protected:
    * the subclass.
    *
    * The PublishFn publishes the transport-specific message type. This indirection allows
-   * SimpleSubscriberPlugin to use this function for both normal broadcast publishing and
+   * SimplePublisherPlugin to use this function for both normal broadcast publishing and
    * single subscriber publishing (in subscription callbacks).
    */
   virtual void publish(
@@ -233,7 +251,7 @@ protected:
    *
    * Defaults to \<base topic\>/\<transport name\>.
    */
-  virtual std::string getTopicToAdvertise(const std::string & base_topic) const
+  std::string getTopicToAdvertise(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
   }
@@ -261,7 +279,7 @@ private:
    * Returns a function object for publishing the transport-specific message type
    * through some ROS publisher type.
    *
-   * @param pub An object with method void publish(const M&)
+   * \param pub An object with method void publish(const M&)
    */
   template<class PubT>
   PublishFn bindInternalPublisher(PubT * pub) const

@@ -58,20 +58,14 @@ class RawSubscriber
 public:
   virtual ~RawSubscriber() {}
 
+  SubscriberPlugin::DecodeResult decodeTyped(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const;
 
   SubscriberPlugin::DecodeResult decodeTyped(
-    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const
-  {
-    return compressed;
-  }
+    const sensor_msgs::msg::PointCloud2 & compressed) const;
 
-  SubscriberPlugin::DecodeResult decodeTyped(const sensor_msgs::msg::PointCloud2 & compressed) const
-  {
-    auto compressedPtr = std::make_shared<const sensor_msgs::msg::PointCloud2>(compressed);
-    return this->decodeTyped(compressedPtr);
-  }
+  std::string getDataType() const override;
 
-  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransportName() const override;
 
 protected:

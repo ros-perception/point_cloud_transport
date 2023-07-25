@@ -16,7 +16,7 @@ Python API
 ROS API
 -------
 
-See |wiki| for the ROS API description.
+See |ros2_documentation| for the ROS API description.
 
 C and C++ API
 -------------

@@ -145,96 +145,10 @@ SubLoaderPtr PointCloudTransportLoader::getSubscriberLoader() const
 
 thread_local std::unique_ptr<point_cloud_transport::PointCloudTransportLoader> loader;
 
-point_cloud_transport::PointCloudTransportLoader & getLoader()
-{
-  if (point_cloud_transport::loader == nullptr) {
-    point_cloud_transport::loader =
-      std::make_unique<point_cloud_transport::PointCloudTransportLoader>();
-  }
-  return *point_cloud_transport::loader;
-}
-
 PointCloudTransport::PointCloudTransport(rclcpp::Node::SharedPtr node)
 {
   PointCloudTransportLoader();
   node_ = node;
 }
-
-
-// TODO(anyone): Are these needed?
-// void pointCloudTransportGetLoadableTransports(
-// cras::allocator_t transportAllocator, cras::allocator_t nameAllocator)
-// {
-//   for (const auto& transport : getLoader().getLoadableTransports())
-//   {
-//     cras::outputString(transportAllocator, transport.first);
-//     cras::outputString(nameAllocator, transport.second);
-//   }
-// }
-
-// void pointCloudTransportGetTopicsToPublish(const char* baseTopic,
-//                                            cras::allocator_t transportAllocator,
-//                                            cras::allocator_t nameAllocator,
-//                                            cras::allocator_t topicAllocator,
-//                                            cras::allocator_t dataTypeAllocator,
-//                                            cras::allocator_t configTypeAllocator)
-// {
-//   auto pubLoader = getLoader().getPublisherLoader();
-//   for (const auto& transportPlugin : pubLoader->getDeclaredClasses())
-//   {
-//     try
-//     {
-//       auto pub = pubLoader->createSharedInstance(transportPlugin);
-//       auto singleTopicPub =
-// std::dynamic_pointer_cast<point_cloud_transport::SingleTopicPublisherPlugin>(pub);
-//       if (singleTopicPub == nullptr)
-//         continue;
-//       // Remove the "_pub" at the end of each class name.
-//       cras::outputString(transportAllocator, erase_last_copy(transportPlugin, "_pub"));
-//       cras::outputString(nameAllocator, singleTopicPub->getTransportName());
-//       cras::outputString(topicAllocator, singleTopicPub->getTopicToAdvertise(baseTopic));
-//       cras::outputString(dataTypeAllocator, singleTopicPub->getDataType());
-//       cras::outputString(configTypeAllocator, singleTopicPub->getConfigDataType());
-//     }
-//     catch (const pluginlib::PluginlibException& e)
-//     {
-//     }
-//   }
-// }
-
-// void pointCloudTransportGetTopicToSubscribe(const char* baseTopic,
-//                                             const char* transport,
-//                                             cras::allocator_t nameAllocator,
-//                                             cras::allocator_t topicAllocator,
-//                                             cras::allocator_t dataTypeAllocator,
-//                                             cras::allocator_t configTypeAllocator)
-// {
-//   auto subLoader = getLoader().getSubscriberLoader();
-//   for (const auto& transportPlugin : subLoader->getDeclaredClasses())
-//   {
-//     try
-//     {
-//       auto sub = subLoader->createSharedInstance(transportPlugin);
-
-//       const auto transportClass = erase_last_copy(transportPlugin, "_sub");
-//       if (transportClass != transport && sub->getTransportName() != transport)
-//         continue;
-
-//       auto singleTopicSub =
-// std::dynamic_pointer_cast<point_cloud_transport::SingleTopicSubscriberPlugin>(sub);
-//       if (singleTopicSub == nullptr)
-//         continue;
-
-//       cras::outputString(nameAllocator, singleTopicSub->getTransportName());
-//       cras::outputString(topicAllocator, singleTopicSub->getTopicToSubscribe(baseTopic));
-//       cras::outputString(dataTypeAllocator, singleTopicSub->getDataType());
-//       cras::outputString(configTypeAllocator, singleTopicSub->getConfigDataType());
-//       return;
-//     }
-//     catch (const pluginlib::PluginlibException& e)
-//     {
-//     }
-//   }
-// }
 
 }  // namespace point_cloud_transport

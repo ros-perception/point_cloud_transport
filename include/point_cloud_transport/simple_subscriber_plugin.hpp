@@ -40,8 +40,10 @@
 #include <string>
 #include <type_traits>
 
+#include "rclcpp/serialization.hpp"
 #include "rclcpp/subscription.hpp"
 
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
 namespace point_cloud_transport
@@ -121,10 +123,24 @@ public:
   /**
    * \brief Decode the given compressed pointcloud into a raw message.
    * \param[in] compressed The input compressed pointcloud.
-   * \param[in] config Config of the decompression (if it has any parameters).
    * \return The raw cloud message (if encoding succeeds), or an error message.
    */
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;
+
+  DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const override
+  {
+    auto msg = std::make_shared<M>();
+    try {
+      auto serializer = rclcpp::Serialization<M>();
+      serializer.deserialize_message(compressed.get(), msg.get());
+    } catch (const std::exception & e) {
+      return cras::make_unexpected(
+        "Error deserializing message for transport decoder: " + std::string(
+          e.what()) + ".");
+    }
+
+    return this->decodeTyped(*msg);
+  }
 
 protected:
   /**
@@ -148,7 +164,7 @@ protected:
    *
    * Defaults to \<base topic\>/\<transport name\>.
    */
-  virtual std::string getTopicToSubscribe(const std::string & base_topic) const
+  std::string getTopicToSubscribe(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
   }

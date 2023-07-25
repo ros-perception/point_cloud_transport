@@ -58,8 +58,12 @@ public:
     return "raw";
   }
 
-  RawPublisher::TypedEncodeResult encodeTyped(
-    const sensor_msgs::msg::PointCloud2 & raw) const
+  std::string getDataType() const override
+  {
+    return "sensor_msgs/msg/PointCloud2";
+  }
+
+  RawPublisher::TypedEncodeResult encodeTyped(const sensor_msgs::msg::PointCloud2 & raw) const
   {
     return raw;
   }

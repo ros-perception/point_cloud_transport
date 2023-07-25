@@ -126,8 +126,8 @@ Subscriber create_subscription(
 /**
 * Advertise and subscribe to PointCloud2 topics.
 *
-* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
+* PointCloudTransport is analogous to rclcpp::Node in that it contains create_publisher() and
+* create_subscription() functions for creating publishers and subscriptions of PointCloud2 topics.
 */
 
 class PointCloudTransport : public PointCloudTransportLoader
@@ -234,22 +234,5 @@ private:
 };
 
 }  // namespace point_cloud_transport
-
-// TODO(anyone): May need these?
-// extern "C" void pointCloudTransportGetLoadableTransports(
-//     cras::allocator_t transportAllocator, cras::allocator_t nameAllocator);
-
-// extern "C" void pointCloudTransportGetTopicsToPublish(
-//     const char* baseTopic,
-// cras::allocator_t transportAllocator,
-// cras::allocator_t nameAllocator,
-//     cras::allocator_t topicAllocator,
-// cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
-
-// extern "C" void pointCloudTransportGetTopicToSubscribe(
-//     const char* baseTopic, const char* transport, cras::allocator_t nameAllocator,
-// cras::allocator_t topicAllocator,
-//     cras::allocator_t dataTypeAllocator, cras::allocator_t configTypeAllocator);
-
 
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_TRANSPORT_HPP_

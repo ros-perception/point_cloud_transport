@@ -34,14 +34,16 @@
 #ifndef POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
 #define POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_
 
-#include <point_cloud_transport/c_api.h>
-
 #include <memory>
 #include <string>
 #include <vector>
 
+#include <pluginlib/class_loader.hpp>
+#include <pluginlib/exceptions.hpp>
+
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
+#include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
 
@@ -49,11 +51,8 @@ namespace point_cloud_transport
 {
 
 /**
-* Advertise and subscribe to PointCloud2 topics.
-*
-* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
-*/
+   * Class to expose all the functionality of pointcloud transport (encode/decode msgs) without needing to spin a node.
+   */
 
 class PointCloudCodec
 {
@@ -61,73 +60,140 @@ public:
   //! Constructor
   PointCloudCodec();
 
-  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(const std::string & name)
-  const;
+  //! Destructor
+  virtual ~PointCloudCodec();
 
-  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByTopic(
-    const std::string & topic, const std::string & datatype) const;
+  /**
+   * Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
+   * e.g. if you want the raw encoder, call getEncoderByName("raw").
+   *
+   * \param name The name of the transport to load.
+   * \returns A shared pointer to the publisher plugin.
+   */
+  std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(
+    const std::string & name);
 
+  /**
+   * Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
+   * e.g. if you want the raw decoder, call getDecoderByName("raw").
+   *
+   * \param name The name of the transport to load.
+   * \returns A shared pointer to the subscriber plugin.
+   */
   std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
-    const std::string & name) const;
+    const std::string & name);
 
-  std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByTopic(
-    const std::string & topic, const std::string & datatype) const;
+  /**
+   * Get a list of all the transports that can be loaded.
+   *
+   * \param[out] transports Vector of the loadable transport plugins.
+   * \param[out] names Vector of string identifieries for the transport provided by each plugin
+   */
+  void getLoadableTransports(
+    std::vector<std::string> & transports,
+    std::vector<std::string> & names);
+
+  /**
+   * Get a list of all the transport plugins, topics, transport names, and their data types that can be loaded.
+   *
+   * \param[in] baseTopic The base topic to use for the transport.
+   * \param[out] transports Vector of the loadable transport plugins.
+   * \param[out] topics Vector of the topics that can be published.
+   * \param[out] names Vector of string identifieries for the transport provided by each plugin
+   * \param[out] dataTypes Vector of the data types the transports encode a PointCloud2 into
+   */
+  void getTopicsToPublish(
+    const std::string & baseTopic,
+    std::vector<std::string> & transports,
+    std::vector<std::string> & topics,
+    std::vector<std::string> & names,
+    std::vector<std::string> & dataTypes);
+
+  /**
+   * Get the topic, transport name, and data type that a given topic is published on for a particular transport plugin.
+   *
+   * \param[in] baseTopic The base topic to use for the transport.
+   * \param[in] transport The transport plugin to load.
+   * \param[out] topic The topic that should be subscribed to.
+   * \param[out] name String identifier for the transport provided by the plugin
+   * \param[out] dataType The data type the transport encodes a PointCloud2 into
+   */
+  void getTopicToSubscribe(
+    const std::string & baseTopic,
+    const std::string & transport,
+    std::string & topic,
+    std::string & name,
+    std::string & dataType);
+
+  /**
+   * Encode a PointCloud2 message into a serialized message
+   * using the specified transport plugin. The underlying type
+   * of the serialized message is determined by the transport plugin,
+   * but doesnt need to be known by this function.
+   *
+   * \param[in] transport_name The name of the transport plugin to use.
+   * \param[in] msg The message to encode.
+   * \param[out] serialized_msg The serialized message to store the encoded message in.
+   * \returns True if the message was successfully encoded, false otherwise.
+   */
+  bool encode(
+    const std::string & transport_name,
+    const sensor_msgs::msg::PointCloud2 & msg,
+    rclcpp::SerializedMessage & serialized_msg);
+
+  /**
+   * Encode a PointCloud2 message into some compressed message type
+   * using the specified transport plugin. The compressed message type
+   * is determined by the transport plugin.
+   *
+   * \param[in] transport_name The name of the transport plugin to use.
+   * \param[in] msg The message to encode.
+   * \param[out] compressed_msg The compressed message to store the encoded message in.
+   * \returns True if the message was successfully encoded, false otherwise.
+   */
+  template<class M>
+  bool encodeTyped(
+    const std::string & transport_name,
+    const sensor_msgs::msg::PointCloud2 & msg,
+    M & compressed_msg);
+
+  /**
+   * Dencode a serialized message into a PointCloud2
+   * using the specified transport plugin. The underlying type
+   * of the serialized message is determined by the transport plugin,
+   * but doesnt need to be known by this function.
+   *
+   * \param[in] transport_name The name of the transport plugin to use.
+   * \param[in] serialized_msg The serialized message to decode.
+   * \param[out] msg The message to store the decoded output in.
+   * \returns True if the message was successfully decoded, false otherwise.
+   */
+  bool decode(
+    const std::string & transport_name,
+    const rclcpp::SerializedMessage & serialized_msg,
+    sensor_msgs::msg::PointCloud2 & msg);
+
+  /**
+   * Decode some compressed message type
+   * into a PointCloud2 based on the specified transport plugin. The compressed message type
+   * is determined by the transport plugin.
+   *
+   * \param[in] transport_name The name of the transport plugin to use.
+   * \param[in] compressed_msg The compressed message to decode.
+   * \param[out] msg The message to store the decoded output in.
+   * \returns True if the message was successfully decoded, false otherwise.
+   */
+  template<class M>
+  bool decodeTyped(
+    const std::string & transport_name,
+    const M & compressed_msg,
+    sensor_msgs::msg::PointCloud2 & msg);
 
 private:
-  struct Impl;
-  typedef std::shared_ptr<Impl> ImplPtr;
-  typedef std::weak_ptr<Impl> ImplWPtr;
-
-  ImplPtr impl_;
+  point_cloud_transport::PubLoaderPtr enc_loader_;
+  point_cloud_transport::SubLoaderPtr dec_loader_;
 };
 
 }  // namespace point_cloud_transport
 
-extern "C" bool pointCloudTransportCodecsEncode(
-  const char * codec,
-  sensor_msgs::msg::PointCloud2::_height_type rawHeight,
-  sensor_msgs::msg::PointCloud2::_width_type rawWidth,
-  size_t rawNumFields,
-  const char * rawFieldNames[],
-  sensor_msgs::PointField::_offset_type rawFieldOffsets[],
-  sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
-  sensor_msgs::PointField::_count_type rawFieldCounts[],
-  sensor_msgs::msg::PointCloud2::_is_bigendian_type rawIsBigendian,
-  sensor_msgs::msg::PointCloud2::_point_step_type rawPointStep,
-  sensor_msgs::msg::PointCloud2::_row_step_type rawRowStep,
-  size_t rawDataLength,
-  const uint8_t rawData[],
-  sensor_msgs::msg::PointCloud2::_is_dense_type rawIsDense,
-  cras::allocator_t compressedTypeAllocator,
-  cras::allocator_t compressedMd5SumAllocator,
-  cras::allocator_t compressedDataAllocator,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
-  cras::allocator_t errorStringAllocator,
-  cras::allocator_t logMessagesAllocator
-);
-
-extern "C" bool pointCloudTransportCodecsDecode(
-  const char * topicOrCodec,
-  const char * compressedType,
-  const char * compressedMd5sum,
-  size_t compressedDataLength,
-  const uint8_t compressedData[],
-  sensor_msgs::msg::PointCloud2::_height_type & rawHeight,
-  sensor_msgs::msg::PointCloud2::_width_type & rawWidth,
-  uint32_t & rawNumFields,
-  cras::allocator_t rawFieldNamesAllocator,
-  cras::allocator_t rawFieldOffsetsAllocator,
-  cras::allocator_t rawFieldDatatypesAllocator,
-  cras::allocator_t rawFieldCountsAllocator,
-  sensor_msgs::msg::PointCloud2::_is_bigendian_type & rawIsBigEndian,
-  sensor_msgs::msg::PointCloud2::_point_step_type & rawPointStep,
-  sensor_msgs::msg::PointCloud2::_row_step_type & rawRowStep,
-  cras::allocator_t rawDataAllocator,
-  sensor_msgs::msg::PointCloud2::_is_dense_type & rawIsDense,
-  size_t serializedConfigLength,
-  const uint8_t serializedConfig[],
-  cras::allocator_t errorStringAllocator,
-  cras::allocator_t logMessagesAllocator
-);
 #endif  // POINT_CLOUD_TRANSPORT__POINT_CLOUD_CODEC_HPP_

@@ -56,9 +56,9 @@ public:
    * in the node's local namespace. For consistency across ROS applications, the
    * name of this parameter should not be changed without good reason.
    *
-   * @param node Node to use when looking up the transport parameter.
-   * @param default_transport Preferred transport to use
-   * @param parameter_name The name of the transport parameter
+   * \param node Node to use when looking up the transport parameter.
+   * \param default_transport Preferred transport to use
+   * \param parameter_name The name of the transport parameter
    *
    */
   POINT_CLOUD_TRANSPORT_PUBLIC

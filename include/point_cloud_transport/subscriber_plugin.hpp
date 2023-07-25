@@ -76,6 +76,13 @@ public:
    */
   virtual std::string getTransportName() const = 0;
 
+  /**
+   * \brief Decode the given compressed pointcloud into a raw cloud.
+   * \param[in] compressed The rclcpp::SerializedMessage of the compressed pointcloud to be decoded.
+   * \return The decoded raw pointcloud (if decoding succeeds), or an error message.
+   */
+  virtual DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const =
+  0;
 
   /**
    * \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.
@@ -135,9 +142,19 @@ public:
   virtual void shutdown() = 0;
 
   /**
+   * Return the datatype of the transported messages (as text in the form `package/Message`).
+   */
+  virtual std::string getDataType() const = 0;
+
+  /**
    * Declare parameter with this SubscriberPlugin.
    */
   virtual void declareParameters() = 0;
+
+  /**
+   * Get the name of the topic that this SubscriberPlugin will subscribe to.
+   */
+  virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
   /**
    * Return the lookup name of the SubscriberPlugin associated with a specific
@@ -171,24 +188,6 @@ protected:
       "SubscriberPlugin::subscribeImpl with five arguments has not been overridden");
     this->subscribeImpl(node, base_topic, callback, custom_qos);
   }
-};
-
-class SingleTopicSubscriberPlugin : public SubscriberPlugin
-{
-public:
-  /**
-   * Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
-  virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
-
-  /**
-   * Return the datatype of the dynamic reconfigure (as text in the form `package/Config`).
-   *
-   * Return empty string if no reconfiguration is supported.
-   */
-  virtual std::string getConfigDataType() const = 0;
 };
 
 }  // namespace point_cloud_transport

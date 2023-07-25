@@ -13,11 +13,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake_ros REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 
 find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(pybind11_vendor REQUIRED)
+find_package(python_cmake_module REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(
@@ -35,7 +41,7 @@ fetchcontent_makeavailable(expected)
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
-  # src/point_cloud_codec.cpp # TODO: This is needed for exposing the encode/decode functions without spinning an node
+  src/point_cloud_codec.cpp
   src/point_cloud_common.cpp
   src/point_cloud_transport.cpp
   src/publisher.cpp
@@ -105,6 +111,33 @@ target_link_libraries(list_transports
   ${PROJECT_NAME}
   pluginlib::pluginlib)
 
+
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
+# Python bindings
+pybind11_add_module(_codec SHARED
+  src/pybind_codec.cpp
+)
+target_link_libraries(_codec PRIVATE
+  ${PROJECT_NAME}
+  pluginlib::pluginlib
+)
+
+# Install cython modules as sub-modules of the project
+install(
+  TARGETS
+    _codec
+  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
+)
+
+# Install Python executables
+install(PROGRAMS
+  point_cloud_transport/publisher.py
+  point_cloud_transport/subscriber.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Install plugin descriptions
 pluginlib_export_plugin_description_file(${PROJECT_NAME} default_plugins.xml)
 
@@ -148,6 +181,14 @@ if(BUILD_TESTING)
   if(TARGET ${PROJECT_NAME}-publisher)
     target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME})
     ament_target_dependencies(${PROJECT_NAME}-publisher
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-codec test/test_point_cloud_codec.cpp)
+  if(TARGET ${PROJECT_NAME}-codec)
+    target_link_libraries(${PROJECT_NAME}-codec ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-codec
       pluginlib
     )
   endif()
