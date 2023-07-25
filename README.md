@@ -67,7 +67,7 @@ ros2 run point_cloud_transport republish --in_transport draco --out_transport ra
 
 The functionality of `point_cloud_transport` is also exposed to python via `pybind11` and `rclpy` serialization.
 
-Please see[point_cloud_transport/publisher.py](point_cloud_transport/publisher.py) and [point_cloud_transport/subscriber.py](point_cloud_transport/subscriber.py) for example usage.
+Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.py) and [point_cloud_transport/subscriber.py](point_cloud_transport/subscriber.py) for example usage.
 
 ### Blacklist point cloud transport
 
