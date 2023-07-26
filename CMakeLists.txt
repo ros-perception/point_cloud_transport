@@ -30,14 +30,8 @@ include_directories(
   include
 )
 
-include(FetchContent)
-fetchcontent_declare(
-  expected
-  GIT_REPOSITORY https://github.com/TartanLlama/expected
-  GIT_TAG        v1.1.0
-)
-
-fetchcontent_makeavailable(expected)
+# Tell CMake where to find the ThirdParty expected dependency
+set(expected_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/expected")
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
