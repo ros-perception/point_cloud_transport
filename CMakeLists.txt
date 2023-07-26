@@ -160,12 +160,35 @@ ament_export_targets(export_${PROJECT_NAME})
 ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(AMENT_LINT_AUTO_FILE_EXCLUDE 
+  set(
+    _linter_excludes
     doc/conf.py
-    ${expected_SOURCE_DIR}
+    ${expected_SOURCE_DIR}/include/tl/expected.hpp
   )
-  ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_copyright REQUIRED)
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_flake8 REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_pep257 REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  find_package(ament_cmake_xmllint REQUIRED)
+
+  ament_copyright(EXCLUDE ${_linter_excludes})
+  ament_cppcheck(
+    EXCLUDE ${_linter_excludes}
+    LANGUAGE c++
+  )
+  ament_cpplint(EXCLUDE ${_linter_excludes})
+  ament_flake8(EXCLUDE ${_linter_excludes})
+  ament_lint_cmake()
+  ament_pep257(EXCLUDE ${_linter_excludes})
+  ament_uncrustify(
+    EXCLUDE ${_linter_excludes}
+    LANGUAGE c++
+  )
+  ament_xmllint()
 
   find_package(ament_cmake_gtest)
 
