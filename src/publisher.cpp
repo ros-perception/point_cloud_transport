@@ -132,30 +132,32 @@ Publisher::Publisher(
   if (param_base_name.front() == '.') {
     param_base_name = param_base_name.substr(1);
   }
-  std::vector<std::string> allowlist_vec;
-  std::set<std::string> allowlist;
+  std::vector<std::string> whitelist_vec;
+
   std::vector<std::string> all_transport_names;
   for (const auto & lookup_name : loader->getDeclaredClasses()) {
     all_transport_names.emplace_back(erase_last_copy(lookup_name, "_pub"));
   }
 
   try {
-    allowlist_vec = node->declare_parameter<std::vector<std::string>>(
+    whitelist_vec = node->declare_parameter<std::vector<std::string>>(
       impl_->base_topic_ + "/enable_pub_plugins", all_transport_names);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
     RCLCPP_DEBUG_STREAM(
       node->get_logger(), param_base_name << "/enable_pub_plugins" << " was previously declared"
     );
-    allowlist_vec =
+    whitelist_vec =
       node->get_parameter(
       impl_->base_topic_ +
       "/enable_pub_plugins").get_value<std::vector<std::string>>();
   }
-  for (size_t i = 0; i < allowlist_vec.size(); ++i) {
-    allowlist.insert(allowlist_vec[i]);
+
+  std::set<std::string> whitelist;
+  for (size_t i = 0; i < whitelist_vec.size(); ++i) {
+    whitelist.insert(whitelist_vec[i]);
   }
 
-  for (const auto & transport_name : allowlist) {
+  for (const auto & transport_name : whitelist) {
     const auto & lookup_name = transport_name + "_pub";
     try {
       auto pub = loader->createUniqueInstance(lookup_name);
