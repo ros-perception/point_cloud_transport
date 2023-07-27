@@ -33,10 +33,10 @@
 
 """Subscriber automatically converting from any transport to raw."""
 
-from rclpy.node import Node
-
-from point_cloud_transport.common import TransportInfo, stringToPointCloud2, stringToMsgType
 from point_cloud_transport._codec import PointCloudCodec, VectorString
+from point_cloud_transport.common import stringToMsgType, stringToPointCloud2, TransportInfo
+
+from rclpy.node import Node
 
 
 def _get_loadable_transports(codec: PointCloudCodec):
@@ -57,24 +57,25 @@ def _get_topic_to_subscribe(codec, base_topic, transport_name):
 
 
 class Subscriber(Node):
+
     def __init__(self):
-        node_name = "point_cloud_transport_subscriber"
+        node_name = 'point_cloud_transport_subscriber'
         super().__init__(node_name)
 
-        self.base_topic = "point_cloud"
-        self.transport = self.get_parameter_or("transport", "raw")
+        self.base_topic = 'point_cloud'
+        self.transport = self.get_parameter_or('transport', 'raw')
         self.codec = PointCloudCodec()
 
         transports = _get_loadable_transports(self.codec)
         if self.transport not in transports and self.transport not in transports.values():
             raise RuntimeError(
-                "Point cloud transport '%s' not found." % (self.transport,))
+                'Point cloud transport "%s" not found.' % (self.transport,))
 
         self.transport_info = _get_topic_to_subscribe(
             self.codec, self.base_topic, self.transport)
         if self.transport_info is None:
             raise RuntimeError(
-                "Point cloud transport '%s' not found." % (self.transport,))
+                'Point cloud transport "%s" not found.' % (self.transport,))
 
         # subscribe to compressed, serialized msg
         self.subscriber = self.create_subscription(stringToMsgType(
@@ -87,7 +88,7 @@ class Subscriber(Node):
         print(cloud)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import rclpy
     import sys
 
