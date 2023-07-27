@@ -163,7 +163,7 @@ public:
     simple_impl_.reset();
   }
 
-  void declareParameters(const std::string & base_topic) override
+  void declareParameters(const std::string & /*base_topic*/) override
   {
     auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
       "point_cloud_transport");
