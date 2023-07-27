@@ -180,6 +180,7 @@ public:
     const VoidPtr & tracked_object = {},
     const point_cloud_transport::TransportHints * transport_hints = nullptr)
   {
+    (void)tracked_object;
     rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
     custom_qos.depth = queue_size;
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions();

@@ -62,7 +62,7 @@ struct TransportDesc
   PluginStatus sub_status;
 };
 
-int main(int argc, char ** argv)
+int main(int /*argc*/, char ** /*argv*/)
 {
   pluginlib::ClassLoader<point_cloud_transport::PublisherPlugin> pub_loader(
     "point_cloud_transport",
