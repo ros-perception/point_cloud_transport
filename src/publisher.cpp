@@ -141,15 +141,15 @@ Publisher::Publisher(
 
   try {
     whitelist_vec = node->declare_parameter<std::vector<std::string>>(
-      impl_->base_topic_ + "/enable_pub_plugins", all_transport_names);
+      impl_->base_topic_ + ".enable_pub_plugins", all_transport_names);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
     RCLCPP_DEBUG_STREAM(
-      node->get_logger(), param_base_name << "/enable_pub_plugins" << " was previously declared"
+      node->get_logger(), param_base_name << ".enable_pub_plugins" << " was previously declared"
     );
     whitelist_vec =
       node->get_parameter(
       impl_->base_topic_ +
-      "/enable_pub_plugins").get_value<std::vector<std::string>>();
+      ".enable_pub_plugins").get_value<std::vector<std::string>>();
   }
 
   std::set<std::string> whitelist;
