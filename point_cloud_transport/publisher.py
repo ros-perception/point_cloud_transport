@@ -33,12 +33,12 @@
 
 """Publisher that automatically publishes to all declared transports."""
 
-from rclpy.parameter import Parameter
-from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2
-
-from point_cloud_transport.common import TransportInfo, pointCloud2ToString, stringToMsgType
 from point_cloud_transport._codec import PointCloudCodec, VectorString
+from point_cloud_transport.common import pointCloud2ToString, stringToMsgType, TransportInfo
+
+from rclpy.node import Node
+from rclpy.parameter import Parameter
+from sensor_msgs.msg import PointCloud2
 
 
 def _get_topics_to_publish(codec, base_topic, logger):
@@ -66,14 +66,14 @@ def _get_topics_to_publish(codec, base_topic, logger):
 class Publisher(Node):
 
     def __init__(self):
-        node_name = "point_cloud_transport_publisher"
+        node_name = 'point_cloud_transport_publisher'
         super().__init__(node_name)
 
         self.codec = PointCloudCodec()
-        print("Codec created")
+        print('Codec created')
         self.topics_to_publish = _get_topics_to_publish(
-            self.codec, "point_cloud", self.get_logger())
-        print("Topics to publish: \n", self.topics_to_publish)
+            self.codec, 'point_cloud', self.get_logger())
+        print('Topics to publish: \n', self.topics_to_publish)
 
         self.declare_parameter('enable_pub_plugins', Parameter.Type.STRING_ARRAY)
         whitelist = self.get_parameter('enable_pub_plugins')
@@ -98,7 +98,7 @@ class Publisher(Node):
                 self.get_logger().error('Error encoding message!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import rclpy
     import sys
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         publisher_node = Publisher()
         rclpy.spin(publisher_node)
     except Exception as e:
-        print("Error in publisher node!")
+        print('Error in publisher node!')
         print(e)
     finally:
         if publisher_node is not None:

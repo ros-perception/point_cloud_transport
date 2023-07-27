@@ -31,9 +31,10 @@
 
 """Common definitions."""
 
-from rclpy.serialization import serialize_message, deserialize_message
-from sensor_msgs.msg import PointCloud2
 from importlib import import_module
+
+from rclpy.serialization import deserialize_message, serialize_message
+from sensor_msgs.msg import PointCloud2
 
 
 class TransportInfo(object):
@@ -45,7 +46,7 @@ class TransportInfo(object):
 
 
 def stringToPointCloud2(buffer: str):
-    cloud = deserialize_message(buffer, "sensor_msgs/msg/PointCloud2")
+    cloud = deserialize_message(buffer, 'sensor_msgs/msg/PointCloud2')
     return cloud
 
 
@@ -58,11 +59,11 @@ def stringToMsgType(message_type_str):
     try:
         # Dynamically import the message type
         package_name, message_type = message_type_str.replace(
-            "/", ".").rsplit(".", 1)
+            '/', '.').rsplit('.', 1)
         module = import_module(package_name)
         message_class = getattr(module, message_type)
         # Return the subscription object
         return message_class
     except Exception as e:
-        print(f"Error creating subscription: {e}")
+        print(f'Error creating subscription: {e}')
         return None
