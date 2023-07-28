@@ -37,6 +37,7 @@ from point_cloud_transport._codec import PointCloudCodec, VectorString
 from point_cloud_transport.common import pointCloud2ToString, stringToMsgType, TransportInfo
 
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from sensor_msgs.msg import PointCloud2
 
 
@@ -74,12 +75,12 @@ class Publisher(Node):
             self.codec, 'point_cloud', self.get_logger())
         print('Topics to publish: \n', self.topics_to_publish)
 
-        blacklist = set(self.get_parameter_or('disable_pub_plugins', []))
-        print('Blacklist: \n' + str(blacklist))
+        self.declare_parameter('enable_pub_plugins', Parameter.Type.STRING_ARRAY)
+        whitelist = self.get_parameter('enable_pub_plugins')
 
         self.transport_publishers = {}
         for transport in self.topics_to_publish:
-            if transport in blacklist:
+            if transport not in whitelist.value:
                 continue
             topic_to_publish = self.topics_to_publish[transport]
             self.transport_publishers[transport] = self.create_publisher(

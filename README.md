@@ -48,7 +48,7 @@ bool success = codec.encode("draco", msg, serialized_msg);
 
 // OR
 
-// typed version (outputs whatever message your selected transport returns, 
+// typed version (outputs whatever message your selected transport returns,
 // for draco that is a point_cloud_interfaces::msg::CompressedPointCloud2)
 point_cloud_interfaces::msg::CompressedPointCloud2 compressed_msg;
 bool success = codec.encode("draco", msg, compressed_msg);
@@ -69,12 +69,12 @@ The functionality of `point_cloud_transport` is also exposed to python via `pybi
 
 Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.py) and [point_cloud_transport/subscriber.py](point_cloud_transport/subscriber.py) for example usage.
 
-### Blacklist point cloud transport
+### Whitelist point cloud transport
 
-This allows you to specify plugins you do not want to load (a.k.a. blacklist them).
+This allows you to specify plugins you do want to load (a.k.a. whitelist them).
 
 ```bash
-ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/disable_pub_plugins:=["point_cloud_transport/raw"]
+ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p pct.point_cloud.enable_pub_plugins:=["point_cloud_transport/zlib"]
 ```
 
 ## Known transports
