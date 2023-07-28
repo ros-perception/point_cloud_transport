@@ -141,14 +141,14 @@ Publisher::Publisher(
 
   try {
     whitelist_vec = node->declare_parameter<std::vector<std::string>>(
-      impl_->base_topic_ + ".enable_pub_plugins", all_transport_names);
+      param_base_name + ".enable_pub_plugins", all_transport_names);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
     RCLCPP_DEBUG_STREAM(
       node->get_logger(), param_base_name << ".enable_pub_plugins" << " was previously declared"
     );
     whitelist_vec =
       node->get_parameter(
-      impl_->base_topic_ +
+      param_base_name +
       ".enable_pub_plugins").get_value<std::vector<std::string>>();
   }
 
@@ -162,7 +162,6 @@ Publisher::Publisher(
     try {
       auto pub = loader->createUniqueInstance(lookup_name);
       pub->advertise(node, point_cloud_topic, custom_qos, options);
-      impl_->base_topic_ = pub->getTopic();
       impl_->publishers_.push_back(std::move(pub));
     } catch (const std::runtime_error & e) {
       RCLCPP_ERROR(

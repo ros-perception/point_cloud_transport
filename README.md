@@ -74,7 +74,7 @@ Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.
 This allows you to specify plugins you do want to load (a.k.a. whitelist them).
 
 ```bash
-ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p /pct/point_cloud/enable_pub_plugins:=["point_cloud_transport/zlib"]
+ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p pct.point_cloud.enable_pub_plugins:=["point_cloud_transport/zlib"]
 ```
 
 ## Known transports
