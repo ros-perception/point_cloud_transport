@@ -37,6 +37,8 @@
 #include <utility>
 #include <vector>
 
+#include "pluginlib/class_loader.hpp"
+
 #include "rclcpp/expand_topic_or_service_name.hpp"
 #include "rclcpp/logging.hpp"
 #include "rclcpp/node.hpp"

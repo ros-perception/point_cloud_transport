@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 
+#include <pluginlib/class_loader.hpp>
 #include <pluginlib/exceptions.hpp>
 
 #include "rclcpp/expand_topic_or_service_name.hpp"
