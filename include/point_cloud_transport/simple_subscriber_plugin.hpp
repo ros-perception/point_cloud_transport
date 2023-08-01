@@ -75,6 +75,14 @@ public:
   {
   }
 
+  rclcpp::Logger getLogger() const
+  {
+    if (impl_) {
+      return impl_->logger_;
+    }
+    return rclcpp::get_logger("point_cloud_transport");
+  }
+
   std::string getTopic() const override
   {
     if (impl_) {
@@ -175,12 +183,8 @@ protected:
     const Callback & callback,
     rmw_qos_profile_t custom_qos) override
   {
-    impl_ = std::make_unique<Impl>();
-    // Push each group of transport-specific parameters into a separate sub-namespace
-    // ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
-    //
+    impl_ = std::make_unique<Impl>(node);
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
-    impl_->node_ = node;
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
@@ -196,11 +200,7 @@ protected:
     rmw_qos_profile_t custom_qos,
     rclcpp::SubscriptionOptions options)
   {
-    impl_ = std::make_unique<Impl>();
-    // Push each group of transport-specific parameters into a separate sub-namespace
-    // ros::NodeHandle param_nh(transport_hints.getParameterNH(), getTransportName());
-    //
-    impl_->node_ = node;
+    impl_ = std::make_unique<Impl>(node);
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     impl_->sub_ = node->create_subscription<M>(
       getTopicToSubscribe(base_topic), qos,
@@ -214,8 +214,15 @@ protected:
 private:
   struct Impl
   {
+    explicit Impl(std::shared_ptr<rclcpp::Node> node)
+    : node_(node),
+      logger_(node->get_logger())
+    {
+    }
+
     rclcpp::SubscriptionBase::SharedPtr sub_;
     std::shared_ptr<rclcpp::Node> node_;
+    rclcpp::Logger logger_;
     rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
   };
 

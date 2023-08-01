@@ -42,8 +42,6 @@
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include "pluginlib/class_loader.hpp"
-
 #include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
