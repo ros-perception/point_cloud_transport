@@ -159,6 +159,17 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher advertise(
     const std::string & base_topic,
+    uint32_t queue_size,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+  {
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
+    custom_qos.depth = queue_size;
+    return Publisher(node_, base_topic, pub_loader_, custom_qos, options);
+  }
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  Publisher advertise(
+    const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {

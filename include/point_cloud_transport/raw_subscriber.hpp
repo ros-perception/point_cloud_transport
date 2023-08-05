@@ -79,15 +79,6 @@ protected:
 
   using SubscriberPlugin::subscribeImpl;
 
-  void subscribeImpl(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    const Callback & callback,
-    rmw_qos_profile_t custom_qos,
-    rclcpp::SubscriptionOptions options) override
-  {
-    this->subscribeImplWithOptions(node, base_topic, callback, custom_qos, options);
-  }
 };
 
 }  // namespace point_cloud_transport

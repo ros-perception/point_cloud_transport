@@ -193,12 +193,12 @@ protected:
     this->declareParameters();
   }
 
-  void subscribeImplWithOptions(
+  void subscribeImpl(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos,
-    rclcpp::SubscriptionOptions options)
+    rclcpp::SubscriptionOptions options) override
   {
     impl_ = std::make_unique<Impl>(node);
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
