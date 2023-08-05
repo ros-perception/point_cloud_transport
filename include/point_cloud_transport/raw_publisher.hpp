@@ -63,6 +63,10 @@ public:
     return "sensor_msgs/msg/PointCloud2";
   }
 
+  void declareParameters() override
+  {
+  }
+
   RawPublisher::TypedEncodeResult encodeTyped(const sensor_msgs::msg::PointCloud2 & raw) const
   {
     return raw;

@@ -66,6 +66,8 @@ public:
 
   std::string getDataType() const override;
 
+  void declareParameters() override;
+
   std::string getTransportName() const override;
 
 protected:

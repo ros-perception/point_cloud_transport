@@ -124,10 +124,6 @@ public:
     impl_.reset();
   }
 
-  void declareParameters() override
-  {
-  }
-
   /**
    * \brief Decode the given compressed pointcloud into a raw message.
    * \param[in] compressed The input compressed pointcloud.
