@@ -55,7 +55,6 @@ std::string RawSubscriber::getDataType() const
 
 void RawSubscriber::declareParameters()
 {
-
 }
 
 SubscriberPlugin::DecodeResult RawSubscriber::decodeTyped(

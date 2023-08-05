@@ -80,7 +80,6 @@ protected:
   std::string getTopicToSubscribe(const std::string & base_topic) const override;
 
   using SubscriberPlugin::subscribeImpl;
-
 };
 
 }  // namespace point_cloud_transport
