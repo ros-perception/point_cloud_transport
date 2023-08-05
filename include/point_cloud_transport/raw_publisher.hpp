@@ -63,7 +63,7 @@ public:
     return "sensor_msgs/msg/PointCloud2";
   }
 
-  void declareParameters() override
+  void declareParameters(const std::string & /*base_topic*/) override
   {
   }
 
