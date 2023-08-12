@@ -245,6 +245,15 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-message-filter test/test_message_filter.cpp)
+  if(TARGET ${PROJECT_NAME}-message-filter)
+    target_link_libraries(${PROJECT_NAME}-message-filter ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-message-filter
+      message_filters
+      pluginlib
+    )
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-single_subscriber_publisher test/test_single_subscriber_publisher.cpp)
   if(TARGET ${PROJECT_NAME}-single_subscriber_publisher)
     target_link_libraries(${PROJECT_NAME}-single_subscriber_publisher ${PROJECT_NAME})

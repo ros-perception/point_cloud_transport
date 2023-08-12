@@ -76,10 +76,10 @@ TEST_F(MessagePassingTesting, one_message_passing)
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  auto pub = point_cloud_transport::create_publisher(node_, "camera/pointcloud");
+  auto pub = point_cloud_transport::create_publisher(node_, "pointcloud");
   auto sub =
     point_cloud_transport::create_subscription(
-    node_, "camera/pointcloud", pointcloudCallback,
+    node_, "pointcloud", pointcloudCallback,
     "raw");
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
