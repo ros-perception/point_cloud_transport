@@ -1,12 +1,22 @@
-# SPDX-License-Identifier: BSD-3-Clause
-# SPDX-FileCopyrightText: Czech Technical University in Prague
+from setuptools import find_packages, setup
 
-from catkin_pkg.python_setup import generate_distutils_setup
-from setuptools import setup
+package_name = 'point_cloud_transport'
 
-setup_args = generate_distutils_setup(
-    packages=['point_cloud_transport'],
-    package_dir={'': 'src'},
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=find_packages(exclude=['test']),
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='john-maidbot',
+    maintainer_email='john.dangelo@tailos.com',
+    entry_points={
+        'console_scripts': [
+        ],
+    },
 )
-
-setup(**setup_args)
