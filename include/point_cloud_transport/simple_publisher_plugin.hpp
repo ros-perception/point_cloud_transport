@@ -42,8 +42,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include "rclcpp/serialization.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tl/expected.hpp>
 
-#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
@@ -75,7 +75,7 @@ class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
 public:
   /// \brief Result of cloud encoding. Either the compressed cloud message,
   /// empty value, or error message.
-  typedef cras::expected<std::optional<M>, std::string> TypedEncodeResult;
+  typedef tl::expected<std::optional<M>, std::string> TypedEncodeResult;
 
   ~SimplePublisherPlugin()
   {
@@ -114,7 +114,7 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    rclcpp::node_interfaces::NodeParametersInterface::OnParametersSetCallbackType
     param_change_callback)
   {
     if (simple_impl_) {
@@ -171,7 +171,7 @@ public:
     // encode the message using the expected transport method
     auto res = this->encodeTyped(raw);
     if (!res) {
-      return cras::make_unexpected(res.error());
+      return tl::make_unexpected(res.error());
     }
     if (!res.value()) {
       return std::nullopt;

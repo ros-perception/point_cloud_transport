@@ -40,8 +40,8 @@
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tl/expected.hpp>
 
-#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
 #include "point_cloud_transport/visibility_control.hpp"
@@ -57,7 +57,7 @@ class POINT_CLOUD_TRANSPORT_PUBLIC SubscriberPlugin
 public:
   /// \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2`
   /// holding the raw message, empty value or error message.
-  typedef cras::expected<std::optional<sensor_msgs::msg::PointCloud2::ConstSharedPtr>,
+  typedef tl::expected<std::optional<sensor_msgs::msg::PointCloud2::ConstSharedPtr>,
       std::string> DecodeResult;
 
   SubscriberPlugin() = default;

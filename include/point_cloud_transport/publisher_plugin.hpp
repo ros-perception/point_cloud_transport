@@ -38,8 +38,8 @@
 
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tl/expected.hpp>
 
-#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
 
@@ -52,7 +52,7 @@ class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 public:
   /// \brief Result of cloud encoding. Either an holding the compressed cloud,
   /// empty value or error message.
-  typedef cras::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
+  typedef tl::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
       std::string> EncodeResult;
 
   PublisherPlugin() = default;

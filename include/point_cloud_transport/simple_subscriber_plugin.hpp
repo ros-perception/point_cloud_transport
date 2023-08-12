@@ -98,7 +98,7 @@ public:
   }
 
   void setParamCallback(
-    rclcpp::node_interfaces::NodeParametersInterface::OnSetParametersCallbackType
+    rclcpp::node_interfaces::NodeParametersInterface::OnParametersSetCallbackType
     param_change_callback)
   {
     if (impl_) {
@@ -134,7 +134,7 @@ public:
       auto serializer = rclcpp::Serialization<M>();
       serializer.deserialize_message(compressed.get(), msg.get());
     } catch (const std::exception & e) {
-      return cras::make_unexpected(
+      return tl::make_unexpected(
         "Error deserializing message for transport decoder: " + std::string(
           e.what()) + ".");
     }
