@@ -94,17 +94,6 @@ struct Publisher::Impl
     }
   }
 
-  void subscriberCB(
-    const point_cloud_transport::SingleSubscriberPublisher & plugin_pub,
-    const point_cloud_transport::SubscriberStatusCallback & user_cb)
-  {
-    point_cloud_transport::SingleSubscriberPublisher ssp(
-      plugin_pub.getSubscriberName(), getTopic(),
-      std::bind(&Publisher::Impl::getNumSubscribers, this),
-      plugin_pub.publish_fn_);
-    user_cb(ssp);
-  }
-
   rclcpp::Logger logger_;
   std::string base_topic_;
   PubLoaderPtr loader_;
@@ -237,31 +226,5 @@ Publisher::operator void *() const
 {
   return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
 }
-
-// TODO(anyone): fix this
-// void Publisher::weakSubscriberCb(const ImplWPtr& impl_wptr,
-//  const point_cloud_transport::SingleSubscriberPublisher& plugin_pub,
-//  const point_cloud_transport::SubscriberStatusCallback& user_cb)
-// {
-//   if (ImplPtr impl = impl_wptr.lock())
-//   {
-//     impl->subscriberCB(plugin_pub, user_cb);
-//   }
-// }
-
-// SubscriberStatusCallback Publisher::rebindCB(
-//   const point_cloud_transport::SubscriberStatusCallback& user_cb)
-// {
-//   // Note: the subscriber callback must be bound to the internal Impl object, not
-//   // 'this'. Due to copying behavior the Impl object may outlive the original Publisher
-//   // instance. But it should not outlive the last Publisher, so we use a weak_ptr.
-//   if (user_cb)
-//   {
-//     ImplWPtr impl_wptr(impl_);
-//     return std::bind(&Publisher::weakSubscriberCb, impl_wptr, _1, user_cb);
-//   }
-
-//   return {};
-// }
 
 }  // namespace point_cloud_transport
