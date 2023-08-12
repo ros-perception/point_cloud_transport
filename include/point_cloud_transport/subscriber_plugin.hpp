@@ -76,7 +76,8 @@ public:
 
   ///
   /// \brief Decode the given compressed pointcloud into a raw cloud.
-  /// \param[in] compressed The rclcpp::SerializedMessage of the compressed pointcloud to be decoded.
+  /// \param[in] compressed The rclcpp::SerializedMessage of the compressed pointcloud
+  /// to be decoded.
   /// \return The decoded raw pointcloud (if decoding succeeds), or an error message.
   ///
   virtual DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const =
@@ -142,7 +143,8 @@ public:
   ///
   /// \brief Get the name of the topic that this SubscriberPlugin will subscribe to.
   /// \param[in] base_topic The topic that the subscriber was constructed with.
-  /// \return The name of the topic that this SubscriberPlugin will subscribe to (e.g. <base_topic>/<transport_name>).
+  /// \return The name of the topic that this SubscriberPlugin will subscribe to
+  /// (e.g. <base_topic>/<transport_name>).
   virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
   ///
