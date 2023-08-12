@@ -48,21 +48,21 @@
 namespace point_cloud_transport
 {
 
-/// 
+///
 /// Manages a subscription callback on a specific topic that can be interpreted
 /// as a PointCloud2 topic.
-/// 
+///
 /// Subscriber is the client-side counterpart to Publisher. By loading the
 /// appropriate plugin, it can subscribe to a base point cloud topic using any available
 /// transport. The complexity of what transport is actually used is hidden from the user,
 /// who sees only a normal PointCloud2 callback.
-/// 
+///
 /// A Subscriber should always be created through a call to PointCloudTransport::subscribe(),
 /// or copied from one that was.
 /// Once all copies of a specific Subscriber go out of scope, the subscription callback
 /// associated with that handle will stop being called. Once all Subscriber for a given
 /// topic go out of scope the topic will be unsubscribed.
-/// 
+///
 class Subscriber
 {
 public:
@@ -81,12 +81,12 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
-  /// 
+  ///
   /// \brief Returns the base point cloud topic.
-  /// 
+  ///
   /// The Subscriber may actually be subscribed to some transport-specific topic that
   /// differs from the base topic.
-  /// 
+  ///
   POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTopic() const;
 

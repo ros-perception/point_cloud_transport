@@ -45,30 +45,30 @@
 namespace point_cloud_transport
 {
 
-/// 
+///
 /// PointCloud2 subscription filter.
-/// 
+///
 /// This class wraps Subscriber as a "filter" compatible with the message_filters
 /// package. It acts as a highest-level filter, simply passing messages from a point cloud
 /// transport subscription through to the filters which have connected to it.
-/// 
+///
 /// When this object is destroyed it will unsubscribe from the ROS subscription.
-/// 
+///
 /// SubscriberFilter has no input connection.
-/// 
+///
 /// The output connection for the SubscriberFilter object is the same signature as for rclcpp
 /// subscription callbacks.
-/// 
+///
 class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::msg::PointCloud2>
 {
 public:
-  /// 
+  ///
   /// \brief Constructor
   /// \param node The rclcpp node to use to subscribe.
   /// \param base_topic The topic to subscribe to.
   /// \param queue_size The subscription queue size
   /// \param transport The transport hint to pass along
-  /// 
+  ///
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
@@ -89,15 +89,15 @@ public:
     unsubscribe();
   }
 
-  /// 
-  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic, 
+  ///
+  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
   /// this function will first unsubscribe.
   /// \param node The rclcpp Node to use to subscribe.
   /// \param base_topic The topic to subscribe to.
   /// \param transport The transport hint to pass along
   /// \param custom_qos Custom quality of service
   /// \param options Subscriber options
-  /// 
+  ///
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     std::shared_ptr<rclcpp::Node> node,

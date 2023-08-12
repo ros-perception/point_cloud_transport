@@ -50,7 +50,10 @@ protected:
   rclcpp::Node::SharedPtr node_;
 };
 
-void callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg1, const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg2){
+void callback(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg1,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg2)
+{
   (void) msg1;
   (void) msg2;
 }
@@ -58,14 +61,16 @@ void callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg1, const 
 TEST_F(TestSubscriber, create_and_release_filter)
 {
   typedef message_filters::sync_policies::ApproximateTime<
-    sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
+      sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
     ApproximateTimePolicy;
   typedef std::shared_ptr<message_filters::Synchronizer<ApproximateTimePolicy>> Sync;
 
   point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
   point_cloud_transport::SubscriberFilter pcl_sub2(node_, "pointcloud2", "raw");
 
-  auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(ApproximateTimePolicy(10), pcl_sub1, pcl_sub2);
+  auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
+    ApproximateTimePolicy(
+      10), pcl_sub1, pcl_sub2);
   sync->registerCallback(std::bind(callback, std::placeholders::_1, std::placeholders::_2));
 
   pcl_sub1.unsubscribe();

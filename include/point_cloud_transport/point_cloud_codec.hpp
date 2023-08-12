@@ -61,7 +61,7 @@ public:
 
   /// \brief Get a shared pointer to an instance of a publisher plugin given its transport name (publishers encode messages).
   /// e.g. if you want the raw encoder, call getEncoderByName("raw").
-  /// 
+  ///
   /// \param name The name of the transport to load.
   /// \returns A shared pointer to the publisher plugin.
   std::shared_ptr<point_cloud_transport::PublisherPlugin> getEncoderByName(
@@ -69,31 +69,31 @@ public:
 
   /// \brief Get a shared pointer to an instance of a publisher plugin given its transport name (subscribers decode messages).
   /// e.g. if you want the raw decoder, call getDecoderByName("raw").
-  /// 
+  ///
   /// \param name The name of the transport to load.
   /// \returns A shared pointer to the subscriber plugin.
   std::shared_ptr<point_cloud_transport::SubscriberPlugin> getDecoderByName(
     const std::string & name);
 
-  /// 
+  ///
   /// \brief Get a list of all the transports that can be loaded.
-  /// 
+  ///
   /// \param[out] transports Vector of the loadable transport plugins.
   /// \param[out] names Vector of string identifieries for the transport provided by each plugin
-  /// 
+  ///
   void getLoadableTransports(
     std::vector<std::string> & transports,
     std::vector<std::string> & names);
 
-  /// 
+  ///
   /// \brief Get a list of all the transport plugins, topics, transport names, and their data types that can be loaded.
-  /// 
+  ///
   /// \param[in] baseTopic The base topic to use for the transport.
   /// \param[out] transports Vector of the loadable transport plugins.
   /// \param[out] topics Vector of the topics that can be published.
   /// \param[out] names Vector of string identifieries for the transport provided by each plugin
   /// \param[out] dataTypes Vector of the data types the transports encode a PointCloud2 into
-  /// 
+  ///
   void getTopicsToPublish(
     const std::string & baseTopic,
     std::vector<std::string> & transports,
@@ -101,15 +101,15 @@ public:
     std::vector<std::string> & names,
     std::vector<std::string> & dataTypes);
 
-  /// 
+  ///
   /// \brief Get the topic, transport name, and data type that a given topic is published on for a particular transport plugin.
-  /// 
+  ///
   /// \param[in] baseTopic The base topic to use for the transport.
   /// \param[in] transport The transport plugin to load.
   /// \param[out] topic The topic that should be subscribed to.
   /// \param[out] name String identifier for the transport provided by the plugin
   /// \param[out] dataType The data type the transport encodes a PointCloud2 into
-  /// 
+  ///
   void getTopicToSubscribe(
     const std::string & baseTopic,
     const std::string & transport,
@@ -117,32 +117,32 @@ public:
     std::string & name,
     std::string & dataType);
 
-  /// 
+  ///
   /// \brief Encode a PointCloud2 message into a serialized message
   /// using the specified transport plugin. The underlying type
   /// of the serialized message is determined by the transport plugin,
   /// but doesnt need to be known by this function.
-  /// 
+  ///
   /// \param[in] transport_name The name of the transport plugin to use.
   /// \param[in] msg The message to encode.
   /// \param[out] serialized_msg The serialized message to store the encoded message in.
   /// \returns True if the message was successfully encoded, false otherwise.
-  /// 
+  ///
   bool encode(
     const std::string & transport_name,
     const sensor_msgs::msg::PointCloud2 & msg,
     rclcpp::SerializedMessage & serialized_msg);
 
-  /// 
+  ///
   /// \brief Encode a PointCloud2 message into some compressed message type
   /// using the specified transport plugin. The compressed message type
   /// is determined by the transport plugin.
-  /// 
+  ///
   /// \param[in] transport_name The name of the transport plugin to use.
   /// \param[in] msg The message to encode.
   /// \param[out] compressed_msg The compressed message to store the encoded message in.
   /// \returns True if the message was successfully encoded, false otherwise.
-  /// 
+  ///
   template<class M>
   bool encodeTyped(
     const std::string & transport_name,
@@ -153,12 +153,12 @@ public:
   /// using the specified transport plugin. The underlying type
   /// of the serialized message is determined by the transport plugin,
   /// but doesnt need to be known by this function.
-  /// 
+  ///
   /// \param[in] transport_name The name of the transport plugin to use.
   /// \param[in] serialized_msg The serialized message to decode.
   /// \param[out] msg The message to store the decoded output in.
   /// \returns True if the message was successfully decoded, false otherwise.
-  /// 
+  ///
   bool decode(
     const std::string & transport_name,
     const rclcpp::SerializedMessage & serialized_msg,
@@ -167,12 +167,12 @@ public:
   /// \brief Decode some compressed message type
   /// into a PointCloud2 based on the specified transport plugin. The compressed message type
   /// is determined by the transport plugin.
-  /// 
+  ///
   /// \param[in] transport_name The name of the transport plugin to use.
   /// \param[in] compressed_msg The compressed message to decode.
   /// \param[out] msg The message to store the decoded output in.
   /// \returns True if the message was successfully decoded, false otherwise.
-  /// 
+  ///
   template<class M>
   bool decodeTyped(
     const std::string & transport_name,

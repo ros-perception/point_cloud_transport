@@ -49,9 +49,9 @@
 namespace point_cloud_transport
 {
 
-/// 
+///
 /// Base class for plugins to Subscriber.
-/// 
+///
 class POINT_CLOUD_TRANSPORT_PUBLIC SubscriberPlugin
 {
 public:
@@ -68,23 +68,23 @@ public:
 
   typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
 
-  /// 
+  ///
   /// Get a string identifier for the transport provided by
   /// this plugin.
-  /// 
+  ///
   virtual std::string getTransportName() const = 0;
 
-  /// 
+  ///
   /// \brief Decode the given compressed pointcloud into a raw cloud.
   /// \param[in] compressed The rclcpp::SerializedMessage of the compressed pointcloud to be decoded.
   /// \return The decoded raw pointcloud (if decoding succeeds), or an error message.
-  /// 
+  ///
   virtual DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const =
   0;
 
-  /// 
+  ///
   /// \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.
-  /// 
+  ///
   void subscribe(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const Callback & callback,
@@ -94,9 +94,9 @@ public:
     return subscribeImpl(node, base_topic, callback, custom_qos, options);
   }
 
-  /// 
+  ///
   /// \brief Subscribe to an pointcloud topic, version for bare function.
-  /// 
+  ///
   void subscribe(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
@@ -109,9 +109,9 @@ public:
       custom_qos, options);
   }
 
-  /// 
+  ///
   /// \brief Subscribe to an pointcloud topic, version for class member function with bare pointer.
-  /// 
+  ///
   template<class T>
   void subscribe(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
@@ -145,21 +145,21 @@ public:
   /// \return The name of the topic that this SubscriberPlugin will subscribe to (e.g. <base_topic>/<transport_name>).
   virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
-  /// 
+  ///
   /// \brief Return the lookup name of the SubscriberPlugin associated with a specific
   /// transport identifier.
   /// \param transport_type The transport identifier.
   /// \return The lookup name of the SubscriberPlugin associated with a specific
-  /// 
+  ///
   static std::string getLookupName(const std::string & transport_type)
   {
     return "point_cloud_transport/" + transport_type + "_sub";
   }
 
 protected:
-  /// 
+  ///
   /// Subscribe to a point cloud transport topic. Must be implemented by the subclass.
-  /// 
+  ///
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,

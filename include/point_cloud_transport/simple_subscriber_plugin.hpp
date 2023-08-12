@@ -47,22 +47,22 @@
 namespace point_cloud_transport
 {
 
-/// 
+///
 /// \brief Base class to simplify implementing most plugins to Subscriber.
-/// 
+///
 /// The base class simplifies implementing a SubscriberPlugin in the common case that
 /// all communication with the matching PublisherPlugin happens over a single ROS
 /// topic using a transport-specific message type. SimpleSubscriberPlugin is templated
 /// on the transport-specific message type.
-/// 
+///
 /// A subclass needs to implement:
 /// - getTransportName() from SubscriberPlugin
 /// - decodeTyped()
 /// - getDataType()
 /// - declareParameters()
-/// 
+///
 /// \tparam M Type of the subscribed messages.
-/// 
+///
 template<class M>
 class SimpleSubscriberPlugin : public SubscriberPlugin
 {
@@ -120,11 +120,11 @@ public:
     impl_.reset();
   }
 
-  /// 
+  ///
   /// \brief Decode the given compressed pointcloud into a raw message.
   /// \param[in] compressed The input compressed pointcloud.
   /// \return The raw cloud message (if encoding succeeds), or an error message.
-  /// 
+  ///
   virtual DecodeResult decodeTyped(const M & compressed) const = 0;
 
   DecodeResult decode(const std::shared_ptr<rclcpp::SerializedMessage> & compressed) const override
@@ -143,10 +143,9 @@ public:
   }
 
 protected:
-
-  /// 
+  ///
   /// \brief Process a message. Must be implemented by the subclass.
-  /// 
+  ///
   virtual void callback(const typename std::shared_ptr<const M> & message, const Callback & user_cb)
   {
     DecodeResult res = this->decodeTyped(*message);
@@ -160,11 +159,11 @@ protected:
     }
   }
 
-  /// 
+  ///
   /// \brief Return the communication topic name for a given base topic.
-  /// 
+  ///
   /// Defaults to \<base topic\>/\<transport name\>.
-  /// 
+  ///
   std::string getTopicToSubscribe(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();

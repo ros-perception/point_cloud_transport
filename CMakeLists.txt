@@ -162,7 +162,6 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 if(BUILD_TESTING)
   set(
     _linter_excludes
-    doc/conf.py
     ${expected_SOURCE_DIR}/include/tl/expected.hpp
   )
 

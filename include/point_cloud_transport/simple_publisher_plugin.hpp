@@ -52,23 +52,23 @@
 namespace point_cloud_transport
 {
 
-/// 
+///
 /// \brief Base class to simplify implementing most plugins to Publisher.
-/// 
+///
 /// This base class vastly simplifies implementing a PublisherPlugin in the common
 /// case that all communication with the matching SubscriberPlugin happens over a
 /// single ROS topic using a transport-specific message type. SimplePublisherPlugin
 /// is templated on the transport-specific message type and publisher dynamic
 /// reconfigure type.
-/// 
+///
 /// A subclass needs to implement:
 /// - getTransportName() from PublisherPlugin
 /// - encodeTyped()
 /// - getDataType()
 /// - declareParameters()
-/// 
+///
 /// \tparam M Type of the published messages.
-/// 
+///
 template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
 {
@@ -156,12 +156,12 @@ public:
     simple_impl_.reset();
   }
 
-  /// 
+  ///
   /// \brief Encode the given raw pointcloud into a compressed message.
   /// \param[in] raw The input raw pointcloud.
   /// \return The output rmw serialized msg holding the compressed cloud message
   /// (if encoding succeeds), or an error message.
-  /// 
+  ///
   POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
@@ -207,13 +207,13 @@ protected:
   //! Generic function for publishing the internal message type.
   typedef std::function<void (const M &)> PublishFn;
 
-  /// 
+  ///
   /// \brief Publish a point cloud using the specified publish function.
-  /// 
+  ///
   /// The PublishFn publishes the transport-specific message type. This indirection allows
   /// SimplePublisherPlugin to use this function for both normal broadcast publishing and
   /// single subscriber publishing (in subscription callbacks).
-  /// 
+  ///
   virtual void publish(
     const sensor_msgs::msg::PointCloud2 & message,
     const PublishFn & publish_fn) const
@@ -228,11 +228,11 @@ protected:
     }
   }
 
-  /// 
+  ///
   /// \brief Return the communication topic name for a given base topic.
-  /// 
+  ///
   /// Defaults to \<base topic\>/\<transport name\>.
-  /// 
+  ///
   std::string getTopicToAdvertise(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
@@ -257,11 +257,11 @@ private:
 
   typedef std::function<void (const sensor_msgs::msg::PointCloud2 &)> PointCloudPublishFn;
 
-  /// 
+  ///
   /// \brief Returns a function object for publishing the transport-specific message type
   /// through some ROS publisher type.
   /// \param pub An object with method void publish(const M&)
-  /// 
+  ///
   template<class PubT>
   PublishFn bindInternalPublisher(PubT * pub) const
   {
