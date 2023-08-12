@@ -211,7 +211,7 @@ public:
   //! Subscribe to a point cloud topic, version for bare function.
   POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::Subscriber subscribe(
-    const std::string & base_topic, rmw_profile_t custom_qos,
+    const std::string & base_topic, rmw_qos_profile_t custom_qos,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
     const point_cloud_transport::TransportHints * transport_hints = nullptr)
   {
@@ -236,7 +236,7 @@ public:
   //! Subscribe to a point cloud topic, version for class member function with bare pointer.
   template<class T>
   point_cloud_transport::Subscriber subscribe(
-    const std::string & base_topic, rmw_profile_t custom_qos,
+    const std::string & base_topic, rmw_qos_profile_t custom_qos,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const, T * obj,
     const point_cloud_transport::TransportHints * transport_hints = nullptr,
     bool allow_concurrent_callbacks = false)
@@ -263,7 +263,7 @@ public:
   //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
   template<class T>
   point_cloud_transport::Subscriber subscribe(
-    const std::string & base_topic, rmw_profile_t custom_qos,
+    const std::string & base_topic, rmw_qos_profile_t custom_qos,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const,
     const std::shared_ptr<T> & obj,
     const point_cloud_transport::TransportHints * transport_hints = nullptr)
