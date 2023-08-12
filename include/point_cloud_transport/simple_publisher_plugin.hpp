@@ -52,32 +52,29 @@
 namespace point_cloud_transport
 {
 
-/**
- * \brief Base class to simplify implementing most plugins to Publisher.
- *
- * This base class vastly simplifies implementing a PublisherPlugin in the common
- * case that all communication with the matching SubscriberPlugin happens over a
- * single ROS topic using a transport-specific message type. SimplePublisherPlugin
- * is templated on the transport-specific message type and publisher dynamic
- * reconfigure type.
- *
- * A subclass need implement only two methods:
- * - getTransportName() from PublisherPlugin
- * - encodeTyped()
- *
- * For access to the parameter server and name remappings, use nh().
- *
- * getTopicToAdvertise() controls the name of the internal communication topic.
- * It defaults to \<base topic\>/\<transport name\>.
- *
- * \tparam M Type of the published messages.
- */
+/// 
+/// \brief Base class to simplify implementing most plugins to Publisher.
+/// 
+/// This base class vastly simplifies implementing a PublisherPlugin in the common
+/// case that all communication with the matching SubscriberPlugin happens over a
+/// single ROS topic using a transport-specific message type. SimplePublisherPlugin
+/// is templated on the transport-specific message type and publisher dynamic
+/// reconfigure type.
+/// 
+/// A subclass needs to implement:
+/// - getTransportName() from PublisherPlugin
+/// - encodeTyped()
+/// - getDataType()
+/// - declareParameters()
+/// 
+/// \tparam M Type of the published messages.
+/// 
 template<class M>
 class SimplePublisherPlugin : public point_cloud_transport::PublisherPlugin
 {
 public:
-  //! \brief Result of cloud encoding. Either the compressed cloud message,
-  // empty value, or error message.
+  /// \brief Result of cloud encoding. Either the compressed cloud message,
+  /// empty value, or error message.
   typedef cras::expected<std::optional<M>, std::string> TypedEncodeResult;
 
   ~SimplePublisherPlugin()
@@ -92,7 +89,7 @@ public:
     return rclcpp::get_logger("point_cloud_transport");
   }
 
-  // template function for getting parameter of a given type
+  //! template function for getting parameter of a given type
   template<typename T>
   bool getParam(const std::string & name, T & value) const
   {
@@ -145,10 +142,8 @@ public:
   void publish(const sensor_msgs::msg::PointCloud2 & message) const override
   {
     if (!simple_impl_ || !simple_impl_->pub_) {
-      auto logger = simple_impl_ ? simple_impl_->logger_ : rclcpp::get_logger(
-        "point_cloud_transport");
       RCLCPP_ERROR(
-        logger,
+        this->getLogger(),
         "Call to publish() on an invalid point_cloud_transport::SimplePublisherPlugin");
       return;
     }
@@ -161,12 +156,12 @@ public:
     simple_impl_.reset();
   }
 
-  /**
-   * \brief Encode the given raw pointcloud into a compressed message.
-   * \param[in] raw The input raw pointcloud.
-   * \return The output rmw serialized msg holding the compressed cloud message
-   * (if encoding succeeds), or an error message.
-   */
+  /// 
+  /// \brief Encode the given raw pointcloud into a compressed message.
+  /// \param[in] raw The input raw pointcloud.
+  /// \return The output rmw serialized msg holding the compressed cloud message
+  /// (if encoding succeeds), or an error message.
+  /// 
   POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
@@ -200,7 +195,7 @@ protected:
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);
 
-    RCLCPP_DEBUG(simple_impl_->logger_, "getTopicToAdvertise: %s", transport_topic.c_str());
+    RCLCPP_DEBUG(node->get_logger(), "getTopicToAdvertise: %s", transport_topic.c_str());
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     simple_impl_->pub_ = node->create_publisher<M>(transport_topic, qos, options);
 
@@ -212,14 +207,13 @@ protected:
   //! Generic function for publishing the internal message type.
   typedef std::function<void (const M &)> PublishFn;
 
-  /**
-   * Publish a point cloud using the specified publish function. Must be implemented by
-   * the subclass.
-   *
-   * The PublishFn publishes the transport-specific message type. This indirection allows
-   * SimplePublisherPlugin to use this function for both normal broadcast publishing and
-   * single subscriber publishing (in subscription callbacks).
-   */
+  /// 
+  /// \brief Publish a point cloud using the specified publish function.
+  /// 
+  /// The PublishFn publishes the transport-specific message type. This indirection allows
+  /// SimplePublisherPlugin to use this function for both normal broadcast publishing and
+  /// single subscriber publishing (in subscription callbacks).
+  /// 
   virtual void publish(
     const sensor_msgs::msg::PointCloud2 & message,
     const PublishFn & publish_fn) const
@@ -227,19 +221,18 @@ protected:
     const auto res = this->encodeTyped(message);
     if (!res) {
       RCLCPP_ERROR(
-        rclcpp::get_logger(
-          "point_cloud_transport"), "Error encoding message by transport %s: %s.",
+        this->getLogger(), "Error encoding message by transport %s: %s.",
         this->getTransportName().c_str(), res.error().c_str());
     } else if (res.value()) {
       publish_fn(res.value().value());
     }
   }
 
-  /**
-   * \brief Return the communication topic name for a given base topic.
-   *
-   * Defaults to \<base topic\>/\<transport name\>.
-   */
+  /// 
+  /// \brief Return the communication topic name for a given base topic.
+  /// 
+  /// Defaults to \<base topic\>/\<transport name\>.
+  /// 
   std::string getTopicToAdvertise(const std::string & base_topic) const override
   {
     return base_topic + "/" + getTransportName();
@@ -264,12 +257,11 @@ private:
 
   typedef std::function<void (const sensor_msgs::msg::PointCloud2 &)> PointCloudPublishFn;
 
-  /**
-   * Returns a function object for publishing the transport-specific message type
-   * through some ROS publisher type.
-   *
-   * \param pub An object with method void publish(const M&)
-   */
+  /// 
+  /// \brief Returns a function object for publishing the transport-specific message type
+  /// through some ROS publisher type.
+  /// \param pub An object with method void publish(const M&)
+  /// 
   template<class PubT>
   PublishFn bindInternalPublisher(PubT * pub) const
   {

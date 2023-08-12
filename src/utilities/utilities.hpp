@@ -20,16 +20,16 @@
 
 namespace point_cloud_transport
 {
-/// Get the option from a list of arguments
-/// param[in] args List of arguments
-/// param[in] option name to extract
-/// return option value
+/// \brief Get the option from a list of arguments
+/// \param[in] args List of arguments
+/// \param[in] option name to extract
+/// \return option value
 std::string get_option(const std::vector<std::string> & args, const std::string & option_name);
 
-/// Is the option available in the list of arguments
-/// param[in] args List of arguments
-/// param[in] option name to extract
-/// return true if the option exists or false otherwise
+/// \brief Is the option available in the list of arguments
+/// \param[in] args List of arguments
+/// \param[in] option name to extract
+/// \return true if the option exists or false otherwise
 bool has_option(const std::vector<std::string> & args, const std::string & option_name);
 }  // namespace point_cloud_transport
 #endif  // UTILITIES__UTILITIES_HPP_

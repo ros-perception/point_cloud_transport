@@ -52,12 +52,9 @@
 namespace point_cloud_transport
 {
 
-/**
-* Advertise and subscribe to PointCloud2 topics.
-*
-* PointCloudTransport is analogous to ros::NodeHandle in that it contains advertise() and
-* subscribe() functions for creating advertisements and subscriptions of PointCloud2 topics.
-*/
+//! Advertise and subscribe to PointCloud2 topics.
+//! PointCloudTransport is analogous to rclcpp::Node in that it contains functions
+//! to create publishers and subscriptions of PointCloud2 topics.
 
 class PointCloudTransportLoader
 {
@@ -76,7 +73,7 @@ public:
   std::vector<std::string> getDeclaredTransports() const;
 
   //! Returns the names of all transports that are loadable in the system
-  // (keys are lookup names, values are names).
+  //! (keys are lookup names, values are names).
   POINT_CLOUD_TRANSPORT_PUBLIC
   std::unordered_map<std::string, std::string> getLoadableTransports() const;
 
@@ -99,9 +96,12 @@ protected:
   point_cloud_transport::SubLoaderPtr sub_loader_;
 };
 
-/*!
- * \brief Advertise an image topic, free function version.
- */
+/// \brief Advertise every available transport on pointcloud topics, free function version.
+/// \param node The ROS node to use for any ROS operations
+/// \param base_topic The base topic for the publisher
+/// \param custom_qos The QoS profile to use for the underlying publisher(s)
+/// \param options The publisher options to use for the underlying publisher(s)
+/// \return The advertised publisher
 POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
   std::shared_ptr<rclcpp::Node> node,
@@ -109,9 +109,14 @@ Publisher create_publisher(
   rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
-/**
- * \brief Subscribe to an image topic, free function version.
- */
+/// \brief Subscribe to a pointcloud transport topic, free function version.
+/// \param node The ROS node to use for any ROS operations
+/// \param base_topic The base topic for the sbuscription
+/// \param callback The callback to invoke on receipt of a message
+/// \param transport The transport to use for the subscription
+/// \param custom_qos The QoS profile to use for the underlying publisher
+/// \param options The publisher options to use for the underlying publisher
+/// \return The subscriber
 POINT_CLOUD_TRANSPORT_PUBLIC
 Subscriber create_subscription(
   std::shared_ptr<rclcpp::Node> node,
@@ -120,13 +125,6 @@ Subscriber create_subscription(
   const std::string & transport,
   rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
-
-/**
-* Advertise and subscribe to PointCloud2 topics.
-*
-* PointCloudTransport is analogous to rclcpp::Node in that it contains create_publisher() and
-* create_subscription() functions for creating publishers and subscriptions of PointCloud2 topics.
-*/
 
 class PointCloudTransport : public PointCloudTransportLoader
 {
@@ -184,21 +182,45 @@ public:
   //! Subscribe to a point cloud topic, version for arbitrary std::function object.
   POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::Subscriber subscribe(
-    const std::string & base_topic, uint32_t queue_size,
+    const std::string & base_topic, rmw_qos_profile_t custom_qos,
     const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> & callback,
     const VoidPtr & tracked_object = {},
     const point_cloud_transport::TransportHints * transport_hints = nullptr)
   {
     (void)tracked_object;
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
-    custom_qos.depth = queue_size;
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions();
     return Subscriber(
       node_, base_topic, callback, sub_loader_,
       getTransportOrDefault(transport_hints), custom_qos, options);
   }
 
+  //! Subscribe to a point cloud topic, version for arbitrary std::function object.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  point_cloud_transport::Subscriber subscribe(
+    const std::string & base_topic, uint32_t queue_size,
+    const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> & callback,
+    const VoidPtr & tracked_object = {},
+    const point_cloud_transport::TransportHints * transport_hints = nullptr)
+  {
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
+    custom_qos.depth = queue_size;
+    return subscribe(
+      base_topic, custom_qos, callback, tracked_object, transport_hints);
+  }
+
   //! Subscribe to a point cloud topic, version for bare function.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  point_cloud_transport::Subscriber subscribe(
+    const std::string & base_topic, rmw_profile_t custom_qos,
+    void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
+    const point_cloud_transport::TransportHints * transport_hints = nullptr)
+  {
+    return subscribe(
+      base_topic, custom_qos,
+      std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>(fp),
+      VoidPtr(), transport_hints);
+  }
+
   POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,
@@ -214,6 +236,19 @@ public:
   //! Subscribe to a point cloud topic, version for class member function with bare pointer.
   template<class T>
   point_cloud_transport::Subscriber subscribe(
+    const std::string & base_topic, rmw_profile_t custom_qos,
+    void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const, T * obj,
+    const point_cloud_transport::TransportHints * transport_hints = nullptr,
+    bool allow_concurrent_callbacks = false)
+  {
+    return subscribe(
+      base_topic, custom_qos, std::bind(
+        fp,
+        obj.get(), std::placeholders::_1), VoidPtr(), transport_hints);
+  }
+
+  template<class T>
+  point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const, T * obj,
     const point_cloud_transport::TransportHints * transport_hints = nullptr,
@@ -226,6 +261,19 @@ public:
   }
 
   //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
+  template<class T>
+  point_cloud_transport::Subscriber subscribe(
+    const std::string & base_topic, rmw_profile_t custom_qos,
+    void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const,
+    const std::shared_ptr<T> & obj,
+    const point_cloud_transport::TransportHints * transport_hints = nullptr)
+  {
+    return subscribe(
+      base_topic, custom_qos, std::bind(
+        fp,
+        obj.get(), std::placeholders::_1), obj, transport_hints);
+  }
+
   template<class T>
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,

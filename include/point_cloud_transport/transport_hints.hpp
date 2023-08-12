@@ -46,19 +46,17 @@ namespace point_cloud_transport
 class TransportHints
 {
 public:
-  /**
-   * Constructor.
-   *
-   * The default transport can be overridden by setting a certain parameter to the
-   * name of the desired transport. By default this parameter is named "point_cloud_transport"
-   * in the node's local namespace. For consistency across ROS applications, the
-   * name of this parameter should not be changed without good reason.
-   *
-   * \param node Node to use when looking up the transport parameter.
-   * \param default_transport Preferred transport to use
-   * \param parameter_name The name of the transport parameter
-   *
-   */
+  /// 
+  /// Constructor.
+  /// 
+  /// The default transport can be overridden by setting a certain parameter to the
+  /// name of the desired transport. By default this parameter is named "point_cloud_transport"
+  /// in the node's local namespace. For consistency across ROS applications, the
+  /// name of this parameter should not be changed without good reason.
+  /// 
+  /// \param node Node to use when looking up the transport parameter.
+  /// \param default_transport Preferred transport to use
+  /// \param parameter_name The name of the transport parameter
   POINT_CLOUD_TRANSPORT_PUBLIC
   TransportHints(
     const std::shared_ptr<rclcpp::Node> node,

@@ -58,18 +58,15 @@ using ::tl::unexpected;
 
 namespace cras
 {
-/**
- * \brief Type trait determining whether type T is cras::expected or not.
- * \tparam T The type to test.
- */
+/// \brief Type trait determining whether type T is cras::expected or not.
+/// \tparam T The type to test.
 template<typename T>
 struct is_cras_expected : public ::std::false_type {};
 
-/**
- * \brief Type trait determining whether type T is std::optional or not.
- * \tparam T Type of the expected value.
- * \tparam E Type of the expected error.
- */
+
+/// \brief Type trait determining whether type T is std::optional or not.
+/// \tparam T Type of the expected value.
+/// \tparam E Type of the expected error.
 template<typename T, typename E>
 struct is_cras_expected<::cras::expected<T, E>>: public ::std::true_type {};
 }  // namespace cras
