@@ -45,12 +45,12 @@ const
 }
 
 void PublisherPlugin::advertise(
-  std::shared_ptr<rclcpp::Node> nh,
+  std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
   rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  advertiseImpl(nh, base_topic, custom_qos, options);
+  advertiseImpl(node, base_topic, custom_qos, options);
 }
 
 void PublisherPlugin::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const

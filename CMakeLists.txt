@@ -162,7 +162,6 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
 if(BUILD_TESTING)
   set(
     _linter_excludes
-    doc/conf.py
     ${expected_SOURCE_DIR}/include/tl/expected.hpp
   )
 
@@ -241,6 +240,15 @@ if(BUILD_TESTING)
   if(TARGET ${PROJECT_NAME}-remapping)
     target_link_libraries(${PROJECT_NAME}-remapping ${PROJECT_NAME})
     ament_target_dependencies(${PROJECT_NAME}-remapping
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-message-filter test/test_message_filter.cpp)
+  if(TARGET ${PROJECT_NAME}-message-filter)
+    target_link_libraries(${PROJECT_NAME}-message-filter ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-message-filter
+      message_filters
       pluginlib
     )
   endif()

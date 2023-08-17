@@ -44,12 +44,12 @@
 namespace point_cloud_transport
 {
 
-/**
- * The default SubscriberPlugin.
- *
- * RawSubscriber is a simple wrapper for ros::Subscriber which listens for PointCloud2 messages
- * and passes them through to the callback.
- */
+///
+/// \brief The default SubscriberPlugin.
+///
+/// RawSubscriber is a simple wrapper for rclcpp::Subscription which listens for
+/// PointCloud2 messages and passes them through to the callback.
+///
 class RawSubscriber
   : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::msg::PointCloud2>
 {

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Open Source Robotics Foundation, Inc.
+// Copyright (c) 2023 John D'Angelo
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -28,12 +28,17 @@
 
 #include <gtest/gtest.h>
 
+#include <message_filters/subscriber.h>
+#include <message_filters/sync_policies/approximate_time.h>
+#include <message_filters/synchronizer.h>
+
 #include <string>
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
+#include "point_cloud_transport/subscriber_filter.hpp"
 
 class TestSubscriber : public ::testing::Test
 {
@@ -46,28 +51,32 @@ protected:
   rclcpp::Node::SharedPtr node_;
 };
 
-TEST_F(TestSubscriber, construction_and_destruction)
+void callback(
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg1,
+  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg2)
 {
-  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
-    [](const auto & msg) {
-      (void)msg;
-    };
-
-  auto sub = point_cloud_transport::create_subscription(node_, "pointcloud", fcn, "raw");
-
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.spin_node_some(node_);
+  (void) msg1;
+  (void) msg2;
 }
 
-TEST_F(TestSubscriber, shutdown)
+TEST_F(TestSubscriber, create_and_release_filter)
 {
-  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
-    [](const auto & msg) {(void)msg;};
+  typedef message_filters::sync_policies::ApproximateTime<
+      sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
+    ApproximateTimePolicy;
+  typedef std::shared_ptr<message_filters::Synchronizer<ApproximateTimePolicy>> Sync;
 
-  auto sub = point_cloud_transport::create_subscription(node_, "pointcloud", fcn, "raw");
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
-  sub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
+  point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
+  point_cloud_transport::SubscriberFilter pcl_sub2(node_, "pointcloud2", "raw");
+
+  auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
+    ApproximateTimePolicy(
+      10), pcl_sub1, pcl_sub2);
+  sync->registerCallback(std::bind(callback, std::placeholders::_1, std::placeholders::_2));
+
+  pcl_sub1.unsubscribe();
+  pcl_sub2.unsubscribe();
+  sync.reset();
 }
 
 int main(int argc, char ** argv)

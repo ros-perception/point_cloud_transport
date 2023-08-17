@@ -38,8 +38,8 @@
 
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tl/expected.hpp>
 
-#include <point_cloud_transport/expected.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
 
@@ -50,9 +50,9 @@ namespace point_cloud_transport
 class POINT_CLOUD_TRANSPORT_PUBLIC PublisherPlugin
 {
 public:
-  //! \brief Result of cloud encoding. Either an holding the compressed cloud,
-  // empty value or error message.
-  typedef cras::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
+  /// \brief Result of cloud encoding. Either an holding the compressed cloud,
+  /// empty value or error message.
+  typedef tl::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
       std::string> EncodeResult;
 
   PublisherPlugin() = default;
@@ -64,7 +64,7 @@ public:
 
   //! \brief Advertise a topic, simple version.
   void advertise(
-    std::shared_ptr<rclcpp::Node> nh,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
@@ -78,11 +78,11 @@ public:
   //! Return the datatype of the transported messages (as text in the form `package/Message`).
   virtual std::string getDataType() const = 0;
 
-  /**
-   * \brief Encode the given raw pointcloud into EncodeResult
-   * \param[in] raw The input raw pointcloud.
-   * \return The output EncodeResult holding the compressed cloud message (if encoding succeeds), or an error message.
-   */
+  /// \brief Encode the given raw pointcloud into EncodeResult
+  /// \param[in] raw The input raw pointcloud.
+  /// \return The output EncodeResult holding the compressed cloud message (if encoding succeeds),
+  /// or an error message.
+  ///
   virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2 & raw) const;
 
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
@@ -105,7 +105,7 @@ public:
 protected:
   //! Advertise a topic. Must be implemented by the subclass.
   virtual void advertiseImpl(
-    std::shared_ptr<rclcpp::Node> nh, const std::string & base_topic,
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };

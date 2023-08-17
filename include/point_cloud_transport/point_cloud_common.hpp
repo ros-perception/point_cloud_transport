@@ -39,27 +39,45 @@
 namespace point_cloud_transport
 {
 
-/**
- * \brief Replacement for uses of boost::erase_last_copy
- */
+/// \brief Remove the last copy of the given substring from the given string.
+/// \param input original string
+/// \param search substring to remove the last entry of
+/// \return "input" with the last entry of "search" removed
 POINT_CLOUD_TRANSPORT_PUBLIC
 std::string erase_last_copy(const std::string & input, const std::string & search);
 
+/// \brief Split a string into substrings using the given delimiter.
+/// \param str string to split
+/// \param delimiter delimiter to split on
+/// \param maxSplits limit on the max number of splits to perform (-1 for unlimited splits)
+/// \return vector of string tokens
 POINT_CLOUD_TRANSPORT_PUBLIC
 std::vector<std::string> split(
   const std::string & str, const std::string & delimiter,
   int maxSplits = -1);
 
-// from cras::string_utils
+/// \brief Check if a string ends with a given suffix. (from cras::string_utils)
+/// \param str string to check
+/// \param suffix suffix to check for
+/// \return true if "str" ends with "suffix", false otherwise
 POINT_CLOUD_TRANSPORT_PUBLIC
 bool endsWith(const std::string & str, const std::string & suffix);
 
-// from cras::string_utils
+/// \brief Remove a suffix from a string if it exists.
+/// \param str string to remove suffix from
+/// \param suffix suffix to remove
+/// \param hadSuffix if non-null, set to true if "str" had "suffix" at the end
+/// \return "str" with "suffix" removed
 POINT_CLOUD_TRANSPORT_PUBLIC
 std::string removeSuffix(
   const std::string & str, const std::string & suffix,
   bool * hadSuffix = nullptr);
 
+/// \brief Check if the given transport matches the given name.
+/// \param lookup_name name of the transport to check
+/// \param name name to check against
+/// \param suffix suffix to remove from name before checking for equality
+/// \return true if "lookup_name" matches "name" with "suffix" removed, false otherwise
 POINT_CLOUD_TRANSPORT_PUBLIC
 bool transportNameMatches(
   const std::string & lookup_name,

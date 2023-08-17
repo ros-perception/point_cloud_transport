@@ -48,10 +48,10 @@ protected:
 
 TEST_F(TestPublisher, publisher)
 {
-  auto pub = point_cloud_transport::create_publisher(node_, "camera/point_cloud");
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("camera/point_cloud"), 1u);
+  auto pub = point_cloud_transport::create_publisher(node_, "point_cloud");
+  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
   pub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("camera/point_cloud"), 0u);
+  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 0u);
   // coverage tests: invalid publisher should fail but not crash
   pub.publish(sensor_msgs::msg::PointCloud2());
   pub.publish(sensor_msgs::msg::PointCloud2::ConstSharedPtr());
@@ -60,7 +60,7 @@ TEST_F(TestPublisher, publisher)
 TEST_F(TestPublisher, point_cloud_transport_publisher)
 {
   point_cloud_transport::PointCloudTransport it(node_);
-  auto pub = it.advertise("camera/point_cloud", rmw_qos_profile_sensor_data);
+  auto pub = it.advertise("point_cloud", rmw_qos_profile_sensor_data);
 }
 
 int main(int argc, char ** argv)
