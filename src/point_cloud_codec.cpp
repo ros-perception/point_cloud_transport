@@ -1,378 +1,269 @@
-// SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: Czech Technical University in Prague .. 2019, paplhjak .. 2009, Willow Garage, Inc.
-
-/*
- *
- * BSD 3-Clause License
- *
- * Copyright (c) Czech Technical University in Prague
- * Copyright (c) 2019, paplhjak
- * Copyright (c) 2009, Willow Garage, Inc.
- *
- *        All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- *        modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- *       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- *       AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *       IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *       DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- *       FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *       DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- *       SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *       CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- *       OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- *       OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
+// Copyright (c) 2023, Czech Technical University in Prague
+// Copyright (c) 2019, paplhjak
+// Copyright (c) 2009, Willow Garage, Inc.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
 
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include <boost/make_shared.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <cras_cpp_common/c_api.h>
-#include <cras_cpp_common/log_utils.h>
-#include <cras_cpp_common/log_utils/memory.h>
-#include <pluginlib/class_loader.h>
-#include <ros/node_handle.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include <point_cloud_transport/loader_fwds.h>
-#include <point_cloud_transport/point_cloud_codec.h>
-#include <point_cloud_transport/publisher_plugin.h>
-#include <point_cloud_transport/subscriber_plugin.h>
+#include <point_cloud_transport/point_cloud_codec.hpp>
+#include <point_cloud_transport/simple_publisher_plugin.hpp>
+#include <point_cloud_transport/simple_subscriber_plugin.hpp>
+#include <point_cloud_transport/point_cloud_common.hpp>
 
 namespace point_cloud_transport
 {
 
-struct PointCloudCodec::Impl
-{
-  point_cloud_transport::PubLoaderPtr enc_loader_;
-  point_cloud_transport::SubLoaderPtr dec_loader_;
-  std::unordered_map<std::string, std::string> encoders_for_topics_;
-  std::unordered_map<std::string, std::string> decoders_for_topics_;
+PointCloudCodec::PointCloudCodec()
+: enc_loader_(std::make_shared<PubLoader>(
+      "point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
+  dec_loader_(std::make_shared<SubLoader>(
+      "point_cloud_transport",
+      "point_cloud_transport::SubscriberPlugin")) {}
 
-  Impl() :
-      enc_loader_(boost::make_shared<PubLoader>("point_cloud_transport", "point_cloud_transport::PublisherPlugin")),
-      dec_loader_(boost::make_shared<SubLoader>("point_cloud_transport", "point_cloud_transport::SubscriberPlugin"))
-  {
-  }
-};
+PointCloudCodec::~PointCloudCodec() {}
 
-PointCloudCodec::PointCloudCodec(const cras::LogHelperPtr& log) : cras::HasLogger(log), impl_(new Impl)
+std::shared_ptr<point_cloud_transport::PublisherPlugin>
+PointCloudCodec::getEncoderByName(const std::string & name)
 {
-}
-
-bool transportNameMatches(const std::string& lookup_name, const std::string& name, const std::string& suffix)
-{
-  if (lookup_name == name)
-  {
-    return true;
-  }
-  const std::string transport_name = cras::removeSuffix(lookup_name, suffix);
-  if (transport_name == name)
-  {
-    return true;
-  }
-  const auto parts = cras::split(transport_name, "/");
-  if (parts.size() == 2 && parts[1] == name)
-  {
-    return true;
-  }
-  return false;
-}
-
-boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByName(
-    const std::string& name) const
-{
-  for (const auto& lookup_name : impl_->enc_loader_->getDeclaredClasses())
-  {
-    if (transportNameMatches(lookup_name, name, "_pub"))
-    {
-      auto encoder = impl_->enc_loader_->createInstance(lookup_name);
-      encoder->setCrasLogger(this->log);
+  for (const auto & lookup_name : enc_loader_->getDeclaredClasses()) {
+    if (transportNameMatches(lookup_name, name, "_pub")) {
+      auto encoder = enc_loader_->createSharedInstance(lookup_name);
       return encoder;
     }
   }
 
-  ROS_DEBUG("Failed to find encoder %s.", name.c_str());
+  RCLCPP_DEBUG(
+    rclcpp::get_logger("point_cloud_transport"),
+    "Failed to find encoder %s.", name.c_str());
   return nullptr;
 }
 
-boost::shared_ptr<point_cloud_transport::PublisherPlugin> PointCloudCodec::getEncoderByTopic(
-    const std::string& topic, const std::string& datatype) const
+std::shared_ptr<point_cloud_transport::SubscriberPlugin>
+PointCloudCodec::getDecoderByName(const std::string & name)
 {
-  if (impl_->encoders_for_topics_.find(topic) != impl_->encoders_for_topics_.end())
-  {
-    auto encoder = impl_->enc_loader_->createInstance(impl_->encoders_for_topics_[topic]);
-    encoder->setCrasLogger(this->log);
-    return encoder;
-  }
-
-  for (const auto& lookup_name : impl_->enc_loader_->getDeclaredClasses())
-  {
-    const auto& encoder = impl_->enc_loader_->createInstance(lookup_name);
-    if (!encoder)
-    {
-      continue;
-    }
-    if (encoder->matchesTopic(topic, datatype))
-    {
-      impl_->encoders_for_topics_[topic] = lookup_name;
-      encoder->setCrasLogger(this->log);
-      return encoder;
-    }
-  }
-
-  ROS_DEBUG("Failed to find encoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
-  return nullptr;
-}
-
-boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByName(
-    const std::string& name) const
-{
-  for (const auto& lookup_name : impl_->dec_loader_->getDeclaredClasses())
-  {
-    if (transportNameMatches(lookup_name, name, "_sub"))
-    {
-      auto decoder = impl_->dec_loader_->createInstance(lookup_name);
-      decoder->setCrasLogger(this->log);
+  for (const auto & lookup_name : dec_loader_->getDeclaredClasses()) {
+    if (transportNameMatches(lookup_name, name, "_sub")) {
+      auto decoder = dec_loader_->createSharedInstance(lookup_name);
       return decoder;
     }
   }
 
-  ROS_DEBUG("Failed to find decoder %s.", name.c_str());
+  RCLCPP_DEBUG(
+    rclcpp::get_logger("point_cloud_transport"),
+    "Failed to find decoder %s.", name.c_str());
   return nullptr;
 }
 
-boost::shared_ptr<point_cloud_transport::SubscriberPlugin> PointCloudCodec::getDecoderByTopic(
-    const std::string& topic, const std::string& datatype) const
+void PointCloudCodec::getLoadableTransports(
+  std::vector<std::string> & transports,
+  std::vector<std::string> & names)
 {
-  if (impl_->decoders_for_topics_.find(topic) != impl_->decoders_for_topics_.end())
-  {
-    auto decoder = impl_->dec_loader_->createInstance(impl_->decoders_for_topics_[topic]);
-    decoder->setCrasLogger(this->log);
-    return decoder;
-  }
-
-  for (const auto& lookup_name : impl_->dec_loader_->getDeclaredClasses())
-  {
-    const auto& decoder = impl_->dec_loader_->createInstance(lookup_name);
-    if (!decoder)
-    {
-      continue;
-    }
-    if (decoder->matchesTopic(topic, datatype))
-    {
-      impl_->decoders_for_topics_[topic] = lookup_name;
-      decoder->setCrasLogger(this->log);
-      return decoder;
+  for (const auto & transportPlugin : dec_loader_->getDeclaredClasses()) {
+    // If the plugin loads without throwing an exception, add its transport name to the list of
+    // valid plugins, otherwise ignore it.
+    try {
+      auto sub = dec_loader_->createSharedInstance(transportPlugin);
+      // Remove the "_sub" at the end of each class name.
+      transports.push_back(erase_last_copy(transportPlugin, "_sub"));
+      names.push_back(sub->getTransportName());
+    } catch (const pluginlib::LibraryLoadException & e) {
+      (void)e;
+    } catch (const pluginlib::CreateClassException & e) {
+      (void)e;
     }
   }
-
-  ROS_DEBUG("Failed to find decoder for topic %s with data type %s.", topic.c_str(), datatype.c_str());
-  return nullptr;
 }
 
-thread_local auto globalLogger = std::make_shared<cras::MemoryLogHelper>();
-thread_local PointCloudCodec point_cloud_transport_codec_instance(globalLogger);
+void PointCloudCodec::getTopicsToPublish(
+  const std::string & baseTopic,
+  std::vector<std::string> & transports,
+  std::vector<std::string> & topics,
+  std::vector<std::string> & names,
+  std::vector<std::string> & dataTypes)
+{
+  for (const auto & transportPlugin : enc_loader_->getDeclaredClasses()) {
+    try {
+      auto pub = enc_loader_->createSharedInstance(transportPlugin);
 
+      if (pub == nullptr) {
+        continue;
+      }
+
+      // Remove the "_pub" at the end of each class name.
+      transports.push_back(erase_last_copy(transportPlugin, "_pub"));
+      names.push_back(pub->getTransportName());
+      topics.push_back(pub->getTopicToAdvertise(baseTopic));
+      dataTypes.push_back(pub->getDataType());
+    } catch (const pluginlib::PluginlibException & e) {
+      std::cout << "pointCloudTransportGetTopicsToPublish: " << e.what() << "\n"
+                << std::endl;
+    }
+  }
 }
 
-bool pointCloudTransportCodecsEncode(
-    const char* codec,
-    sensor_msgs::PointCloud2::_height_type rawHeight,
-    sensor_msgs::PointCloud2::_width_type rawWidth,
-    size_t rawNumFields,
-    const char* rawFieldNames[],
-    sensor_msgs::PointField::_offset_type rawFieldOffsets[],
-    sensor_msgs::PointField::_datatype_type rawFieldDatatypes[],
-    sensor_msgs::PointField::_count_type rawFieldCounts[],
-    sensor_msgs::PointCloud2::_is_bigendian_type rawIsBigendian,
-    sensor_msgs::PointCloud2::_point_step_type rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type rawRowStep,
-    size_t rawDataLength,
-    const uint8_t rawData[],
-    sensor_msgs::PointCloud2::_is_dense_type rawIsDense,
-    cras::allocator_t compressedTypeAllocator,
-    cras::allocator_t compressedMd5SumAllocator,
-    cras::allocator_t compressedDataAllocator,
-    size_t serializedConfigLength,
-    const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator,
-    cras::allocator_t logMessagesAllocator
-)
+void PointCloudCodec::getTopicToSubscribe(
+  const std::string & baseTopic,
+  const std::string & transport,
+  std::string & topic,
+  std::string & name,
+  std::string & dataType)
 {
-  dynamic_reconfigure::Config config;
-  if (serializedConfigLength > 0)
-  {
-    ros::serialization::IStream data(const_cast<uint8_t*>(serializedConfig), serializedConfigLength);
-    try
-    {
-      ros::serialization::deserialize(data, config);
-    }
-    catch (const ros::Exception& e)
-    {
-      cras::outputString(errorStringAllocator, cras::format("Could not deserialize encoder config: %s.", e.what()));
-      return false;
+  for (const auto & transportPlugin : dec_loader_->getDeclaredClasses()) {
+    try {
+      auto sub = dec_loader_->createSharedInstance(transportPlugin);
+
+      const auto transportClass = erase_last_copy(transportPlugin, "_sub");
+      if (transportClass != transport && sub->getTransportName() != transport) {
+        continue;
+      }
+
+      if (sub == nullptr) {
+        continue;
+      }
+
+      topic = sub->getTopicToSubscribe(baseTopic);
+      name = sub->getTransportName();
+      dataType = sub->getDataType();
+      return;
+    } catch (const pluginlib::PluginlibException & e) {
+      std::cout << "pointCloudTransportGetTopicToSubscribe: " << e.what() << "\n"
+                << std::endl;
     }
   }
-  sensor_msgs::PointCloud2 raw;
-  raw.height = rawHeight;
-  raw.width = rawWidth;
-  for (size_t i = 0; i < rawNumFields; ++i)
-  {
-    sensor_msgs::PointField field;
-    field.name = rawFieldNames[i];
-    field.offset = rawFieldOffsets[i];
-    field.datatype = rawFieldDatatypes[i];
-    field.count = rawFieldCounts[i];
-    raw.fields.push_back(field);
-  }
-  raw.is_bigendian = rawIsBigendian;
-  raw.point_step = rawPointStep;
-  raw.row_step = rawRowStep;
-  raw.data.resize(rawDataLength);
-  memcpy(raw.data.data(), rawData, rawDataLength);
-  raw.is_dense = rawIsDense;
+}
 
-  point_cloud_transport::globalLogger->clear();
-
-  auto encoder = point_cloud_transport::point_cloud_transport_codec_instance.getEncoderByName(codec);
-  if (!encoder)
-  {
-    cras::outputString(errorStringAllocator, std::string("Could not find encoder for ") + codec);
+bool PointCloudCodec::encode(
+  const std::string & transport_name, const sensor_msgs::msg::PointCloud2 & msg,
+  rclcpp::SerializedMessage & serialized_msg)
+{
+  auto encoder = getEncoderByName(transport_name);
+  if (!encoder) {
     return false;
   }
 
-  const auto compressed = encoder->encode(raw, config);
+  const auto compressed = encoder->encode(msg);
 
-  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
-    cras::outputRosMessage(logMessagesAllocator, msg);
-  point_cloud_transport::globalLogger->clear();
-
-  if (!compressed)
-  {
-    cras::outputString(errorStringAllocator, compressed.error());
+  if (!compressed) {
     return false;
   }
-  if (!compressed.value())
-  {
-    return true;
+  if (!compressed.value()) {
+    return false;
   }
 
-  cras::outputString(compressedTypeAllocator, compressed.value()->getDataType());
-  cras::outputString(compressedMd5SumAllocator, compressed.value()->getMD5Sum());
-  cras::outputByteBuffer(compressedDataAllocator, cras::getBuffer(compressed->value()), compressed.value()->size());
+  serialized_msg = *(compressed.value()->get());
   return true;
 }
 
-bool pointCloudTransportCodecsDecode(
-    const char* topicOrCodec,
-    const char* compressedType,
-    const char* compressedMd5sum,
-    size_t compressedDataLength,
-    const uint8_t compressedData[],
-    sensor_msgs::PointCloud2::_height_type& rawHeight,
-    sensor_msgs::PointCloud2::_width_type& rawWidth,
-    uint32_t& rawNumFields,
-    cras::allocator_t rawFieldNamesAllocator,
-    cras::allocator_t rawFieldOffsetsAllocator,
-    cras::allocator_t rawFieldDatatypesAllocator,
-    cras::allocator_t rawFieldCountsAllocator,
-    sensor_msgs::PointCloud2::_is_bigendian_type& rawIsBigEndian,
-    sensor_msgs::PointCloud2::_point_step_type& rawPointStep,
-    sensor_msgs::PointCloud2::_row_step_type& rawRowStep,
-    cras::allocator_t rawDataAllocator,
-    sensor_msgs::PointCloud2::_is_dense_type& rawIsDense,
-    size_t serializedConfigLength,
-    const uint8_t serializedConfig[],
-    cras::allocator_t errorStringAllocator,
-    cras::allocator_t logMessagesAllocator
-)
+template<class M>
+bool PointCloudCodec::encodeTyped(
+  const std::string & transport_name, const sensor_msgs::msg::PointCloud2 & msg,
+  M & compressed_msg)
 {
-  dynamic_reconfigure::Config config;
-  if (serializedConfigLength > 0)
-  {
-    ros::serialization::IStream data(const_cast<uint8_t*>(serializedConfig), serializedConfigLength);
-    try
-    {
-      ros::serialization::deserialize(data, config);
-    }
-    catch (const ros::Exception& e)
-    {
-      cras::outputString(errorStringAllocator, cras::format("Could not deserialize decoder config: %s.", e.what()));
-      return false;
-    }
-  }
-
-  topic_tools::ShapeShifter compressed;
-  compressed.morph(compressedMd5sum, compressedType, "", "");
-  cras::resizeBuffer(compressed, compressedDataLength);
-  memcpy(cras::getBuffer(compressed), compressedData, compressedDataLength);
-
-  point_cloud_transport::globalLogger->clear();
-
-  auto decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByTopic(
-      topicOrCodec, compressedType);
-  if (!decoder)
-  {
-    decoder = point_cloud_transport::point_cloud_transport_codec_instance.getDecoderByName(topicOrCodec);
-  }
-  if (!decoder)
-  {
-    cras::outputString(errorStringAllocator, std::string("Could not find decoder for ") + topicOrCodec);
+  auto encoder = getEncoderByName(transport_name);
+  if (!encoder) {
     return false;
   }
 
-  const auto res = decoder->decode(compressed, config);
+  auto typed_encoder =
+    reinterpret_cast<point_cloud_transport::SimplePublisherPlugin<M> *>(encoder.get());
+  const auto compressed = typed_encoder->encodeTyped(msg);
 
-  for (const auto& msg : point_cloud_transport::globalLogger->getMessages())
-    cras::outputRosMessage(logMessagesAllocator, msg);
-  point_cloud_transport::globalLogger->clear();
-
-  if (!res)
-  {
-    cras::outputString(errorStringAllocator, res.error());
+  if (!compressed) {
+    return false;
+  }
+  if (!compressed.value()) {
     return false;
   }
 
-  if (!res.value())
-  {
-    return true;
-  }
-
-  const auto& raw = res->value();
-
-  rawHeight = raw->height;
-  rawWidth = raw->width;
-  rawNumFields = raw->fields.size();
-  for (size_t i = 0; i < rawNumFields; ++i)
-  {
-    cras::outputString(rawFieldNamesAllocator, raw->fields[i].name);
-    cras::outputByteBuffer(rawFieldOffsetsAllocator, reinterpret_cast<const uint8_t*>(&raw->fields[i].offset), 4);
-    cras::outputByteBuffer(rawFieldDatatypesAllocator, reinterpret_cast<const uint8_t*>(&raw->fields[i].datatype), 1);
-    cras::outputByteBuffer(rawFieldCountsAllocator, reinterpret_cast<const uint8_t*>(&raw->fields[i].count), 4);
-  }
-  rawIsBigEndian = raw->is_bigendian;
-  rawPointStep = raw->point_step;
-  rawRowStep = raw->row_step;
-  cras::outputByteBuffer(rawDataAllocator, raw->data);
-  rawIsDense = raw->is_dense;
+  compressed_msg = *(compressed.value()->get());
   return true;
 }
+
+bool PointCloudCodec::decode(
+  const std::string & transport_name,
+  const rclcpp::SerializedMessage & serialized_msg,
+  sensor_msgs::msg::PointCloud2 & msg)
+{
+  // decode the serialized msg into a pointcloud
+  auto decoder = getDecoderByName(transport_name);
+
+  if (!decoder) {
+    return false;
+  }
+
+  const auto decompressed = decoder->decode(
+    std::make_shared<rclcpp::SerializedMessage>(serialized_msg));
+
+  if (!decompressed) {
+    return false;
+  }
+  if (!decompressed.value()) {
+    return false;
+  }
+
+  msg = *(decompressed.value()->get());
+  return true;
+}
+
+template<class M>
+bool PointCloudCodec::decodeTyped(
+  const std::string & transport_name,
+  const M & compressed_msg,
+  sensor_msgs::msg::PointCloud2 & msg)
+{
+  // decode the serialized msg into a pointcloud
+  auto decoder = getDecoderByName(transport_name);
+
+  if (!decoder) {
+    return false;
+  }
+
+  auto typed_decoder =
+    reinterpret_cast<point_cloud_transport::SimpleSubscriberPlugin<M> *>(decoder.get());
+
+  const auto decompressed = typed_decoder->decodeTyped(compressed_msg);
+
+  if (!decompressed) {
+    return false;
+  }
+  if (!decompressed.value()) {
+    return false;
+  }
+
+  msg = *(decompressed.value()->get());
+  return true;
+}
+
+}  // namespace point_cloud_transport

@@ -27,52 +27,45 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
 
+#ifndef POINT_CLOUD_TRANSPORT__EXCEPTION_HPP_
+#define POINT_CLOUD_TRANSPORT__EXCEPTION_HPP_
+
+#include <stdexcept>
 #include <string>
-
-#include <sensor_msgs/msg/point_cloud2.hpp>
-
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
+//! A base class for all point_cloud_transport exceptions inheriting from std::runtime_error.
+class Exception : public std::runtime_error
 {
-}
+public:
+  explicit Exception(const std::string & message)
+  : std::runtime_error(message)
+  {
+  }
+};
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
+//! An exception class thrown when point_cloud_transport is unable to load a requested transport.
+class TransportLoadException : public Exception
 {
-  return caller_id_;
-}
+public:
+  TransportLoadException(const std::string & transport, const std::string & message)
+  : Exception("Unable to load plugin for transport '" + transport + "', error string:\n" + message),
+    transport_(transport.c_str())
+  {
+  }
 
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
+  std::string getTransport() const
+  {
+    return transport_;
+  }
 
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
-
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
-
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
+protected:
+  const char * transport_;
+};
 
 }  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__EXCEPTION_HPP_

@@ -1,50 +1,47 @@
 <package format="3">
   <name>point_cloud_transport</name>
+
   <version>1.0.11</version>
+
   <description>
     Support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
   </description>
+
   <author>Jakub Paplham</author>
-  <maintainer email="peckama2@fel.cvut.cz">Martin Pecka</maintainer>
+
+  <maintainer email="alejandro@openrobotics.org">Alejandro Hernández</maintainer>
+  <maintainer email="john.dangelo@tailos.com">John D'Angelo</maintainer>
+
   <license>BSD</license>
 
   <url type="repository">https://github.com/ctu-vras/point_cloud_transport</url>
-  <url type="website">https://wiki.ros.org/point_cloud_transport</url>
   <url type="bugtracker">https://github.com/ctu-vras/point_cloud_transport/issues</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <buildtool_depend condition="$ROS_PYTHON_VERSION == 2">python-setuptools</buildtool_depend>
-  <buildtool_depend condition="$ROS_PYTHON_VERSION == 3">python3-setuptools</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
-  <build_depend>message_generation</build_depend>
-  <build_depend>pluginlib</build_depend>
-
-  <build_export_depend>message_filters</build_export_depend>
-  <build_export_depend>message_runtime</build_export_depend>
-
-  <exec_depend version_gte="2.2.2">cras_py_common</exec_depend>
-  <exec_depend>message_runtime</exec_depend>
-  <exec_depend>pluginlib</exec_depend>
-
-  <depend>cras_cpp_common</depend>
-  <depend>cras_topic_tools</depend>
-  <depend>dynamic_reconfigure</depend>
-  <depend>nodelet</depend>
-  <depend>roscpp</depend>
+  <depend>message_filters</depend>
+  <depend>pybind11</depend>
+  <depend>pybind11_vendor</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
-  <depend>topic_tools</depend>
+  <depend>git</depend>
 
-  <test_depend condition="$ROS_PYTHON_VERSION == 2">python-catkin-lint</test_depend>
-  <test_depend condition="$ROS_PYTHON_VERSION == 3">python3-catkin-lint</test_depend>
-  <test_depend>roslint</test_depend>
-
-  <doc_depend>cras_docs_common</doc_depend>
-  <doc_depend>rosdoc_lite</doc_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_copyright</test_depend>
+  <test_depend>ament_cmake_cppcheck</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_flake8</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
+  <test_depend>ament_cmake_pep257</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_cmake_xmllint</test_depend>
 
   <export>
-    <point_cloud_transport plugin="${prefix}/default_plugins.xml" />
-    <nodelet plugin="${prefix}/nodelets.xml" />
-    <rosdoc config="rosdoc.yaml"/>
+    <build_type>ament_cmake</build_type>
   </export>
 
 </package>

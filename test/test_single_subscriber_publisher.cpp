@@ -1,6 +1,4 @@
-// Copyright (c) 2023, Czech Technical University in Prague
-// Copyright (c) 2019, paplhjak
-// Copyright (c) 2009, Willow Garage, Inc.
+// Copyright (c) 2023 Open Source Robotics Foundation, Inc.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -12,7 +10,7 @@
 //      notice, this list of conditions and the following disclaimer in the
 //      documentation and/or other materials provided with the distribution.
 //
-//    * Neither the name of the copyright holder nor the names of its
+//    * Neither the name of the Willow Garage nor the names of its
 //      contributors may be used to endorse or promote products derived from
 //      this software without specific prior written permission.
 //
@@ -27,52 +25,62 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
 
+#include <functional>
 #include <string>
+#include <memory>
 
+#include "gtest/gtest.h"
+
+#include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "point_cloud_transport/single_subscriber_publisher.hpp"
 
-namespace point_cloud_transport
+class TestPublisher : public ::testing::Test
 {
+protected:
+  static constexpr const char * caller_id = "node";
+  static constexpr const char * topic = "/topic";
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
-{
+
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  void SetUp()
+  {
+    node = std::make_shared<rclcpp::Node>("point_cloud_transport", "/ns");
+  }
+
+  void TearDown()
+  {
+    node.reset();
+  }
+
+  rclcpp::Node::SharedPtr node;
+};
+
+TEST_F(TestPublisher, construction_and_destruction) {
+  auto get_num_subscribers = []() -> size_t {return 0;};
+  auto publish_fn = [](const sensor_msgs::msg::PointCloud2 & /*pointcloud*/) {};
+
+  point_cloud_transport::SingleSubscriberPublisher ssp(caller_id, topic,
+    get_num_subscribers, publish_fn);
 }
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
+TEST_F(TestPublisher, getNumSubscribers) {
+  size_t nSub = 0;
 
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
+  auto get_num_subscribers = [&nSub]() -> size_t {return nSub;};
+  auto publish_fn = [](const sensor_msgs::msg::PointCloud2 & /*pointcloud*/) {};
 
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
+  point_cloud_transport::SingleSubscriberPublisher ssp(caller_id, topic,
+    get_num_subscribers, publish_fn);
 
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
+  nSub = 0;
+  ASSERT_EQ(ssp.getNumSubscribers(), 0u);
+  nSub = 1;
+  ASSERT_EQ(ssp.getNumSubscribers(), 1u);
 }
-
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
-
-}  // namespace point_cloud_transport

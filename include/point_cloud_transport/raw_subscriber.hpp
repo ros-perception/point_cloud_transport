@@ -27,52 +27,58 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
+
+#ifndef POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_
+#define POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_
+
 
 #include <string>
+#include <memory>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include <point_cloud_transport/simple_subscriber_plugin.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
+///
+/// \brief The default SubscriberPlugin.
+///
+/// RawSubscriber is a simple wrapper for rclcpp::Subscription which listens for
+/// PointCloud2 messages and passes them through to the callback.
+///
+class RawSubscriber
+  : public point_cloud_transport::SimpleSubscriberPlugin<sensor_msgs::msg::PointCloud2>
 {
-}
+public:
+  virtual ~RawSubscriber() {}
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
+  SubscriberPlugin::DecodeResult decodeTyped(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const;
 
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
+  SubscriberPlugin::DecodeResult decodeTyped(
+    const sensor_msgs::msg::PointCloud2 & compressed) const;
 
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
+  std::string getDataType() const override;
 
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
+  void declareParameters() override;
 
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
+  std::string getTransportName() const override;
+
+protected:
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void callback(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
+    const Callback & user_cb) override;
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  std::string getTopicToSubscribe(const std::string & base_topic) const override;
+
+  using SubscriberPlugin::subscribeImpl;
+};
 
 }  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__RAW_SUBSCRIBER_HPP_

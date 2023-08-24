@@ -1,4 +1,4 @@
-<library path="lib/libpoint_cloud_transport_plugins">
+<library path="point_cloud_transport_plugins">
     <class name="point_cloud_transport/raw_pub" type="point_cloud_transport::RawPublisher" base_class_type="point_cloud_transport::PublisherPlugin">
         <description>
             This is the default publisher. It publishes the PointCloud2 as-is on the base topic.

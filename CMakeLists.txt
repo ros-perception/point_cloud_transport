@@ -1,117 +1,265 @@
 cmake_minimum_required(VERSION 3.10.2)
+
 project(point_cloud_transport)
 
-find_package(catkin REQUIRED COMPONENTS
-  cras_cpp_common
-  cras_topic_tools
-  dynamic_reconfigure
-  message_generation
-  nodelet
-  pluginlib
-  roscpp
-  sensor_msgs
-  topic_tools
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake_ros REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+
+find_package(message_filters REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(pybind11_vendor REQUIRED)
+find_package(python_cmake_module REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
+include_directories(
+  include
 )
 
-find_package(Boost REQUIRED)
-
-catkin_python_setup()
-
-generate_dynamic_reconfigure_options(cfg/NoConfig.cfg)
-
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} raw_${PROJECT_NAME}
-  CATKIN_DEPENDS cras_cpp_common cras_topic_tools dynamic_reconfigure message_filters message_runtime nodelet roscpp sensor_msgs topic_tools
-)
-
-include_directories(include ${catkin_INCLUDE_DIRS})
+# Tell CMake where to find the ThirdParty expected dependency
+set(expected_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/expected")
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
   src/point_cloud_codec.cpp
+  src/point_cloud_common.cpp
   src/point_cloud_transport.cpp
   src/publisher.cpp
   src/publisher_plugin.cpp
+  src/raw_subscriber.cpp
   src/single_subscriber_publisher.cpp
   src/subscriber.cpp
 )
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
-# The library is build twice. Once with symbols exported for direct use, and once with symbols hidden for use via pluginlib.
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  message_filters::message_filters
+  rclcpp::rclcpp
+  ${sensor_msgs_TARGETS})
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  pluginlib::pluginlib)
 
-# Build libraw_point_cloud_transport
-add_library(raw_${PROJECT_NAME} src/raw_publisher.cpp src/raw_subscriber.cpp)
-target_link_libraries(raw_${PROJECT_NAME} ${PROJECT_NAME})
-add_dependencies(raw_${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+target_compile_definitions(${PROJECT_NAME} PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
 
 # Build libpoint_cloud_transport_plugins
-add_library(${PROJECT_NAME}_plugins src/manifest.cpp src/raw_publisher.cpp src/raw_subscriber.cpp)
-target_link_libraries(${PROJECT_NAME}_plugins ${PROJECT_NAME})
-add_dependencies(${PROJECT_NAME}_plugins ${${PROJECT_NAME}_EXPORTED_TARGETS})
-class_loader_hide_library_symbols(${PROJECT_NAME}_plugins)
+add_library(${PROJECT_NAME}_plugins
+  src/manifest.cpp
+)
+add_library(${PROJECT_NAME}::${PROJECT_NAME}_plugins ALIAS ${PROJECT_NAME}_plugins)
 
-add_library(${PROJECT_NAME}_republish src/republish.cpp)
-target_link_libraries(${PROJECT_NAME}_republish ${PROJECT_NAME})
-cras_node_from_nodelet(${PROJECT_NAME}_republish "${PROJECT_NAME}/republish.h" ${PROJECT_NAME}::RepublishNodelet OUTPUT_NAME republish ANONYMOUS)
+target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
+  ${PROJECT_NAME}
+  pluginlib::pluginlib)
 
+add_library(republish_node SHARED src/republish.cpp)
+target_link_libraries(republish_node
+  ${PROJECT_NAME}
+)
+target_compile_definitions(republish_node PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
+ament_target_dependencies(republish_node
+  pluginlib
+  rclcpp_components
+  rclcpp
+)
+target_include_directories(republish_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
+
+add_executable(republish
+  src/republish_program.cpp
+  src/utilities/utilities.cpp
+)
+target_link_libraries(republish
+  ${PROJECT_NAME}
+  republish_node
+)
+ament_target_dependencies(republish
+  pluginlib
+  rclcpp_components
+  rclcpp
+)
+
+# Build list_transports
 add_executable(list_transports src/list_transports.cpp)
-target_link_libraries(list_transports ${PROJECT_NAME})
+target_link_libraries(list_transports
+  ${PROJECT_NAME}
+  pluginlib::pluginlib)
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins ${PROJECT_NAME}_republish raw_${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
+# Python bindings
+pybind11_add_module(_codec SHARED
+  src/pybind_codec.cpp
+)
+target_link_libraries(_codec PRIVATE
+  ${PROJECT_NAME}
+  pluginlib::pluginlib
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+# Install cython modules as sub-modules of the project
+install(
+  TARGETS
+    _codec
+  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
 )
 
-install(TARGETS list_transports
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# Install Python executables
+install(PROGRAMS
+  point_cloud_transport/publisher.py
+  point_cloud_transport/subscriber.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
-install(FILES default_plugins.xml nodelets.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# Install plugin descriptions
+pluginlib_export_plugin_description_file(${PROJECT_NAME} default_plugins.xml)
+
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugins republish_node
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME})
+
+# Install executables
+install(
+  TARGETS
+    list_transports
+    republish
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-if (CATKIN_ENABLE_TESTING)
-  find_package(roslint REQUIRED)
+# Install include directories
+install(DIRECTORY include/ $<BUILD_INTERFACE:${expected_SOURCE_DIR}/include/> DESTINATION include/${PROJECT_NAME})
 
-  # catkin_lint - checks validity of package.xml and CMakeLists.txt
-  # ROS buildfarm calls this without any environment and with empty rosdep cache,
-  # so we have problems reading the list of packages from env
-  # see https://github.com/ros-infrastructure/ros_buildfarm/issues/923
-  if(DEFINED ENV{ROS_HOME})
-    #catkin_lint: ignore_once env_var
-    set(ROS_HOME "$ENV{ROS_HOME}")
-  else()
-    #catkin_lint: ignore_once env_var
-    set(ROS_HOME "$ENV{HOME}/.ros")
+ament_export_include_directories("include/${PROJECT_NAME}")
+
+ament_export_targets(export_${PROJECT_NAME})
+
+ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
+
+if(BUILD_TESTING)
+  set(
+    _linter_excludes
+    ${expected_SOURCE_DIR}/include/tl/expected.hpp
+  )
+
+  find_package(ament_cmake_copyright REQUIRED)
+  find_package(ament_cmake_cppcheck REQUIRED)
+  find_package(ament_cmake_cpplint REQUIRED)
+  find_package(ament_cmake_flake8 REQUIRED)
+  find_package(ament_cmake_lint_cmake REQUIRED)
+  find_package(ament_cmake_pep257 REQUIRED)
+  find_package(ament_cmake_uncrustify REQUIRED)
+  find_package(ament_cmake_xmllint REQUIRED)
+
+  ament_copyright(EXCLUDE ${_linter_excludes})
+  ament_cppcheck(
+    EXCLUDE ${_linter_excludes}
+    LANGUAGE c++
+  )
+  ament_cpplint(EXCLUDE ${_linter_excludes})
+  ament_flake8(EXCLUDE ${_linter_excludes})
+  ament_lint_cmake()
+  ament_pep257(EXCLUDE ${_linter_excludes})
+  ament_uncrustify(
+    EXCLUDE ${_linter_excludes}
+    LANGUAGE c++
+  )
+  ament_xmllint()
+
+  find_package(ament_cmake_gtest)
+
+  ament_add_gtest(${PROJECT_NAME}-point_cloud_common test/test_point_cloud_common.cpp)
+  if(TARGET ${PROJECT_NAME}-point_cloud_common)
+    target_link_libraries(${PROJECT_NAME}-point_cloud_common ${PROJECT_NAME})
   endif()
-  #catkin_lint: ignore_once env_var
-  if(DEFINED ENV{ROS_ROOT} AND EXISTS "${ROS_HOME}/rosdep/sources.cache")
-    roslint_custom(catkin_lint "-W2" .)
+
+  ament_add_gtest(${PROJECT_NAME}-publisher test/test_publisher.cpp)
+  if(TARGET ${PROJECT_NAME}-publisher)
+    target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-publisher
+      pluginlib
+    )
   endif()
 
-  # Roslint C++ - checks formatting and some other rules for C++ files
+  ament_add_gtest(${PROJECT_NAME}-codec test/test_point_cloud_codec.cpp)
+  if(TARGET ${PROJECT_NAME}-codec)
+    target_link_libraries(${PROJECT_NAME}-codec ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-codec
+      pluginlib
+    )
+  endif()
 
-  file(GLOB_RECURSE ROSLINT_INCLUDE include/*.h include/*.hpp)
-  file(GLOB_RECURSE ROSLINT_SRC src/*.cpp src/*.hpp src/*.h)
-  #file(GLOB_RECURSE ROSLINT_TEST test/*.cpp)
+  ament_add_gtest(${PROJECT_NAME}-subscriber test/test_subscriber.cpp)
+  if(TARGET ${PROJECT_NAME}-subscriber)
+    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-subscriber
+      pluginlib
+    )
+  endif()
 
-  set(ROSLINT_CPP_OPTS "--extensions=h,hpp,hh,c,cpp,cc;--linelength=120;--filter=\
-    -build/header_guard,-readability/namespace,-whitespace/braces,-runtime/references,\
-    -build/c++11,-readability/nolint,-readability/todo,-legal/copyright,-build/namespaces")
-  roslint_cpp(${ROSLINT_INCLUDE} ${ROSLINT_SRC})
-  
-  # Roslint Python
+  ament_add_gtest(${PROJECT_NAME}-message_passing test/test_message_passing.cpp)
+  if(TARGET ${PROJECT_NAME}-message_passing)
+    target_link_libraries(${PROJECT_NAME}-message_passing ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-message_passing
+      pluginlib
+    )
+  endif()
 
-  # Run roslint on Python sources
-  file(GLOB_RECURSE python_files src/*.py)
-  roslint_python("${python_files}")
+  ament_add_gtest(${PROJECT_NAME}-qos_override test/test_qos_override.cpp)
+  if(TARGET ${PROJECT_NAME}-qos_override)
+    target_link_libraries(${PROJECT_NAME}-qos_override ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-qos_override
+      pluginlib
+    )
+  endif()
 
-  roslint_add_test()
+  ament_add_gtest(${PROJECT_NAME}-remapping test/test_remapping.cpp)
+  if(TARGET ${PROJECT_NAME}-remapping)
+    target_link_libraries(${PROJECT_NAME}-remapping ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-remapping
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-message-filter test/test_message_filter.cpp)
+  if(TARGET ${PROJECT_NAME}-message-filter)
+    target_link_libraries(${PROJECT_NAME}-message-filter ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-message-filter
+      message_filters
+      pluginlib
+    )
+  endif()
+
+  ament_add_gtest(${PROJECT_NAME}-single_subscriber_publisher test/test_single_subscriber_publisher.cpp)
+  if(TARGET ${PROJECT_NAME}-single_subscriber_publisher)
+    target_link_libraries(${PROJECT_NAME}-single_subscriber_publisher ${PROJECT_NAME})
+    ament_target_dependencies(${PROJECT_NAME}-single_subscriber_publisher
+      pluginlib
+    )
+  endif()
 endif()
+
+ament_package()

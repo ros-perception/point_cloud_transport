@@ -27,52 +27,63 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
 
+#ifndef POINT_CLOUD_TRANSPORT__SINGLE_SUBSCRIBER_PUBLISHER_HPP_
+#define POINT_CLOUD_TRANSPORT__SINGLE_SUBSCRIBER_PUBLISHER_HPP_
+
+#include <functional>
 #include <string>
 
+#include "rclcpp/macros.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
+//! Allows publication of a point cloud to a single subscriber.
+// Only available inside subscriber connection callbacks.
+class SingleSubscriberPublisher
 {
-}
+public:
+  typedef std::function<uint32_t()> GetNumSubscribersFn;
+  typedef std::function<void (const sensor_msgs::msg::PointCloud2 &)> PublishFn;
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
+  SingleSubscriberPublisher(const SingleSubscriberPublisher &) = delete;
+  SingleSubscriberPublisher & operator=(const SingleSubscriberPublisher &) = delete;
 
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  SingleSubscriberPublisher(
+    const std::string & caller_id, const std::string & topic,
+    const GetNumSubscribersFn & num_subscribers_fn,
+    const PublishFn & publish_fn);
 
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  std::string getSubscriberName() const;
 
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  std::string getTopic() const;
 
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  uint32_t getNumSubscribers() const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void publish(const sensor_msgs::msg::PointCloud2 & message) const;
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
+
+private:
+  std::string caller_id_;
+  std::string topic_;
+  GetNumSubscribersFn num_subscribers_fn_;
+  PublishFn publish_fn_;
+
+  friend class Publisher;  // to get publish_fn_ directly
+};
+
+typedef std::function<void (const SingleSubscriberPublisher &)> SubscriberStatusCallback;
 }  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__SINGLE_SUBSCRIBER_PUBLISHER_HPP_

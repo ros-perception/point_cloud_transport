@@ -27,52 +27,62 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
 
+#ifndef POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_
+#define POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_
+
+#include <memory>
 #include <string>
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <rclcpp/node.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "point_cloud_transport/visibility_control.hpp"
 
 namespace point_cloud_transport
 {
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
+//! Stores transport settings for a point cloud topic subscription.
+class TransportHints
 {
-}
+public:
+  ///
+  /// Constructor.
+  ///
+  /// The default transport can be overridden by setting a certain parameter to the
+  /// name of the desired transport. By default this parameter is named "point_cloud_transport"
+  /// in the node's local namespace. For consistency across ROS applications, the
+  /// name of this parameter should not be changed without good reason.
+  ///
+  /// \param node Node to use when looking up the transport parameter.
+  /// \param default_transport Preferred transport to use
+  /// \param parameter_name The name of the transport parameter
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  TransportHints(
+    const std::shared_ptr<rclcpp::Node> node,
+    const std::string & default_transport = "raw",
+    const std::string & parameter_name = "point_cloud_transport")
+  {
+    node->declare_parameter<std::string>(parameter_name, transport_);
+    node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
+  }
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  TransportHints(
+    const std::string & transport = "raw")
+  : transport_(transport)
+  {
+  }
 
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  const std::string & getTransport() const
+  {
+    return transport_;
+  }
 
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
-
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
-
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
+private:
+  std::string transport_{"raw"};
+};
 
 }  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__TRANSPORT_HINTS_HPP_

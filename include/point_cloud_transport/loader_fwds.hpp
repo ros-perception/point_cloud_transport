@@ -27,52 +27,33 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
 
-#include <string>
+#ifndef POINT_CLOUD_TRANSPORT__LOADER_FWDS_HPP_
+#define POINT_CLOUD_TRANSPORT__LOADER_FWDS_HPP_
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include <memory>
+
+
+// Forward-declare some classes most users shouldn't care about so that
+// point_cloud_transport.hpp doesn't bring them in.
+
+namespace pluginlib
+{
+template<class T>
+class ClassLoader;
+}  // namespace pluginlib
 
 namespace point_cloud_transport
 {
+class PublisherPlugin;
+class SubscriberPlugin;
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
-{
-}
+typedef pluginlib::ClassLoader<PublisherPlugin> PubLoader;
+typedef std::shared_ptr<PubLoader> PubLoaderPtr;
 
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
-
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
-
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
-
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
-
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
-
+typedef pluginlib::ClassLoader<SubscriberPlugin> SubLoader;
+typedef std::shared_ptr<SubLoader> SubLoaderPtr;
 }  // namespace point_cloud_transport
+#endif  // POINT_CLOUD_TRANSPORT__LOADER_FWDS_HPP_

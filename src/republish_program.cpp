@@ -27,52 +27,46 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-///
+//
 
-#include <string>
+#include "point_cloud_transport/republish.hpp"
 
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <rclcpp/rclcpp.hpp>
 
-#include <point_cloud_transport/publisher.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
+#include "utilities/utilities.hpp"
 
-namespace point_cloud_transport
+int main(int argc, char ** argv)
 {
+  std::vector<std::string> args = rclcpp::init_and_remove_ros_arguments(argc, argv);
 
-SingleSubscriberPublisher::SingleSubscriberPublisher(
-  const std::string & caller_id, const std::string & topic,
-  const GetNumSubscribersFn & num_subscribers_fn,
-  const PublishFn & publish_fn)
-: caller_id_(caller_id), topic_(topic),
-  num_subscribers_fn_(num_subscribers_fn),
-  publish_fn_(publish_fn)
-{
+  // remove program name
+  args.erase(args.begin());
+
+  std::string in_transport{"raw"};
+  std::string out_transport{""};
+
+  if (point_cloud_transport::has_option(args, "--in_transport")) {
+    in_transport = point_cloud_transport::get_option(args, "--in_transport");
+  }
+  if (point_cloud_transport::has_option(args, "--out_transport")) {
+    out_transport = point_cloud_transport::get_option(args, "--out_transport");
+  }
+
+  rclcpp::NodeOptions options;
+  // override default parameters with the desired transform
+  options.parameter_overrides(
+  {
+    {"in_transport", in_transport},
+    {"out_transport", out_transport},
+  });
+
+  std::shared_ptr<point_cloud_transport::Republisher> node;
+
+  node = std::make_shared<point_cloud_transport::Republisher>(options);
+
+  rclcpp::spin(node);
+
+  rclcpp::shutdown();
+
+  return 0;
 }
-
-std::string SingleSubscriberPublisher::getSubscriberName() const
-{
-  return caller_id_;
-}
-
-std::string SingleSubscriberPublisher::getTopic() const
-{
-  return topic_;
-}
-
-uint32_t SingleSubscriberPublisher::getNumSubscribers() const
-{
-  return num_subscribers_fn_();
-}
-
-void SingleSubscriberPublisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
-{
-  publish_fn_(message);
-}
-
-void SingleSubscriberPublisher::publish(
-  const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
-{
-  publish_fn_(*message);
-}
-
-}  // namespace point_cloud_transport
