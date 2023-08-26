@@ -2,19 +2,19 @@
 
 ## Description
 
-[point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport) is a [ROS 2](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages via different transport layers.
+[point_cloud_transport](https://github.com/ros-perception/point_cloud_transport) is a [ROS 2](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages via different transport layers.
 E.g. it can provide support for transporting point clouds in low-bandwidth environment using [Draco](https://github.com/google/draco) compression library.
 
-[point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport) is **NOT yet** released as C++ source code and binary packages via ROS buildfarm.
+[point_cloud_transport](https://github.com/ros-perception/point_cloud_transport) is **NOT yet** released as C++ source code and binary packages via ROS buildfarm.
 
 ## Usage
 
-[point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport) can be used to publish and subscribe to [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages. At this level of usage, it is similar to using ROS 2 Publishers and Subscribers. Using [point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport) instead of the ROS 2 primitives, however, gives the user much greater flexibility in how point clouds are communicated between nodes.
+[point_cloud_transport](https://github.com/ros-perception/point_cloud_transport) can be used to publish and subscribe to [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages. At this level of usage, it is similar to using ROS 2 Publishers and Subscribers. Using [point_cloud_transport](https://github.com/ros-perception/point_cloud_transport) instead of the ROS 2 primitives, however, gives the user much greater flexibility in how point clouds are communicated between nodes.
 
-For complete examples of publishing and subscribing to point clouds using [point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport), see [Tutorial](https://github.com/ahcorde/point_cloud_transport_tutorial).
+For complete examples of publishing and subscribing to point clouds using [point_cloud_transport](https://github.com/ros-perception/point_cloud_transport), see [Tutorial](https://github.com/ros-perception/point_cloud_transport_tutorial).
 
 ### C++
-Communicating PointCloud2 messages using [point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport):
+Communicating PointCloud2 messages using [point_cloud_transport](https://github.com/ros-perception/point_cloud_transport):
 ```cpp
 #include <rclcpp/rclcpp.hpp>
 #include <point_cloud_transport/point_cloud_transport.hpp>
@@ -74,13 +74,13 @@ Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.
 This allows you to specify plugins you do want to load (a.k.a. whitelist them).
 
 ```bash
-ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -p pct.point_cloud.enable_pub_plugins:=["point_cloud_transport/zlib"]
+ros2 run point_cloud_transport_tutorial my_publisher --ros-args -p pct.point_cloud.enable_pub_plugins:=["point_cloud_transport/zlib"]
 ```
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/draco_point_cloud_transport): Lossy compression via Google
-- [zlib_point_cloud_transport](https://github.com/john-maidbot/point_cloud_transport_plugins/tree/ros2/zlib_point_cloud_transport): Lossless compression via Zlib compression.
+- [draco_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/ros2/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/ros2/zlib_point_cloud_transport): Lossless compression via Zlib compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors
@@ -98,7 +98,7 @@ ros2 run point_cloud_transport_tutorial my_publisher <rosbag2 file> --ros-args -
 
 ## License
 
-This project is licensed under the BSD License - see the [LICENSE](https://github.com/john-maidbot/point_cloud_transport/blob/master/LICENSE) file for details.
+This project is licensed under the BSD License - see the [LICENSE](https://github.com/ros-perception/point_cloud_transport/blob/master/LICENSE) file for details.
 
 ## Acknowledgments
 
@@ -110,7 +110,7 @@ Support
 
 For questions/comments please email the maintainer mentioned in `package.xml`.
 
-If you have found an error in this package, please file an issue at: [https://github.com/john-maidbot/point_cloud_transport/issues]()
+If you have found an error in this package, please file an issue at: [https://github.com/ros-perception/point_cloud_transport/issues]()
 
 Patches are encouraged, and may be submitted by forking this project and
 submitting a pull request through GitHub. Any help is further development of the project is much appreciated.
