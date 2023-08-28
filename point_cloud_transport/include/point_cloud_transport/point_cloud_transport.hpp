@@ -155,8 +155,20 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher advertise(
     const std::string & base_topic,
+    uint32_t queue_size)
+  {
+    rclcpp::PublisherOptions options = rclcpp::PublisherOptions();
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
+    custom_qos.depth = queue_size;
+    return Publisher(node_, base_topic, pub_loader_, custom_qos, options);
+  }
+
+  //! Advertise a PointCloud2 topic, simple version.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  Publisher advertise(
+    const std::string & base_topic,
     uint32_t queue_size,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+    const rclcpp::PublisherOptions & options)
   {
     rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
     custom_qos.depth = queue_size;
@@ -171,6 +183,19 @@ public:
   {
     return Publisher(node_, base_topic, pub_loader_, custom_qos, options);
   }
+
+  // //! Subscribe to a point cloud topic, version for arbitrary std::function object.
+  // POINT_CLOUD_TRANSPORT_PUBLIC
+  // point_cloud_transport::Subscriber subscribe(
+  //   const std::string & base_topic,
+  //   uint32_t queue_size,
+  //   const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> & callback)
+  // {
+  //   rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
+  //   custom_qos.depth = queue_size;
+  //   return subscribe(
+  //     base_topic, custom_qos, callback, {}, nullptr);
+  // }
 
   //! Advertise an PointCloud2 topic with subscriber status callbacks.
   // TODO(ros2) Implement when SubscriberStatusCallback is available

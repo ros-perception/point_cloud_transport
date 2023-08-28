@@ -75,7 +75,7 @@ class Publisher(Node):
         print('Topics to publish: \n', self.topics_to_publish)
 
         self.declare_parameter('enable_pub_plugins', Parameter.Type.STRING_ARRAY)
-        whitelist = self.get_parameter('enable_pub_plugins')
+        whitelist = self.get_parameter_or('enable_pub_plugins', ["raw", "draco"])
 
         self.transport_publishers = {}
         for transport in self.topics_to_publish:
@@ -86,15 +86,16 @@ class Publisher(Node):
                 stringToMsgType(topic_to_publish.data_type), topic_to_publish.topic, 1)
 
     def publish(self, raw: PointCloud2):
-        for transport, transport_info in self.topics_to_publish.items():
-            compressed_buffer = self.codec.encode(
-                transport_info.name, pointCloud2ToString(raw))
-            if compressed_buffer:
-                # rclpy is smart and will publish the correct type even though we
-                # are giving it a serialized array of bytes
-                self.transport_publishers[transport].publish(compressed_buffer)
-            else:
-                self.get_logger().error('Error encoding message!')
+        # for transport, transport_info in self.topics_to_publish.items():
+        self.transport_publishers[transport].publish(raw)
+            # compressed_buffer = self.codec.encode(
+            #     transport_info.name, pointCloud2ToString(raw))
+            # if compressed_buffer:
+            #     # rclpy is smart and will publish the correct type even though we
+            #     # are giving it a serialized array of bytes
+            #     self.transport_publishers[transport].publish(raw)
+            # else:
+            #     self.get_logger().error('Error encoding message!')
 
 
 if __name__ == '__main__':

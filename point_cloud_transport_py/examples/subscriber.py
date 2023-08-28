@@ -36,6 +36,8 @@ from point_cloud_transport._codec import PointCloudCodec, VectorString
 from point_cloud_transport.common import stringToMsgType, stringToPointCloud2, TransportInfo
 
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import PointCloud2
 
 
 def _get_loadable_transports(codec: PointCloudCodec):
@@ -61,8 +63,8 @@ class Subscriber(Node):
         node_name = 'point_cloud_transport_subscriber'
         super().__init__(node_name)
 
-        self.base_topic = 'point_cloud'
-        self.transport = self.get_parameter_or('transport', 'raw')
+        self.base_topic = '/pct/point_cloud'
+        self.transport = self.get_parameter_or('transport', 'draco')
         self.codec = PointCloudCodec()
 
         transports = _get_loadable_transports(self.codec)
@@ -78,13 +80,10 @@ class Subscriber(Node):
 
         # subscribe to compressed, serialized msg
         self.subscriber = self.create_subscription(stringToMsgType(
-            self.transport_info.data_type), self.transport_info.topic, self.cb, 1, raw=True)
+            self.transport_info.data_type), self.transport_info.topic, self.cb, qos_profile_sensor_data)
 
-    def cb(self, serialized_buffer):
-        cloud_buffer = self.codec.decode(
-            self.transport_info.name, serialized_buffer)
-        cloud = stringToPointCloud2(cloud_buffer)
-        print(cloud)
+    def cb(self, cloud):
+        print(cloud.height * cloud.width)
 
 
 if __name__ == '__main__':
