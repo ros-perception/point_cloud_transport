@@ -97,7 +97,7 @@ PYBIND11_MODULE(_point_cloud_transport, m)
   .def("advertise",
        pybind11::overload_cast<const std::string &, uint32_t>(
          &point_cloud_transport::PointCloudTransport::advertise));
-  // TODO(ahcorde)
+  // TODO(ahcorde): Revisit this method
   // .def("subscribe",
   //      [](point_cloud_transport::PointCloudTransport & pct,
   //         const std::string & base_topic,
