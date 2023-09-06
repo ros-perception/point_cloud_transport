@@ -53,6 +53,7 @@ void stringToSerializedMsg(const std::string & buffer, rclcpp::SerializedMessage
   raw_serialized_msg.buffer_capacity = buffer.size();
   raw_serialized_msg.buffer_length = buffer.size();
   raw_serialized_msg.buffer = static_cast<uint8_t *>(malloc(raw_serialized_msg.buffer_capacity));
+  raw_serialized_msg.allocator = rcl_get_default_allocator();
 
   if (!raw_serialized_msg.buffer) {
     // Handle memory allocation error
@@ -61,7 +62,7 @@ void stringToSerializedMsg(const std::string & buffer, rclcpp::SerializedMessage
   }
 
   // Copy the string data into the serialized message buffer
-  memcpy(raw_serialized_msg.buffer, buffer.c_str(), raw_serialized_msg.buffer_length);
+  memcpy(raw_serialized_msg.buffer, buffer.data(), raw_serialized_msg.buffer_length);
 
   serial_msg = rclcpp::SerializedMessage(raw_serialized_msg);
 }
