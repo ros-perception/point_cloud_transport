@@ -147,7 +147,7 @@ if(BUILD_TESTING)
     LANGUAGE c++
   )
   ament_cpplint(EXCLUDE ${_linter_excludes})
-  ament_flake8(EXCLUDE ${_linter_excludes})
+  ament_flake8()
   ament_lint_cmake()
   ament_pep257(EXCLUDE ${_linter_excludes})
   ament_uncrustify(
