@@ -64,7 +64,6 @@ TEST_F(TestSubscriber, create_and_release_filter)
   typedef message_filters::sync_policies::ApproximateTime<
       sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
     ApproximateTimePolicy;
-  typedef std::shared_ptr<message_filters::Synchronizer<ApproximateTimePolicy>> Sync;
 
   point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
   point_cloud_transport::SubscriberFilter pcl_sub2(node_, "pointcloud2", "raw");
