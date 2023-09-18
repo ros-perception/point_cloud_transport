@@ -2,7 +2,7 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.12 (2023-06-18)
+2.0.0 (2023-09-18)
 -------------------
 * ROS2 port
 * Contributors: John D'Angelo
