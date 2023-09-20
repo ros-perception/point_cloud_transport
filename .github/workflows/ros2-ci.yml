@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - docker-image: "ubuntu:22.04"
-            ros-distro: "rolling"
+            ros-distro: "iron"
     container:
       image: ${{ matrix.docker-image }}
     steps:
