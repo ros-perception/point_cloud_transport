@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2023-09-20)
+-------------------
+* feat: replace third party expected with ros package (`#32 <https://github.com/ros-perception/point_cloud_transport/issues/32>`_)
+* fix: modify wrong install for header (`#30 <https://github.com/ros-perception/point_cloud_transport/issues/30>`_)
+* Contributors: Daisuke Nishimatsu
+
 2.0.0 (2023-09-18)
 -------------------
 * Removed warning (`#28 <https://github.com/ros-perception/point_cloud_transport/issues/28>`_)
