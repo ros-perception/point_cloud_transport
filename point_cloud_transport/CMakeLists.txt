@@ -19,13 +19,7 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
-
-include_directories(
-  include
-)
-
-# Tell CMake where to find the ThirdParty expected dependency
-set(expected_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/expected")
+find_package(tl_expected REQUIRED)
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
@@ -42,12 +36,12 @@ add_library(${PROJECT_NAME}
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
-  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 target_link_libraries(${PROJECT_NAME} PUBLIC
   message_filters::message_filters
   rclcpp::rclcpp
-  ${sensor_msgs_TARGETS})
+  ${sensor_msgs_TARGETS}
+  tl_expected::tl_expected)
 target_link_libraries(${PROJECT_NAME} PRIVATE
   pluginlib::pluginlib)
 
@@ -75,8 +69,7 @@ ament_target_dependencies(republish_node
 )
 target_include_directories(republish_node PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
-  "$<BUILD_INTERFACE:${expected_SOURCE_DIR}/include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
 add_executable(republish
@@ -118,20 +111,15 @@ install(
 )
 
 # Install include directories
-install(DIRECTORY include/ ${expected_SOURCE_DIR}/include/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
 ament_export_include_directories("include/${PROJECT_NAME}")
 
 ament_export_targets(export_${PROJECT_NAME})
 
-ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib)
+ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib tl_expected)
 
 if(BUILD_TESTING)
-  set(
-    _linter_excludes
-    ${expected_SOURCE_DIR}/include/tl/expected.hpp
-  )
-
   find_package(ament_cmake_copyright REQUIRED)
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_cpplint REQUIRED)
