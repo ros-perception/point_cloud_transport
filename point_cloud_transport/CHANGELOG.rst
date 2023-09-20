@@ -2,6 +2,13 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.13 (2023-09-20)
+-------------------
+* feat: replace third party expected with ros package (`#32 <https://github.com/ros-perception/point_cloud_transport/issues/32>`_) (`#33 <https://github.com/ros-perception/point_cloud_transport/issues/33>`_)
+  (cherry picked from commit d13b7a2feb63c82cbd619a99a7eed7c95f9ac558)
+  Co-authored-by: Daisuke Nishimatsu <42202095+wep21@users.noreply.github.com>
+* Contributors: mergify[bot], Daisuke Nishimatsu
+
 1.0.12 (2023-09-18)
 -------------------
 * ROS2 port
