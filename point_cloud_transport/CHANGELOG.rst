@@ -2,6 +2,16 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.2 (2023-10-05)
+-------------------
+* Fix param name (`#39 <https://github.com/ros-perception/point_cloud_transport/issues/39>`_) (`#41 <https://github.com/ros-perception/point_cloud_transport/issues/41>`_)
+  (cherry picked from commit 7acc9458dbfd75dcb4e8e2c984fd16e5d5d5aac8)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Fixed param name (`#36 <https://github.com/ros-perception/point_cloud_transport/issues/36>`_) (`#38 <https://github.com/ros-perception/point_cloud_transport/issues/38>`_)
+  (cherry picked from commit 851434a59ef2de7bccb1a46e27882c0480534289)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: mergify[bot]
+
 2.0.1 (2023-09-20)
 -------------------
 * feat: replace third party expected with ros package (`#32 <https://github.com/ros-perception/point_cloud_transport/issues/32>`_) (`#34 <https://github.com/ros-perception/point_cloud_transport/issues/34>`_)
