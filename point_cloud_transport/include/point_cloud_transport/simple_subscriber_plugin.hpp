@@ -96,7 +96,6 @@ public:
     if (impl_) {
       uint ns_len = impl_->node_->get_effective_namespace().length();
       std::string param_base_name = getTopic().substr(ns_len);
-      std::cout << "param_base_name " << param_base_name << std::endl;
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
       std::string param_name = param_base_name + "." + parameter_name;
