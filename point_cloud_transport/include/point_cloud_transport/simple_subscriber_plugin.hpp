@@ -88,10 +88,23 @@ public:
   }
 
   template<typename T>
-  bool declareParam(const std::string parameter_name, const T value)
+  bool declareParam(
+    const std::string parameter_name, const T value,
+    const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
+    rcl_interfaces::msg::ParameterDescriptor())
   {
     if (impl_) {
-      impl_->node_->template declare_parameter<T>(parameter_name, value);
+      uint ns_len = impl_->node_->get_effective_namespace().length();
+      std::string param_base_name = getTopic().substr(ns_len);
+      std::cout << "param_base_name " << param_base_name << std::endl;
+      std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
+
+      std::string param_name = param_base_name + "." + parameter_name;
+
+      rcl_interfaces::msg::ParameterDescriptor param_descriptor = parameter_descriptor;
+      param_descriptor.name = param_name;
+
+      impl_->node_->template declare_parameter<T>(param_name, value, param_descriptor);
       return true;
     }
     return false;
