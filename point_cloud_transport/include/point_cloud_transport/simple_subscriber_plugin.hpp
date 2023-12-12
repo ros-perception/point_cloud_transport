@@ -106,7 +106,9 @@ public:
       try {
         impl_->node_->template declare_parameter<T>(param_name, value, param_descriptor);
       } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
-        RCLCPP_DEBUG(impl_->node_->get_logger(), "%s was previously declared", param_descriptor.name.c_str());
+        RCLCPP_DEBUG(
+          impl_->node_->get_logger(), "%s was previously declared",
+          param_descriptor.name.c_str());
       }
 
       return true;
