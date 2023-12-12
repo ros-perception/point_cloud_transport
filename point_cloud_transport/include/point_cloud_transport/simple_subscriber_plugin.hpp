@@ -103,7 +103,12 @@ public:
       rcl_interfaces::msg::ParameterDescriptor param_descriptor = parameter_descriptor;
       param_descriptor.name = param_name;
 
-      impl_->node_->template declare_parameter<T>(param_name, value, param_descriptor);
+      try {
+        impl_->node_->template declare_parameter<T>(param_name, value, param_descriptor);
+      } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
+        RCLCPP_DEBUG(impl_->node_->get_logger(), "%s was previously declared", param_descriptor.name.c_str());
+      }
+
       return true;
     }
     return false;
