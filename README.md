@@ -8,8 +8,6 @@ Rolling |  [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__po
 Iron |  [![Build Status](https://build.ros2.org/buildStatus/icon?job=Idev__point_cloud_transport__ubuntu_jammy_amd64)](https://build.ros2.org/job/Idev__point_cloud_transport__ubuntu_jammy_amd64/) |  [![Build Status](https://build.ros2.org/buildStatus/icon?job=Ibin_uJ64__point_cloud_transport__ubuntu_jammy_amd64__binary)](https://build.ros2.org/job/Ibin_uJ64__point_cloud_transport__ubuntu_jammy_amd64__binary/) |
 Humble |  [![Build Status](https://build.ros2.org/buildStatus/icon?job=Hdev__point_cloud_transport__ubuntu_jammy_amd64)](https://build.ros2.org/job/Hdev__point_cloud_transport__ubuntu_jammy_amd64/) |  [![Build Status](https://build.ros2.org/buildStatus/icon?job=Hbin_uJ64__point_cloud_transport__ubuntu_jammy_amd64__binary)](https://build.ros2.org/job/Hbin_uJ64__point_cloud_transport__ubuntu_jammy_amd64__binary/) |
 
-
-
 ## Description
 
 [point_cloud_transport](https://github.com/ros-perception/point_cloud_transport) is a [ROS 2](https://www.ros.org/) package for subscribing to and publishing [PointCloud2](http://docs.ros.org/latest/api/sensor_msgs/html/msg/PointCloud2.html) messages via different transport layers.
