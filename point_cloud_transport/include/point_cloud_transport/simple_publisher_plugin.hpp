@@ -42,7 +42,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include "rclcpp/serialization.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <tl_expected/expected.hpp>
+#include <rcpputils/tl_expected/expected.hpp>
 
 #include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
