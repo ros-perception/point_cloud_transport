@@ -172,7 +172,6 @@ public:
   /// \return The output rmw serialized msg holding the compressed cloud message
   /// (if encoding succeeds), or an error message.
   ///
-  POINT_CLOUD_TRANSPORT_PUBLIC
   virtual TypedEncodeResult encodeTyped(
     const sensor_msgs::msg::PointCloud2 & raw) const = 0;
 
