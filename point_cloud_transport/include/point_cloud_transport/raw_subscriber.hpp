@@ -56,16 +56,21 @@ class RawSubscriber
 public:
   virtual ~RawSubscriber() {}
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberPlugin::DecodeResult decodeTyped(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & compressed) const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberPlugin::DecodeResult decodeTyped(
     const sensor_msgs::msg::PointCloud2 & compressed) const;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getDataType() const override;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void declareParameters() override;
 
+  POINT_CLOUD_TRANSPORT_PUBLIC
   std::string getTransportName() const override;
 
 protected:
