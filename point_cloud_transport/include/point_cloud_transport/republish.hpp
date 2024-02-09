@@ -51,6 +51,7 @@ public:
   explicit Republisher(const rclcpp::NodeOptions & options);
 
 private:
+  POINT_CLOUD_TRANSPORT_PUBLIC
   void initialize();
 
   std::shared_ptr<point_cloud_transport::PointCloudTransport> pct;
