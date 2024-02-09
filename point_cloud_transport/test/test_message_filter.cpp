@@ -59,11 +59,11 @@ void callback(
   (void) msg2;
 }
 
-TEST_F(TestSubscriber, create_and_release_filter)
-{
-  typedef message_filters::sync_policies::ApproximateTime<
-      sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
-    ApproximateTimePolicy;
+// TEST_F(TestSubscriber, create_and_release_filter)
+// {
+  // typedef message_filters::sync_policies::ApproximateTime<
+  //     sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
+  //   ApproximateTimePolicy;
 
   // TODO(ahcorde): Review this test on Windows
   // point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
@@ -77,7 +77,7 @@ TEST_F(TestSubscriber, create_and_release_filter)
   //   pcl_sub1.unsubscribe();
   //   pcl_sub2.unsubscribe();
   //   sync.reset();
-}
+// }
 
 int main(int argc, char ** argv)
 {
