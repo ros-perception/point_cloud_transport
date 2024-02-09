@@ -19,7 +19,7 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(tl_expected REQUIRED)
+find_package(rcpputils REQUIRED)
 
 # Build libpoint_cloud_transport
 add_library(${PROJECT_NAME}
@@ -41,7 +41,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   message_filters::message_filters
   rclcpp::rclcpp
   ${sensor_msgs_TARGETS}
-  tl_expected::tl_expected)
+  rcpputils::rcpputils)
 target_link_libraries(${PROJECT_NAME} PRIVATE
   pluginlib::pluginlib)
 
@@ -117,7 +117,7 @@ ament_export_include_directories("include/${PROJECT_NAME}")
 
 ament_export_targets(export_${PROJECT_NAME})
 
-ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib tl_expected)
+ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib rcpputils)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_copyright REQUIRED)
