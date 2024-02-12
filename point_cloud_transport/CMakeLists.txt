@@ -120,31 +120,10 @@ ament_export_targets(export_${PROJECT_NAME})
 ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib tl_expected)
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_copyright REQUIRED)
-  find_package(ament_cmake_cppcheck REQUIRED)
-  find_package(ament_cmake_cpplint REQUIRED)
-  find_package(ament_cmake_flake8 REQUIRED)
-  find_package(ament_cmake_lint_cmake REQUIRED)
-  find_package(ament_cmake_pep257 REQUIRED)
-  find_package(ament_cmake_uncrustify REQUIRED)
-  find_package(ament_cmake_xmllint REQUIRED)
-
-  ament_copyright(EXCLUDE ${_linter_excludes})
-  ament_cppcheck(
-    EXCLUDE ${_linter_excludes}
-    LANGUAGE c++
-  )
-  ament_cpplint(EXCLUDE ${_linter_excludes})
-  ament_flake8(EXCLUDE ${_linter_excludes})
-  ament_lint_cmake()
-  ament_pep257(EXCLUDE ${_linter_excludes})
-  ament_uncrustify(
-    EXCLUDE ${_linter_excludes}
-    LANGUAGE c++
-  )
-  ament_xmllint()
-
+  find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest)
+
+  ament_lint_auto_find_test_dependencies()
 
   ament_add_gtest(${PROJECT_NAME}-point_cloud_common test/test_point_cloud_common.cpp)
   if(TARGET ${PROJECT_NAME}-point_cloud_common)
