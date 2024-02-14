@@ -59,6 +59,8 @@ public:
   PublisherPlugin(const PublisherPlugin &) = delete;
   PublisherPlugin & operator=(const PublisherPlugin &) = delete;
 
+  virtual ~PublisherPlugin() {}
+
   //! Get a string identifier for the transport provided by this plugin
   virtual std::string getTransportName() const = 0;
 
@@ -92,7 +94,7 @@ public:
 
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
   POINT_CLOUD_TRANSPORT_PUBLIC
-  virtual void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
+  virtual void publishPtr(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
 
   //! Shutdown any advertisements associated with this PublisherPlugin.
   virtual void shutdown() = 0;

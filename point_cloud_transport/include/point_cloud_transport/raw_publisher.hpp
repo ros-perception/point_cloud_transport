@@ -51,7 +51,7 @@ class RawPublisher
 public:
   virtual ~RawPublisher() {}
 
-  virtual std::string getTransportName() const
+  virtual std::string getTransportName() const override
   {
     return "raw";
   }
@@ -65,7 +65,7 @@ public:
   {
   }
 
-  RawPublisher::TypedEncodeResult encodeTyped(const sensor_msgs::msg::PointCloud2 & raw) const
+  RawPublisher::TypedEncodeResult encodeTyped(const sensor_msgs::msg::PointCloud2 & raw) const override
   {
     return raw;
   }
@@ -73,19 +73,19 @@ public:
 protected:
   virtual void publish(
     const sensor_msgs::msg::PointCloud2 & message,
-    const PublishFn & publish_fn) const
+    const PublishFn & publish_fn) const override
   {
     publish_fn(message);
   }
 
   virtual void publish(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message_ptr,
-    const PublishFn & publish_fn) const
+    const PublishFn & publish_fn) const override
   {
     publish_fn(*message_ptr);
   }
 
-  virtual std::string getTopicToAdvertise(const std::string & base_topic) const
+  virtual std::string getTopicToAdvertise(const std::string & base_topic) const override
   {
     return base_topic;
   }

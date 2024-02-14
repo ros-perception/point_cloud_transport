@@ -199,7 +199,7 @@ protected:
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     rmw_qos_profile_t custom_qos,
-    const rclcpp::PublisherOptions & options)
+    const rclcpp::PublisherOptions & options) override
   {
     std::string transport_topic = getTopicToAdvertise(base_topic);
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node);
@@ -228,6 +228,27 @@ protected:
     const PublishFn & publish_fn) const
   {
     const auto res = this->encodeTyped(message);
+    if (!res) {
+      RCLCPP_ERROR(
+        this->getLogger(), "Error encoding message by transport %s: %s.",
+        this->getTransportName().c_str(), res.error().c_str());
+    } else if (res.value()) {
+      publish_fn(res.value().value());
+    }
+  }
+
+  ///
+  /// \brief Publish a point cloud using the specified publish function.
+  ///
+  /// The PublishFn publishes the transport-specific message type. This indirection allows
+  /// SimplePublisherPlugin to use this function for both normal broadcast publishing and
+  /// single subscriber publishing (in subscription callbacks).
+  ///
+  virtual void publish(
+    const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message,
+    const PublishFn & publish_fn) const
+  {
+    const auto res = this->encodeTyped(*message.get());
     if (!res) {
       RCLCPP_ERROR(
         this->getLogger(), "Error encoding message by transport %s: %s.",
