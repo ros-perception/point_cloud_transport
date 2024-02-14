@@ -38,7 +38,7 @@
 
 #include "rclcpp/node.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <tl_expected/expected.hpp>
+#include <rcpputils/tl_expected/expected.hpp>
 
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
