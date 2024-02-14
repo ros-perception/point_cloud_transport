@@ -53,7 +53,8 @@ void PublisherPlugin::advertise(
   advertiseImpl(node, base_topic, custom_qos, options);
 }
 
-void PublisherPlugin::publishPtr(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
+void PublisherPlugin::publishPtr(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message)
+const
 {
   publish(*message);
 }
