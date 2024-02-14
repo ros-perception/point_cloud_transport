@@ -38,10 +38,12 @@
 namespace point_cloud_transport
 {
 
-PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::msg::PointCloud2 & raw)
+PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::msg::PointCloud2 & /*raw*/)
 const
 {
-  return this->encode(raw);
+  // TODO(ahcorde): Review this, infinite recursion
+  // return this->encode(raw);
+  return std::nullopt;
 }
 
 void PublisherPlugin::advertise(
