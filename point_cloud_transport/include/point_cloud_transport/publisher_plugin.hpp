@@ -87,7 +87,7 @@ public:
   /// or an error message.
   ///
   POINT_CLOUD_TRANSPORT_PUBLIC
-  virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2 & raw) const;
+  virtual EncodeResult encode(const sensor_msgs::msg::PointCloud2 & raw) const = 0;
 
   //! Publish a point cloud using the transport associated with this PublisherPlugin.
   virtual void publish(const sensor_msgs::msg::PointCloud2 & message) const = 0;
