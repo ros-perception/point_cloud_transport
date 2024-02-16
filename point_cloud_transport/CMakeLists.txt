@@ -72,18 +72,9 @@ target_include_directories(republish_node PUBLIC
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 rclcpp_components_register_nodes(republish_node "point_cloud_transport::Republisher")
 
-add_executable(republish
-  src/republish_program.cpp
-  src/utilities/utilities.cpp
-)
-target_link_libraries(republish
-  ${PROJECT_NAME}
-  republish_node
-)
-ament_target_dependencies(republish
-  pluginlib
-  rclcpp_components
-  rclcpp
+rclcpp_components_register_node(republish_node
+  PLUGIN "point_cloud_transport::Republisher"
+  EXECUTABLE republish
 )
 
 # Build list_transports
@@ -106,7 +97,6 @@ install(TARGETS ${PROJECT_NAME} EXPORT export_${PROJECT_NAME})
 install(
   TARGETS
     list_transports
-    republish
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
