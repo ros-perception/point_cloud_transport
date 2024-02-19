@@ -2,6 +2,13 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.4 (2023-02-19)
+-------------------
+* Cleanup republisher (`#58 <https://github.com/ros-perception/point_cloud_transport/issues/58>`_)
+* Fixed clang issues (`#55 <https://github.com/ros-perception/point_cloud_transport/issues/55>`_)
+* Fixed MacOS M1 build (`#57 <https://github.com/ros-perception/point_cloud_transport/issues/57>`_)
+* Contributors: Alejandro Hernández Cordero
+
 3.0.3 (2023-02-13)
 -------------------
 * Improve Windows support (`#50 <https://github.com/ros-perception/point_cloud_transport//issues/50>`_)
