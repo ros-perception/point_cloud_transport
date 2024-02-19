@@ -294,7 +294,7 @@ public:
     return subscribe(
       base_topic, custom_qos, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), obj, transport_hints);
+        obj, std::placeholders::_1), obj, transport_hints);
   }
 
   template<class T>
@@ -307,7 +307,7 @@ public:
     return subscribe(
       base_topic, queue_size, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), obj, transport_hints);
+        obj, std::placeholders::_1), obj, transport_hints);
   }
 
 private:
