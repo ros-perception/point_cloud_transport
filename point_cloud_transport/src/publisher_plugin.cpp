@@ -38,12 +38,6 @@
 namespace point_cloud_transport
 {
 
-PublisherPlugin::EncodeResult PublisherPlugin::encode(const sensor_msgs::msg::PointCloud2 & raw)
-const
-{
-  return this->encode(raw);
-}
-
 void PublisherPlugin::advertise(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & base_topic,
@@ -53,7 +47,8 @@ void PublisherPlugin::advertise(
   advertiseImpl(node, base_topic, custom_qos, options);
 }
 
-void PublisherPlugin::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
+void PublisherPlugin::publishPtr(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message)
+const
 {
   publish(*message);
 }
