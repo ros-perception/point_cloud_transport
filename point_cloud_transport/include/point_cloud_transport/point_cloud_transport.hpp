@@ -263,26 +263,24 @@ public:
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, rmw_qos_profile_t custom_qos,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const, T * obj,
-    const point_cloud_transport::TransportHints * transport_hints = nullptr,
-    bool allow_concurrent_callbacks = false)
+    const point_cloud_transport::TransportHints * transport_hints = nullptr)
   {
     return subscribe(
       base_topic, custom_qos, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), VoidPtr(), transport_hints);
+        obj, std::placeholders::_1), VoidPtr(), transport_hints);
   }
 
   template<class T>
   point_cloud_transport::Subscriber subscribe(
     const std::string & base_topic, uint32_t queue_size,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &) const, T * obj,
-    const point_cloud_transport::TransportHints * transport_hints = nullptr,
-    bool allow_concurrent_callbacks = false)
+    const point_cloud_transport::TransportHints * transport_hints = nullptr)
   {
     return subscribe(
       base_topic, queue_size, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), VoidPtr(), transport_hints);
+        obj, std::placeholders::_1), VoidPtr(), transport_hints);
   }
 
   //! Subscribe to a point cloud topic, version for class member function with shared_ptr.
@@ -296,7 +294,7 @@ public:
     return subscribe(
       base_topic, custom_qos, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), obj, transport_hints);
+        obj, std::placeholders::_1), obj, transport_hints);
   }
 
   template<class T>
@@ -309,7 +307,7 @@ public:
     return subscribe(
       base_topic, queue_size, std::bind(
         fp,
-        obj.get(), std::placeholders::_1), obj, transport_hints);
+        obj, std::placeholders::_1), obj, transport_hints);
   }
 
 private:

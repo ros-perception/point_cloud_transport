@@ -147,7 +147,7 @@ void Republisher::initialize()
     typedef void (point_cloud_transport::PublisherPlugin::* PublishMemFn)(
       const sensor_msgs::msg::
       PointCloud2::ConstSharedPtr &) const;
-    PublishMemFn pub_mem_fn = &point_cloud_transport::PublisherPlugin::publish;
+    PublishMemFn pub_mem_fn = &point_cloud_transport::PublisherPlugin::publishPtr;
 
     RCLCPP_INFO(this->get_logger(), "Loading %s subscriber", in_topic.c_str());
 

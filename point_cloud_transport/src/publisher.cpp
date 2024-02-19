@@ -209,7 +209,7 @@ void Publisher::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & me
 
   for (const auto & pub : impl_->publishers_) {
     if (pub->getNumSubscribers() > 0) {
-      pub->publish(message);
+      pub->publishPtr(message);
     }
   }
 }
