@@ -63,7 +63,7 @@ protected:
 };
 
 TEST_F(TestPublisher, construction_and_destruction) {
-  auto get_num_subscribers = []() -> size_t {return 0;};
+  auto get_num_subscribers = []() -> uint32_t {return 0;};
   auto publish_fn = [](const sensor_msgs::msg::PointCloud2 & /*pointcloud*/) {};
 
   point_cloud_transport::SingleSubscriberPublisher ssp(caller_id, topic,
@@ -71,9 +71,9 @@ TEST_F(TestPublisher, construction_and_destruction) {
 }
 
 TEST_F(TestPublisher, getNumSubscribers) {
-  size_t nSub = 0;
+  uint32_t nSub = 0;
 
-  auto get_num_subscribers = [&nSub]() -> size_t {return nSub;};
+  auto get_num_subscribers = [&nSub]() -> uint32_t {return nSub;};
   auto publish_fn = [](const sensor_msgs::msg::PointCloud2 & /*pointcloud*/) {};
 
   point_cloud_transport::SingleSubscriberPublisher ssp(caller_id, topic,
