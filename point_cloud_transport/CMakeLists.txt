@@ -30,6 +30,7 @@ add_library(${PROJECT_NAME}
   src/publisher_plugin.cpp
   src/raw_subscriber.cpp
   src/single_subscriber_publisher.cpp
+  src/subscriber_filter.cpp
   src/subscriber.cpp
 )
 

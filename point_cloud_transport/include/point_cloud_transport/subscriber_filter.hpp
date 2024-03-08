@@ -73,23 +73,14 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    const std::string & transport)
-  {
-    subscribe(node, base_topic, transport);
-  }
+    const std::string & transport);
 
   //! Empty constructor, use subscribe() to subscribe to a topic
   POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter()
-  {
-  }
+  SubscriberFilter();
 
   POINT_CLOUD_TRANSPORT_PUBLIC
-  ~SubscriberFilter()
-  {
-    unsubscribe();
-  }
-
+  ~SubscriberFilter();
   ///
   /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
   /// this function will first unsubscribe.
@@ -105,48 +96,26 @@ public:
     const std::string & base_topic,
     const std::string & transport,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
-  {
-    unsubscribe();
-    sub_ = point_cloud_transport::create_subscription(
-      node, base_topic,
-      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
-      transport, custom_qos, options);
-  }
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   //! Force immediate unsubscription of this subscriber from its topic
   POINT_CLOUD_TRANSPORT_PUBLIC
-  void unsubscribe()
-  {
-    sub_.shutdown();
-  }
+  void unsubscribe();
 
   POINT_CLOUD_TRANSPORT_PUBLIC
-  std::string getTopic() const
-  {
-    return sub_.getTopic();
-  }
+  std::string getTopic() const;
 
   //! Returns the number of publishers this subscriber is connected to.
   POINT_CLOUD_TRANSPORT_PUBLIC
-  uint32_t getNumPublishers() const
-  {
-    return sub_.getNumPublishers();
-  }
+  uint32_t getNumPublishers() const;
 
   //! Returns the name of the transport being used.
   POINT_CLOUD_TRANSPORT_PUBLIC
-  std::string getTransport() const
-  {
-    return sub_.getTransport();
-  }
+  std::string getTransport() const;
 
   //! Returns the internal point_cloud_transport::Subscriber object.
   POINT_CLOUD_TRANSPORT_PUBLIC
-  const Subscriber & getSubscriber() const
-  {
-    return sub_;
-  }
+  const Subscriber & getSubscriber() const;
 
 private:
   void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m)
