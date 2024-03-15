@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.5 (2024-03-15)
+-------------------
+* Fixed SubscriberFilter linking issue on windows (`#64 <https://github.com/ros-perception/point_cloud_transport/issues/64>`_)
+* Contributors: Alejandro Hernández Cordero
+
 3.0.4 (2023-02-19)
 -------------------
 * Cleanup republisher (`#58 <https://github.com/ros-perception/point_cloud_transport/issues/58>`_)
