@@ -44,6 +44,7 @@
 #include "point_cloud_transport/publisher_plugin.hpp"
 #include "point_cloud_transport/republish.hpp"
 #include "point_cloud_transport/subscriber.hpp"
+#include "point_cloud_transport/qos.hpp"
 
 using namespace std::chrono_literals;
 
@@ -103,6 +104,31 @@ void Republisher::initialize()
       "The 'out_transport' parameter is set to: " << out_transport);
   }
 
+   std::string publisher_qos_profile_name = "DEFAULT";
+   this->declare_parameter<std::string>("publisher_qos_profile", publisher_qos_profile_name);
+   if(this->get_parameter("publisher_qos_profile", publisher_qos_profile_name))
+   {
+       RCLCPP_INFO_STREAM(this->get_logger(), "found param publisher_qos_profile");
+   }
+   RCLCPP_INFO_STREAM(
+       this->get_logger(),
+       "The 'publisher_qos_profile' parameter is set to: " << publisher_qos_profile_name);
+
+   rmw_qos_profile_t publisher_qos_profile = rmw_qos_profile_default;
+   bool foundProfile = detectQoSProfileFromString(publisher_qos_profile_name,
+                                                  publisher_qos_profile);
+
+   if(!foundProfile)
+   {
+       RCLCPP_WARN_STREAM(this->get_logger(),
+                          "unkown QoS profile, will use SYSTEM_DEFAULT instead."
+                          << "Please check the 'publisher_qos_profile' param "
+                          << "(valid values are 'PARAMS_EVENTS', 'PARAMS', "
+                          << "'SENSOR_DATA', 'SERVICES_DEFAULT' and 'SYSTEM_DEFAULT'.");
+       publisher_qos_profile = rmw_qos_profile_default;
+   }
+
+
   pct = std::make_shared<point_cloud_transport::PointCloudTransport>(this->shared_from_this());
 
   if (out_transport.empty()) {
@@ -111,7 +137,7 @@ void Republisher::initialize()
       std::make_shared<point_cloud_transport::Publisher>(
       pct->advertise(
         out_topic,
-        rmw_qos_profile_default));
+        publisher_qos_profile));
 
     RCLCPP_INFO_STREAM(
       this->get_logger(),
@@ -137,7 +163,7 @@ void Republisher::initialize()
     auto instance = loader->createUniqueInstance(lookup_name);
     // DO NOT use instance after this line
     this->pub = std::move(instance);
-    pub->advertise(this->shared_from_this(), out_topic);
+    pub->advertise(this->shared_from_this(), out_topic, publisher_qos_profile);
 
     RCLCPP_INFO_STREAM(
       this->get_logger(),
