@@ -32,14 +32,19 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'image_pipeline'
-copyright = '2008-2024, Open Source Robotics Foundation, Inc.'  # noqa
+
+from datetime import datetime
+now = datetime.now() # current date and time
+year = now.strftime("%Y")
+
+project = 'point_cloud_transport'
+copyright = '2008-' + year + ', Open Source Robotics Foundation, Inc.'  # noqa
 author = 'Open Source Robotics Foundation, Inc.'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '3.2.1'
+release = '3.0.5'
 
 
 # -- General configuration ---------------------------------------------------
@@ -120,7 +125,7 @@ html_static_path = []
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'image_pipeline_doc'
+htmlhelp_basename = 'point_cloud_transport_doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -149,7 +154,7 @@ latex_elements = {
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'image_pipeline', 'image_pipeline Documentation',
+    (master_doc, 'point_cloud_transport', 'point_cloud_transport Documentation',
      [author], 1)
 ]
 
@@ -160,8 +165,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'image_pipeline', 'image_pipeline Documentation',
-     author, 'image_pipeline', 'ROS 2 components for image processing.',
+    (master_doc, 'point_cloud_transport', 'point_cloud_transport Documentation',
+     author, 'point_cloud_transport', 'ROS 2 components for point cloud transport.',
      'Miscellaneous'),
 ]
 
