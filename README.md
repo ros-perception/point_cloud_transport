@@ -85,8 +85,9 @@ ros2 run point_cloud_transport_tutorial my_publisher --ros-args -p pct.point_clo
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/ros2/draco_point_cloud_transport): Lossy compression via Google
-- [zlib_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/ros2/zlib_point_cloud_transport): Lossless compression via Zlib compression.
+- [draco_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/zlib_point_cloud_transport): Lossless compression via Zlib compression.
+- [zstd_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/zstd_point_cloud_transport): Lossless compression via Zstd compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors
