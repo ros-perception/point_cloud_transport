@@ -66,7 +66,7 @@ We provide a process to republish any topic speaking in a given transport to a d
 e.g. have it subscribe to a topic you recorded encoded using draco and publish it as a raw, decoded message
 
 ```bash
-ros2 run point_cloud_transport republish --in_transport draco --out_transport raw --ros-args --remap in:=input_topic_name --remap out:=ouput_topic_name
+ros2 run point_cloud_transport republish --ros-args -p in_transport:=raw -p out_transport:=draco --remap in:=input_topic_name --remap out:=ouput_topic_name
 ```
 
 ### Python
