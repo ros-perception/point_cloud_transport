@@ -2,6 +2,14 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.5 (2023-03-26)
+------------------
+* Cleanup republisher (`#58 <https://github.com/ros-perception/point_cloud_transport/issues/58>`_) (`#71 <https://github.com/ros-perception/point_cloud_transport/issues/71>`_)
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Improve Windows support (`#50 <https://github.com/ros-perception/point_cloud_transport/issues/50>`_) (`#62 <https://github.com/ros-perception/point_cloud_transport/issues/62>`_)
+* Fixed MacOS M1 build (`#57 <https://github.com/ros-perception/point_cloud_transport/issues/57>`_) (`#60 <https://github.com/ros-perception/point_cloud_transport/issues/60>`_)
+* Contributors: Alejandro Hernández Cordero, john-maidbot
+
 2.0.4 (2023-02-14)
 -------------------
 * Change tl_expected for rcpputils (`#48 <https://github.com/ros-perception/point_cloud_transport//issues/48>`_) (`#52 <https://github.com/ros-perception/point_cloud_transport//issues/52>`_)
