@@ -59,6 +59,11 @@ protected:
     node.reset();
   }
 
+  static void TearDownTestSuite()
+  {
+    rclcpp::shutdown();
+  }
+
   rclcpp::Node::SharedPtr node;
 };
 
