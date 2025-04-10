@@ -86,8 +86,9 @@ public:
   ///
   /// \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.
   ///
+  template<typename NodeT = rclcpp::Node::SharedPtr>
   void subscribe(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
+    NodeT node, const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -95,11 +96,26 @@ public:
     return subscribeImpl(node, base_topic, callback, custom_qos, options);
   }
 
-  ///
-  /// \brief Subscribe to an pointcloud topic, version for bare function.
-  ///
   void subscribe(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
+  {
+    return subscribeImpl(node_interfaces, base_topic, callback, custom_qos, options);
+  }
+
+  ///
+  /// \brief Subscribe to a pointcloud topic, version for bare function.
+  ///
+  template<typename NodeT = rclcpp::Node::SharedPtr>
+  void subscribe(
+    NodeT node, const std::string & base_topic,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -111,11 +127,11 @@ public:
   }
 
   ///
-  /// \brief Subscribe to an pointcloud topic, version for class member function with bare pointer.
+  /// \brief Subscribe to a pointcloud topic, version for class member function with bare pointer.
   ///
-  template<class T>
+  template<class T, typename NodeT = rclcpp::Node::SharedPtr>
   void subscribe(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
+    NodeT node, const std::string & base_topic,
     void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &), T * obj,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
@@ -162,18 +178,33 @@ protected:
   ///
   /// Subscribe to a point cloud transport topic. Must be implemented by the subclass.
   ///
-  virtual void subscribeImpl(
-    std::shared_ptr<rclcpp::Node> node,
+  template<typename NodeT = rclcpp::Node::SharedPtr>
+  void subscribeImpl(
+    NodeT node,
     const std::string & base_topic,
     const Callback & callback,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default) = 0;
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
+  {
+    subscribeImpl(
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
+        base_topic, callback, custom_qos, options);
+  }
 
   virtual void subscribeImpl(
-    std::shared_ptr<rclcpp::Node> node,
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const Callback & callback,
-    rmw_qos_profile_t custom_qos,
-    rclcpp::SubscriptionOptions options) = 0;
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions()) = 0;
 };
 
 }  // namespace point_cloud_transport

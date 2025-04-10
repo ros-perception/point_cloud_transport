@@ -75,6 +75,22 @@ public:
     std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
     const std::string & transport);
 
+  ///
+  /// \brief Constructs a SubscriberFilter with node interfaces
+  /// \param node_interfaces A shared pointer to the node interfaces required for subscription.
+  /// \param base_topic The topic name to subscribe to.
+  /// \param transport The transport hint to pass along
+  ///
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  SubscriberFilter(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    const std::string & base_topic,
+    const std::string & transport);
+
   //! Empty constructor, use subscribe() to subscribe to a topic
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter();
@@ -93,6 +109,26 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     std::shared_ptr<rclcpp::Node> node,
+    const std::string & base_topic,
+    const std::string & transport,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
+
+  ///
+  /// \brief Subscribes to a point cloud topic using the specified transport method.
+  /// \param node_interfaces Shared pointer to the node interfaces required for subscription.
+  /// \param base_topic The base topic name to subscribe to.
+  /// \param transport The transport method to use (e.g., "raw", "compressed").
+  /// \param custom_qos Custom QoS profile
+  /// \param options Subscription options.
+  ///
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void subscribe(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
     const std::string & base_topic,
     const std::string & transport,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
