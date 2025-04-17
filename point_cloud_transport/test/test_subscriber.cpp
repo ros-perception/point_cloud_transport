@@ -32,7 +32,7 @@
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
-
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
@@ -43,9 +43,11 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
+    lifecycle_node_ = rclcpp_lifecycle::LifecycleNode::make_shared("test_subscriber_lifecycle");
   }
 
   rclcpp::Node::SharedPtr node_;
+  rclcpp_lifecycle::LifecycleNode::SharedPtr lifecycle_node_;
 };
 
 TEST_F(TestSubscriber, construction_and_destruction)
@@ -70,6 +72,30 @@ TEST_F(TestSubscriber, shutdown)
   EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
   sub.shutdown();
   EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
+}
+
+TEST_F(TestSubscriber, construction_and_destruction_lifecycle)
+{
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {
+      (void)msg;
+    };
+
+  auto sub = point_cloud_transport::create_subscription(lifecycle_node_, "pointcloud", fcn, "raw");
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.spin_node_some(lifecycle_node_->get_node_base_interface());
+}
+
+TEST_F(TestSubscriber, shutdown_lifecycle)
+{
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {(void)msg;};
+
+  auto sub = point_cloud_transport::create_subscription(lifecycle_node_, "pointcloud", fcn, "raw");
+  EXPECT_EQ(lifecycle_node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
+  sub.shutdown();
+  EXPECT_EQ(lifecycle_node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
 }
 
 int main(int argc, char ** argv)

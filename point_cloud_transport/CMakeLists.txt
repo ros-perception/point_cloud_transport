@@ -18,6 +18,7 @@ find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -123,7 +124,7 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-publisher test/test_publisher.cpp)
   if(TARGET ${PROJECT_NAME}-publisher)
-    target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME} rclcpp::rclcpp)
+    target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME} rclcpp::rclcpp rclcpp_lifecycle::rclcpp_lifecycle)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-codec test/test_point_cloud_codec.cpp)
@@ -133,7 +134,8 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-subscriber)
-    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME} rclcpp::rclcpp
+      rclcpp_lifecycle::rclcpp_lifecycle ${sensor_msgs_TARGETS})
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-message_passing test/test_message_passing.cpp)
