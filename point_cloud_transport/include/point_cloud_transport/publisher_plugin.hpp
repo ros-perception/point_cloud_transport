@@ -37,6 +37,7 @@
 #include <vector>
 
 #include "rclcpp/node.hpp"
+#include "rclcpp/node_interfaces/node_interfaces.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
@@ -65,12 +66,28 @@ public:
   virtual std::string getTransportName() const = 0;
 
   //! \brief Advertise a topic, simple version.
-  POINT_CLOUD_TRANSPORT_PUBLIC
+  template<typename NodeT = rclcpp::Node::SharedPtr>
   void advertise(
-    std::shared_ptr<rclcpp::Node> node,
+    NodeT node,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+  {
+    advertiseImpl(node, base_topic, custom_qos, options);
+  }
+
+  void advertise(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+  {
+    advertiseImpl(node_interfaces, base_topic, custom_qos, options);
+  }
 
   //! Returns the number of subscribers that are currently connected to this PublisherPlugin
   virtual uint32_t getNumSubscribers() const = 0;
@@ -109,10 +126,30 @@ public:
   static std::string getLookupName(const std::string & transport_name);
 
 protected:
-  //! Advertise a topic. Must be implemented by the subclass.
+  template<typename NodeT = rclcpp::Node::SharedPtr>
+  void advertiseImpl(
+    NodeT node, const std::string & base_topic,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+  {
+    advertiseImpl(
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
+      base_topic, custom_qos, options);
+  }
+
+    //! Advertise a topic. Must be implemented by the subclass.
   virtual void advertiseImpl(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    rmw_qos_profile_t custom_qos,
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
 };
 

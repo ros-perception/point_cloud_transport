@@ -38,15 +38,6 @@
 namespace point_cloud_transport
 {
 
-void PublisherPlugin::advertise(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & base_topic,
-  rmw_qos_profile_t custom_qos,
-  const rclcpp::PublisherOptions & options)
-{
-  advertiseImpl(node, base_topic, custom_qos, options);
-}
-
 void PublisherPlugin::publishPtr(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message)
 const
 {
