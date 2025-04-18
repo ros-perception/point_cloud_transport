@@ -64,18 +64,6 @@ class SubscriberFilter : public message_filters::SimpleFilter<sensor_msgs::msg::
 {
 public:
   ///
-  /// \brief Constructor
-  /// \param node The rclcpp node to use to subscribe.
-  /// \param base_topic The topic to subscribe to.
-  /// \param queue_size The subscription queue size
-  /// \param transport The transport hint to pass along
-  ///
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    const std::string & transport);
-
-  ///
   /// \brief Constructs a SubscriberFilter with node interfaces
   /// \param node_interfaces A shared pointer to the node interfaces required for subscription.
   /// \param base_topic The topic name to subscribe to.
@@ -87,9 +75,30 @@ public:
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const std::string & transport);
+
+  ///
+  /// \brief Constructor
+  /// \param node The rclcpp node to use to subscribe.
+  /// \param base_topic The topic to subscribe to.
+  /// \param queue_size The subscription queue size
+  /// \param transport The transport hint to pass along
+  ///
+  template<typename NodeT = rclcpp::Node::SharedPtr>
+  SubscriberFilter(
+    NodeT node, const std::string & base_topic,
+    const std::string & transport)
+  : SubscriberFilter(
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
+      base_topic, transport)
+  {
+  }
 
   //! Empty constructor, use subscribe() to subscribe to a topic
   POINT_CLOUD_TRANSPORT_PUBLIC
@@ -128,7 +137,7 @@ public:
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const std::string & transport,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,

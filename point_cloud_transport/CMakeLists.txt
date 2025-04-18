@@ -156,7 +156,7 @@ if(BUILD_TESTING)
   ament_add_gtest(${PROJECT_NAME}-message-filter test/test_message_filter.cpp)
   if(TARGET ${PROJECT_NAME}-message-filter)
     target_link_libraries(${PROJECT_NAME}-message-filter
-      ${PROJECT_NAME} message_filters::message_filters rclcpp::rclcpp ${sensor_msgs_TARGETS})
+      ${PROJECT_NAME} message_filters::message_filters rclcpp::rclcpp rclcpp_lifecycle::rclcpp_lifecycle ${sensor_msgs_TARGETS})
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-single_subscriber_publisher test/test_single_subscriber_publisher.cpp)
