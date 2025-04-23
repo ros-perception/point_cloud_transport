@@ -18,7 +18,6 @@ find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -114,6 +113,7 @@ ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib rcpputils
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest)
+  find_package(rclcpp_lifecycle REQUIRED)
 
   ament_lint_auto_find_test_dependencies()
 
