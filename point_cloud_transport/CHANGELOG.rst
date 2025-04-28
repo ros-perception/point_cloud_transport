@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.2 (2025-04-28)
+------------------
+* Add `rclcpp::shutdown` (`#110 <https://github.com/ros-perception/point_cloud_transport/issues/110>`_)
+* Contributors: Yuyuan Yuan
+
 5.1.1 (2024-11-25)
 ------------------
 
