@@ -149,7 +149,7 @@ public:
   {
     if (simple_impl_) {
       simple_impl_->on_set_parameters_callback_handle_ =
-        simple_impl_->node_interface_->get_node_parameters_interface()
+        simple_impl_->node_interfaces_->get_node_parameters_interface()
         ->add_on_set_parameters_callback(param_change_callback);
     }
   }
