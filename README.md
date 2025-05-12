@@ -73,7 +73,7 @@ ros2 run point_cloud_transport republish --ros-args -p in_transport:=raw -p out_
 
 The functionality of `point_cloud_transport` is also exposed to python via `pybind11` and `rclpy` serialization.
 
-Please see [point_cloud_transport/publisher.py](point_cloud_transport/publisher.py) and [point_cloud_transport/subscriber.py](point_cloud_transport/subscriber.py) for example usage.
+Please see [publisher.py](https://github.com/ros-perception/point_cloud_transport_tutorial/blob/kilted/scripts/publisher.py) and [subscriber.py](https://github.com/ros-perception/point_cloud_transport_tutorial/blob/kilted/scripts/subscriber_old_school.py) for example usage.
 
 ### Whitelist point cloud transport
 
@@ -85,9 +85,9 @@ ros2 run point_cloud_transport_tutorial my_publisher --ros-args -p pct.point_clo
 
 ## Known transports
 
-- [draco_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/draco_point_cloud_transport): Lossy compression via Google
-- [zlib_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/zlib_point_cloud_transport): Lossless compression via Zlib compression.
-- [zstd_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/rolling/zstd_point_cloud_transport): Lossless compression via Zstd compression.
+- [draco_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/kilted/draco_point_cloud_transport): Lossy compression via Google
+- [zlib_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/kilted/zlib_point_cloud_transport): Lossless compression via Zlib compression.
+- [zstd_point_cloud_transport](https://github.com/ros-perception/point_cloud_transport_plugins/tree/kilted/zstd_point_cloud_transport): Lossless compression via Zstd compression.
 - Did you write one? Don't hesitate and send a pull request adding it to this list!
 
 ## Authors
