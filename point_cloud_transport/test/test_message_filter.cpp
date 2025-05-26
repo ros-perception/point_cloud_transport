@@ -36,7 +36,6 @@
 #include <message_filters/synchronizer.hpp>
 
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
 #include "point_cloud_transport/subscriber_filter.hpp"
@@ -47,11 +46,9 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
-    lifecycle_node_ = rclcpp_lifecycle::LifecycleNode::make_shared("test_lifecycle_node");
   }
 
   rclcpp::Node::SharedPtr node_;
-  rclcpp_lifecycle::LifecycleNode::SharedPtr lifecycle_node_;
 };
 
 void callback(
@@ -70,25 +67,6 @@ TEST_F(TestSubscriber, create_and_release_filter)
 
   point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
   point_cloud_transport::SubscriberFilter pcl_sub2(node_, "pointcloud2", "raw");
-
-  auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
-    ApproximateTimePolicy(
-      10), pcl_sub1, pcl_sub2);
-  sync->registerCallback(std::bind(callback, std::placeholders::_1, std::placeholders::_2));
-
-  pcl_sub1.unsubscribe();
-  pcl_sub2.unsubscribe();
-  sync.reset();
-}
-
-TEST_F(TestSubscriber, create_and_release_filter_lifecycle)
-{
-  typedef message_filters::sync_policies::ApproximateTime<
-      sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
-    ApproximateTimePolicy;
-
-  point_cloud_transport::SubscriberFilter pcl_sub1(lifecycle_node_, "pointcloud1", "raw");
-  point_cloud_transport::SubscriberFilter pcl_sub2(lifecycle_node_, "pointcloud2", "raw");
 
   auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
     ApproximateTimePolicy(

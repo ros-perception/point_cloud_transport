@@ -33,7 +33,6 @@
 
 namespace point_cloud_transport
 {
-
 SubscriberFilter::SubscriberFilter(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,

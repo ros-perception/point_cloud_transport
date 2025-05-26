@@ -56,12 +56,13 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher() = default;
 
-  template<typename NodeT = rclcpp::Node::SharedPtr>
+  [[deprecated("Use Publisher(rclcpp::node_interfaces...) instead")]]
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher(
-    NodeT node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     PubLoaderPtr loader,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rmw_qos_profile_t custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   : Publisher(
       std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
@@ -70,8 +71,7 @@ public:
         rclcpp::node_interfaces::NodeTopicsInterface,
         rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
       base_topic, loader, custom_qos, options)
-  {
-  }
+  {}
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   Publisher(
@@ -82,7 +82,7 @@ public:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     PubLoaderPtr loader,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rmw_qos_profile_t custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
   //! get total number of subscribers to all advertised topics.

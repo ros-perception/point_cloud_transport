@@ -58,6 +58,7 @@ public:
   /// \param node Node to use when looking up the transport parameter.
   /// \param default_transport Preferred transport to use
   /// \param parameter_name The name of the transport parameter
+  [[deprecated("Use TransportHints(rclcpp::node_interfaces...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   TransportHints(
     const std::shared_ptr<rclcpp::Node> node,

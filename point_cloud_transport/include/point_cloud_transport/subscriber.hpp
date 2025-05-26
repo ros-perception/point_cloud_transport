@@ -71,9 +71,10 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   Subscriber() = default;
 
-  template<typename NodeT = rclcpp::Node::SharedPtr>
+  [[deprecated("Use Subscriber(rclcpp::node_interfaces...) instead")]]
+  POINT_CLOUD_TRANSPORT_PUBLIC
   Subscriber(
-    NodeT node,
+    std::shared_ptr<rclcpp::Node> node,
     const std::string & base_topic,
     const Callback & callback,
     SubLoaderPtr loader,
@@ -152,5 +153,4 @@ private:
 };
 
 }  // namespace point_cloud_transport
-
 #endif  // POINT_CLOUD_TRANSPORT__SUBSCRIBER_HPP_

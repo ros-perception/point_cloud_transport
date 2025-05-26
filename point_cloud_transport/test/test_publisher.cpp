@@ -32,7 +32,6 @@
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
 
@@ -42,11 +41,9 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_publisher");
-    lifecycle_node_ = rclcpp_lifecycle::LifecycleNode::make_shared("test_publisher_lifecycle");
   }
 
   rclcpp::Node::SharedPtr node_;
-  rclcpp_lifecycle::LifecycleNode::SharedPtr lifecycle_node_;
 };
 
 TEST_F(TestPublisher, publisher)
@@ -65,23 +62,6 @@ TEST_F(TestPublisher, point_cloud_transport_publisher)
   point_cloud_transport::PointCloudTransport it(node_);
   auto pub = it.advertise("point_cloud", rmw_qos_profile_sensor_data);
 }
-
-TEST_F(TestPublisher, publisher_lifecycle)
-{
-  auto pub = point_cloud_transport::create_publisher(lifecycle_node_, "point_cloud");
-  EXPECT_EQ(lifecycle_node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
-  pub.shutdown();
-  EXPECT_EQ(lifecycle_node_->get_node_graph_interface()->count_publishers("point_cloud"), 0u);
-  pub.publish(sensor_msgs::msg::PointCloud2());
-  pub.publish(sensor_msgs::msg::PointCloud2::ConstSharedPtr());
-}
-
-TEST_F(TestPublisher, point_cloud_transport_publisher_lifecycle)
-{
-  point_cloud_transport::PointCloudTransport it(lifecycle_node_);
-  auto pub = it.advertise("point_cloud", rmw_qos_profile_sensor_data);
-}
-
 
 int main(int argc, char ** argv)
 {

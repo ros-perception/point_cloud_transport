@@ -139,7 +139,6 @@ Publisher::Publisher(
     all_transport_names.emplace_back(erase_last_copy(lookup_name, "_pub"));
   }
 
-
   try {
     whitelist_vec = node_interfaces->get_node_parameters_interface()
       ->declare_parameter(param_base_name + ".enable_pub_plugins",
@@ -151,7 +150,7 @@ Publisher::Publisher(
     whitelist_vec =
       node_interfaces->get_node_parameters_interface()->
       get_parameter(param_base_name +
-          ".enable_pub_plugins").get_value<std::vector<std::string>>();
+      ".enable_pub_plugins").get_value<std::vector<std::string>>();
   }
 
   std::set<std::string> whitelist;
