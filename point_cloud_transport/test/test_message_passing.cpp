@@ -95,11 +95,25 @@ TEST_F(MessagePassingTesting, one_message_passing)
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
   auto pub = point_cloud_transport::create_publisher(node_, "pointcloud");
   auto sub =
     point_cloud_transport::create_subscription(
     node_, "pointcloud", pointcloudCallback,
     "raw");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
 

@@ -70,6 +70,13 @@ TEST_F(TestPublisher, RemappedPublisher) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pointcloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
   // Subscribe
   bool received{false};
   auto sub = point_cloud_transport::create_subscription(
@@ -81,6 +88,11 @@ TEST_F(TestPublisher, RemappedPublisher) {
 
   // Publish
   auto pub = point_cloud_transport::create_publisher(node_, "new_topic");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
 
   ASSERT_EQ("/namespace/new_topic", sub.getTopic());
   ASSERT_EQ("/namespace/new_topic", pub.getTopic());
@@ -164,7 +176,7 @@ TEST_F(TestPublisher, RemappedPublisher_ni_api) {
       node_->get_node_topics_interface(),
       node_->get_node_logging_interface()
     );
-  auto pub = point_cloud_transport::create_publisher(node_, "new_topic");
+  auto pub = point_cloud_transport::create_publisher(node_node_interfaces, "new_topic");
 
   ASSERT_EQ("/namespace/new_topic", sub.getTopic());
   ASSERT_EQ("/namespace/new_topic", pub.getTopic());
