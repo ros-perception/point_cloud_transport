@@ -93,7 +93,12 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
-    return subscribeImpl(node, base_topic, callback, custom_qos, options);
+    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+          rclcpp::node_interfaces::NodeBaseInterface,
+          rclcpp::node_interfaces::NodeParametersInterface,
+          rclcpp::node_interfaces::NodeTopicsInterface,
+          rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
+    return subscribeImpl(node_interfaces, base_topic, callback, custom_qos, options);
   }
 
   void subscribe(
@@ -120,8 +125,13 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
+    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+          rclcpp::node_interfaces::NodeBaseInterface,
+          rclcpp::node_interfaces::NodeParametersInterface,
+          rclcpp::node_interfaces::NodeTopicsInterface,
+          rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
     return subscribe(
-      node, base_topic,
+      node_interfaces, base_topic,
       std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>(fp),
       custom_qos, options);
   }
@@ -153,8 +163,13 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
+    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+          rclcpp::node_interfaces::NodeBaseInterface,
+          rclcpp::node_interfaces::NodeParametersInterface,
+          rclcpp::node_interfaces::NodeTopicsInterface,
+          rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
     return subscribe(
-      node, base_topic,
+      node_interfaces, base_topic,
       std::bind(fp, obj, std::placeholders::_1), custom_qos, options);
   }
   template<class T>

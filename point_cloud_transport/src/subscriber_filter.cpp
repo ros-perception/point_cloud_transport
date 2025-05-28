@@ -62,8 +62,13 @@ void SubscriberFilter::subscribe(
   rclcpp::SubscriptionOptions options)
 {
   unsubscribe();
+  auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
   sub_ = point_cloud_transport::create_subscription(
-    node, base_topic,
+    node_interfaces, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
     transport, custom_qos, options);
 }
