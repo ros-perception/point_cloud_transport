@@ -157,24 +157,25 @@ class PointCloudTransport : public PointCloudTransportLoader
 
 public:
   //! Constructor
+  [[deprecated("Use PointCloudTransport(rclcpp::node_interfaces...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   explicit PointCloudTransport(rclcpp::Node::SharedPtr node)
   : PointCloudTransport(
-      rclcpp::node_interfaces::NodeInterfaces<
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
         rclcpp::node_interfaces::NodeBaseInterface,
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>(*node))
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node))
   {
   }
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   explicit PointCloudTransport(
-    rclcpp::node_interfaces::NodeInterfaces<
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces);
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces);
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   ~PointCloudTransport() override = default;

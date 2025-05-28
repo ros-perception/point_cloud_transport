@@ -172,18 +172,14 @@ SubLoaderPtr PointCloudTransportLoader::getSubscriberLoader() const
 thread_local std::unique_ptr<point_cloud_transport::PointCloudTransportLoader> loader;
 
 PointCloudTransport::PointCloudTransport(
-  rclcpp::node_interfaces::NodeInterfaces<
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces)
+    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces)
+: node_interfaces_(std::move(node_interfaces))
 {
   PointCloudTransportLoader();
-  node_interfaces_ = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(node_interfaces);
 }
 
 }  // namespace point_cloud_transport
