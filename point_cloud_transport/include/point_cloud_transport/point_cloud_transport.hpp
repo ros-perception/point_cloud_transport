@@ -98,7 +98,7 @@ protected:
 };
 
 /// \brief Advertise every available transport on pointcloud topics, free function version.
-/// \param node_interfaces The ROS node to use for any ROS operations
+/// \param node The ROS node to use for any ROS operations
 /// \param base_topic The base topic for the publisher
 /// \param custom_qos The QoS profile to use for the underlying publisher(s)
 /// \param options The publisher options to use for the underlying publisher(s)
@@ -110,6 +110,14 @@ Publisher create_publisher(
   const std::string & base_topic,
   rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
+
+/// \brief Advertise every available transport on pointcloud topics, free function version.
+/// \param node_interfaces the ROS node interfaces required for core node functionality, including
+///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
+/// \param base_topic The base topic for the publisher
+/// \param custom_qos The QoS profile to use for the underlying publisher(s)
+/// \param options The publisher options to use for the underlying publisher(s)
+/// \return The advertised publisher
 POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -122,7 +130,7 @@ Publisher create_publisher(
   const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
 
 /// \brief Subscribe to a pointcloud transport topic, free function version.
-/// \param node_interfaces The ROS node to use for any ROS operations
+/// \param node The ROS node to use for any ROS operations
 /// \param base_topic The base topic for the sbuscription
 /// \param callback The callback to invoke on receipt of a message
 /// \param transport The transport to use for the subscription
@@ -138,6 +146,16 @@ Subscriber create_subscription(
   const std::string & transport,
   rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
+
+/// \brief Subscribe to a pointcloud transport topic, free function version.
+/// \param node_interfaces the ROS node interfaces required for core node functionality, including
+///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
+/// \param base_topic The base topic for the sbuscription
+/// \param callback The callback to invoke on receipt of a message
+/// \param transport The transport to use for the subscription
+/// \param custom_qos The QoS profile to use for the underlying publisher
+/// \param options The publisher options to use for the underlying publisher
+/// \return The subscriber
 POINT_CLOUD_TRANSPORT_PUBLIC
 Subscriber create_subscription(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
