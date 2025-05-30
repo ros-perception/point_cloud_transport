@@ -46,9 +46,28 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
+    node_interfaces_ = std::make_shared<
+      rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface
+      >
+      >(
+        node_->get_node_base_interface(),
+        node_->get_node_parameters_interface(),
+        node_->get_node_topics_interface(),
+        node_->get_node_logging_interface()
+      );
   }
 
   rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface
+    >> node_interfaces_;
 };
 
 void callback(
@@ -65,8 +84,41 @@ TEST_F(TestSubscriber, create_and_release_filter)
       sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
     ApproximateTimePolicy;
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
   point_cloud_transport::SubscriberFilter pcl_sub1(node_, "pointcloud1", "raw");
   point_cloud_transport::SubscriberFilter pcl_sub2(node_, "pointcloud2", "raw");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
+
+  auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
+    ApproximateTimePolicy(
+      10), pcl_sub1, pcl_sub2);
+  sync->registerCallback(std::bind(callback, std::placeholders::_1, std::placeholders::_2));
+
+  pcl_sub1.unsubscribe();
+  pcl_sub2.unsubscribe();
+  sync.reset();
+}
+
+TEST_F(TestSubscriber, create_and_release_filter_ni_api)
+{
+  typedef message_filters::sync_policies::ApproximateTime<
+      sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
+    ApproximateTimePolicy;
+
+  point_cloud_transport::SubscriberFilter pcl_sub1(node_interfaces_, "pointcloud1", "raw");
+  point_cloud_transport::SubscriberFilter pcl_sub2(node_interfaces_, "pointcloud2", "raw");
 
   auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
     ApproximateTimePolicy(

@@ -56,10 +56,29 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_message_passing");
+    node_interfaces_ = std::make_shared<
+      rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface
+      >
+      >(
+        node_->get_node_base_interface(),
+        node_->get_node_parameters_interface(),
+        node_->get_node_topics_interface(),
+        node_->get_node_logging_interface()
+      );
     total_pointclouds_received = 0;
   }
 
   rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface
+    >> node_interfaces_;
 };
 
 void pointcloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
@@ -76,10 +95,63 @@ TEST_F(MessagePassingTesting, one_message_passing)
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
   auto pub = point_cloud_transport::create_publisher(node_, "pointcloud");
   auto sub =
     point_cloud_transport::create_subscription(
     node_, "pointcloud", pointcloudCallback,
+    "raw");
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
+
+  test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
+
+  ASSERT_EQ(0, total_pointclouds_received);
+  ASSERT_EQ(1u, pub.getNumSubscribers());
+  ASSERT_EQ(1u, sub.getNumPublishers());
+
+  executor.spin_node_some(node_);
+  ASSERT_EQ(0, total_pointclouds_received);
+
+  size_t retry = 0;
+  while (retry < max_retries && total_pointclouds_received == 0) {
+    // generate random pointcloud and publish it
+    pub.publish(generate_random_cloudpoint());
+
+    executor.spin_node_some(node_);
+    size_t loop = 0;
+    while ((total_pointclouds_received != 1) && (loop++ < max_loops)) {
+      std::this_thread::sleep_for(sleep_per_loop);
+      executor.spin_node_some(node_);
+    }
+  }
+
+  ASSERT_EQ(1, total_pointclouds_received);
+}
+
+TEST_F(MessagePassingTesting, one_message_passing_ni_api)
+{
+  const size_t max_retries = 3;
+  const size_t max_loops = 200;
+  const std::chrono::milliseconds sleep_per_loop = std::chrono::milliseconds(10);
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  auto pub = point_cloud_transport::create_publisher(node_interfaces_, "pointcloud");
+  auto sub =
+    point_cloud_transport::create_subscription(
+    node_interfaces_, "pointcloud", pointcloudCallback,
     "raw");
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());

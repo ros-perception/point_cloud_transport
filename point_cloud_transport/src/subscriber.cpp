@@ -49,8 +49,14 @@ namespace point_cloud_transport
 
 struct Subscriber::Impl
 {
-  Impl(std::shared_ptr<rclcpp::Node> node, SubLoaderPtr loader)
-  : logger_(node->get_logger()),
+  Impl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    SubLoaderPtr loader)
+  : logger_(node_interfaces->get_node_logging_interface()->get_logger()),
     loader_(loader),
     unsubscribed_(false)
   {
@@ -84,14 +90,18 @@ struct Subscriber::Impl
 };
 
 Subscriber::Subscriber(
-  std::shared_ptr<rclcpp::Node> node,
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
   const std::string & base_topic,
   const Callback & callback,
   SubLoaderPtr loader,
   const std::string & transport,
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
-: impl_(std::make_shared<Impl>(node, loader))
+: impl_(std::make_shared<Impl>(node_interfaces, loader))
 {
   // Load the plugin for the chosen transport.
   std::string lookup_name = SubscriberPlugin::getLookupName(transport);
@@ -124,7 +134,7 @@ Subscriber::Subscriber(
   }
 
   // Tell plugin to subscribe.
-  impl_->subscriber_->subscribe(node, base_topic, callback, custom_qos, options);
+  impl_->subscriber_->subscribe(node_interfaces, base_topic, callback, custom_qos, options);
   RCLCPP_INFO(impl_->logger_, "Subscribing to: %s\n", impl_->subscriber_->getTopic().c_str());
 }
 

@@ -70,6 +70,13 @@ TEST_F(TestPublisher, RemappedPublisher) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pointcloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
   // Subscribe
   bool received{false};
   auto sub = point_cloud_transport::create_subscription(
@@ -81,6 +88,95 @@ TEST_F(TestPublisher, RemappedPublisher) {
 
   // Publish
   auto pub = point_cloud_transport::create_publisher(node_, "new_topic");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
+
+  ASSERT_EQ("/namespace/new_topic", sub.getTopic());
+  ASSERT_EQ("/namespace/new_topic", pub.getTopic());
+
+  test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
+
+  ASSERT_FALSE(received);
+
+  size_t retry = 0;
+  uint32_t nSub = 0;
+  uint32_t nPub = 0;
+  while (retry < max_retries && nPub == 0 && nSub == 0) {
+    nSub = pub.getNumSubscribers();
+    nPub = sub.getNumPublishers();
+    std::this_thread::sleep_for(sleep_per_loop);
+  }
+
+  executor.spin_node_some(node_);
+  executor.spin_node_some(node_remap_);
+
+  retry = 0;
+  while (retry < max_retries && !received) {
+    // generate random pointcloud and publish it
+    pub.publish(pointcloud);
+
+    executor.spin_node_some(node_);
+    executor.spin_node_some(node_remap_);
+
+    size_t loop = 0;
+    while ((!received) && (loop++ < max_loops)) {
+      std::this_thread::sleep_for(sleep_per_loop);
+      executor.spin_node_some(node_);
+      executor.spin_node_some(node_remap_);
+    }
+  }
+
+  EXPECT_TRUE(received);
+}
+
+TEST_F(TestPublisher, RemappedPublisher_ni_api) {
+  const size_t max_retries = 3;
+  const size_t max_loops = 200;
+  const std::chrono::milliseconds sleep_per_loop = std::chrono::milliseconds(10);
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  auto pointcloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+
+  // Subscribe
+  bool received{false};
+  auto node_remap_node_interfaces = std::make_shared<
+    rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface
+    >
+    >(
+      node_remap_->get_node_base_interface(),
+      node_remap_->get_node_parameters_interface(),
+      node_remap_->get_node_topics_interface(),
+      node_remap_->get_node_logging_interface()
+    );
+  auto sub = point_cloud_transport::create_subscription(
+    node_remap_node_interfaces, "old_topic",
+    [&received](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg) {
+      (void)msg;
+      received = true;
+    }, "raw");
+
+  // Publish
+  auto node_node_interfaces = std::make_shared<
+    rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface
+    >
+    >(
+      node_->get_node_base_interface(),
+      node_->get_node_parameters_interface(),
+      node_->get_node_topics_interface(),
+      node_->get_node_logging_interface()
+    );
+  auto pub = point_cloud_transport::create_publisher(node_node_interfaces, "new_topic");
 
   ASSERT_EQ("/namespace/new_topic", sub.getTopic());
   ASSERT_EQ("/namespace/new_topic", pub.getTopic());

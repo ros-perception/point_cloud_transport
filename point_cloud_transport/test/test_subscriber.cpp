@@ -43,11 +43,37 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
+    node_interfaces_ = std::make_shared<
+      rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface
+      >
+      >(
+        node_->get_node_base_interface(),
+        node_->get_node_parameters_interface(),
+        node_->get_node_topics_interface(),
+        node_->get_node_logging_interface()
+      );
   }
 
   rclcpp::Node::SharedPtr node_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface
+    >> node_interfaces_;
 };
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 TEST_F(TestSubscriber, construction_and_destruction)
 {
   std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
@@ -67,6 +93,35 @@ TEST_F(TestSubscriber, shutdown)
     [](const auto & msg) {(void)msg;};
 
   auto sub = point_cloud_transport::create_subscription(node_, "pointcloud", fcn, "raw");
+  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
+  sub.shutdown();
+  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
+}
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
+
+TEST_F(TestSubscriber, construction_and_destruction_ni_api)
+{
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {
+      (void)msg;
+    };
+
+  auto sub = point_cloud_transport::create_subscription(node_interfaces_, "pointcloud", fcn, "raw");
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.spin_node_some(node_);
+}
+
+TEST_F(TestSubscriber, shutdown_ni_api)
+{
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {(void)msg;};
+
+  auto sub = point_cloud_transport::create_subscription(node_interfaces_, "pointcloud", fcn, "raw");
   EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
   sub.shutdown();
   EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
