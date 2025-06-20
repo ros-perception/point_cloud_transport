@@ -119,6 +119,7 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
+  [[deprecated("Use subscribe(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -129,6 +130,18 @@ public:
     const std::string & base_topic,
     const std::string & transport,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void subscribe(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    const std::string & transport,
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   //! Force immediate unsubscription of this subscriber from its topic

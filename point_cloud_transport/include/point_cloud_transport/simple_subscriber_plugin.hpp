@@ -223,16 +223,44 @@ protected:
     const Callback & callback,
     rmw_qos_profile_t custom_qos) override
   {
+    subscribeImpl(node_interfaces, base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos));
+  }
+
+  void subscribeImpl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rmw_qos_profile_t custom_qos,
+    rclcpp::SubscriptionOptions options) override
+  {
+    subscribeImpl(node_interfaces, base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  void subscribeImpl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rclcpp::QoS custom_qos) override
+  {
     if (!node_interfaces) {
       throw std::runtime_error("node_interfaces is null");
     }
     impl_ = std::make_unique<Impl>(node_interfaces);
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     auto node_parameters = node_interfaces->get_node_parameters_interface();
     auto node_topics = node_interfaces->get_node_topics_interface();
     impl_->sub_ = rclcpp::create_subscription<M>(
       node_parameters, node_topics,
-      getTopicToSubscribe(base_topic), qos,
+      getTopicToSubscribe(base_topic), custom_qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
         this->callback(msg, callback);
       });
@@ -247,16 +275,15 @@ protected:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const Callback & callback,
-    rmw_qos_profile_t custom_qos,
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options) override
   {
     impl_ = std::make_unique<Impl>(node_interfaces);
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos);
     auto node_parameters = node_interfaces->get_node_parameters_interface();
     auto node_topics = node_interfaces->get_node_topics_interface();
     impl_->sub_ = rclcpp::create_subscription<M>(
       node_parameters, node_topics,
-      getTopicToSubscribe(base_topic), qos,
+      getTopicToSubscribe(base_topic), custom_qos,
       [this, callback](const typename std::shared_ptr<const M> msg) {
         this->callback(msg, callback);
       },

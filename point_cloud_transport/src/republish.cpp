@@ -159,7 +159,7 @@ void Republisher::initialize()
       std::make_shared<point_cloud_transport::Publisher>(
       pct->advertise(
         out_topic,
-        rmw_qos_profile_default,
+        rclcpp::SystemDefaultsQoS(),
         pub_options));
 
     RCLCPP_INFO_STREAM(
@@ -186,7 +186,7 @@ void Republisher::initialize()
     auto instance = loader->createUniqueInstance(lookup_name);
     // DO NOT use instance after this line
     this->pub = std::move(instance);
-    pub->advertise(this->node_interfaces_, out_topic, rmw_qos_profile_default, pub_options);
+    pub->advertise(this->node_interfaces_, out_topic, rclcpp::SystemDefaultsQoS(), pub_options);
 
     RCLCPP_INFO_STREAM(
       this->get_logger(),

@@ -98,7 +98,8 @@ public:
           rclcpp::node_interfaces::NodeParametersInterface,
           rclcpp::node_interfaces::NodeTopicsInterface,
           rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-    return subscribeImpl(node_interfaces, base_topic, callback, custom_qos, options);
+    return subscribeImpl(node_interfaces, base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 
   void subscribe(
@@ -110,6 +111,22 @@ public:
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
+  {
+    return subscribeImpl(
+      node_interfaces, base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  void subscribe(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     return subscribeImpl(node_interfaces, base_topic, callback, custom_qos, options);
@@ -135,6 +152,7 @@ public:
       std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>(fp),
       custom_qos, options);
   }
+
   void subscribe(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
@@ -144,6 +162,23 @@ public:
     const std::string & base_topic,
     void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
+  {
+    return subscribe(
+      node_interfaces, base_topic,
+      std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>(fp),
+      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  void subscribe(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    const std::string & base_topic,
+    void (* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &),
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     return subscribe(
@@ -172,6 +207,7 @@ public:
       node_interfaces, base_topic,
       std::bind(fp, obj, std::placeholders::_1), custom_qos, options);
   }
+
   template<class T>
   void subscribe(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -186,7 +222,26 @@ public:
   {
     return subscribe(
       node_interfaces, base_topic,
-      std::bind(fp, obj, std::placeholders::_1), custom_qos, options);
+      std::bind(fp, obj, std::placeholders::_1),
+      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  template<class T>
+  void subscribe(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    const std::string & base_topic,
+    void (T::* fp)(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &), T * obj,
+    rclcpp::QoS custom_qos,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
+  {
+    return subscribe(
+      node_interfaces, base_topic,
+      std::bind(fp, obj, std::placeholders::_1),
+      custom_qos, options);
   }
 
   //! Get the transport-specific communication topic.
@@ -241,6 +296,7 @@ protected:
         rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
         base_topic, callback, custom_qos);
   }
+
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
@@ -250,6 +306,16 @@ protected:
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default) = 0;
+
+  virtual void subscribeImpl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rclcpp::QoS custom_qos) = 0;
 
   [[deprecated("Use subscribeImpl(rclcpp::node_interfaces...) instead")]]
   virtual void subscribeImpl(
@@ -265,8 +331,27 @@ protected:
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
         rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
+        base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  virtual void subscribeImpl(
+    std::shared_ptr<rclcpp::Node> node,
+    const std::string & base_topic,
+    const Callback & callback,
+    rclcpp::QoS custom_qos,
+    rclcpp::SubscriptionOptions options)
+  {
+    subscribeImpl(
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+        rclcpp::node_interfaces::NodeBaseInterface,
+        rclcpp::node_interfaces::NodeParametersInterface,
+        rclcpp::node_interfaces::NodeTopicsInterface,
+        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
         base_topic, callback, custom_qos, options);
   }
+
+  [[deprecated("Use subscribeImpl(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
@@ -276,6 +361,17 @@ protected:
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos,
+    rclcpp::SubscriptionOptions options) = 0;
+
+  virtual void subscribeImpl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    const Callback & callback,
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options) = 0;
 };
 
