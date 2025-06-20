@@ -109,7 +109,7 @@ TEST_F(TestPublisher, publisher_ni_api)
 TEST_F(TestPublisher, point_cloud_transport_publisher_ni_api)
 {
   point_cloud_transport::PointCloudTransport it(node_interfaces_);
-  auto pub = it.advertise("point_cloud", rmw_qos_profile_sensor_data);
+  auto pub = it.advertise("point_cloud", rclcpp::SystemDefaultsQoS());
 }
 
 int main(int argc, char ** argv)
