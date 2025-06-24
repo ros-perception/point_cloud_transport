@@ -335,22 +335,6 @@ protected:
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 
-  virtual void subscribeImpl(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    const Callback & callback,
-    rclcpp::QoS custom_qos,
-    rclcpp::SubscriptionOptions options)
-  {
-    subscribeImpl(
-      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
-        base_topic, callback, custom_qos, options);
-  }
-
   [[deprecated("Use subscribeImpl(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<

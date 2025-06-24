@@ -138,24 +138,6 @@ Subscriber create_subscription(
 }
 
 Subscriber create_subscription(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & base_topic,
-  const Subscriber::Callback & callback,
-  const std::string & transport,
-  rclcpp::QoS custom_qos,
-  rclcpp::SubscriptionOptions options)
-{
-  auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-  return Subscriber(
-    node_interfaces, base_topic, callback,
-    kImpl->getSubLoader(), transport, custom_qos, options);
-}
-
-Subscriber create_subscription(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
