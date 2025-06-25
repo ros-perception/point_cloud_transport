@@ -118,6 +118,7 @@ Publisher create_publisher(
 /// \param custom_qos The QoS profile to use for the underlying publisher(s)
 /// \param options The publisher options to use for the underlying publisher(s)
 /// \return The advertised publisher
+[[deprecated("Use create_subscription(rclcpp::node_interfaces...) instead")]]
 POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -174,6 +175,7 @@ Subscriber create_subscription(
 /// \param custom_qos The QoS profile to use for the underlying publisher
 /// \param options The publisher options to use for the underlying publisher
 /// \return The subscriber
+[[deprecated("Use create_subscription(rclcpp::node_interfaces...) instead")]]
 POINT_CLOUD_TRANSPORT_PUBLIC
 Subscriber create_subscription(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<

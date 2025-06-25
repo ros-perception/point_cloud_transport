@@ -70,7 +70,9 @@ void SubscriberFilter::subscribe(
   sub_ = point_cloud_transport::create_subscription(
     node_interfaces, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
-    transport, custom_qos, options);
+    transport,
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
+    options);
 }
 
 void SubscriberFilter::subscribe(
@@ -85,7 +87,7 @@ void SubscriberFilter::subscribe(
   rclcpp::SubscriptionOptions options)
 {
   subscribe(node_interfaces, base_topic, transport,
-      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
 void SubscriberFilter::subscribe(

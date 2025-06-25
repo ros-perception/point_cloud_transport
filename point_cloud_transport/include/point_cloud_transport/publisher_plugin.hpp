@@ -160,7 +160,13 @@ protected:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
+  {
+    advertiseImpl(
+      node_interfaces, base_topic,
+      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
+      options);
+  }
 
   virtual void advertiseImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<

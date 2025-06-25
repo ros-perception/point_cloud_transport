@@ -97,7 +97,10 @@ TEST_F(TestPublisher, point_cloud_transport_publisher)
 
 TEST_F(TestPublisher, publisher_ni_api)
 {
-  auto pub = point_cloud_transport::create_publisher(node_interfaces_, "point_cloud");
+  auto pub = point_cloud_transport::create_publisher(
+    node_interfaces_,
+    "point_cloud",
+    rclcpp::SystemDefaultsQoS());
   EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
   pub.shutdown();
   EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 0u);
