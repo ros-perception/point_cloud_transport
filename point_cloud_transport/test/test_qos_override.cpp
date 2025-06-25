@@ -249,7 +249,8 @@ TEST_F(TestQosOverride, qos_override_subscriber_without_options_ni_api) {
   auto sub = point_cloud_transport::create_subscription(
     sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS());
   auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
+  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::BestEffort);
   sub.shutdown();
 
   sub = point_cloud_transport::create_subscription(
@@ -277,7 +278,8 @@ TEST_F(TestQosOverride, qos_override_subscriber_with_options_ni_api) {
   auto sub = point_cloud_transport::create_subscription(
     sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS(), options);
   auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
+  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::BestEffort);
   sub.shutdown();
 
   sub = point_cloud_transport::create_subscription(
