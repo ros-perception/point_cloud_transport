@@ -350,7 +350,14 @@ protected:
     const std::string & base_topic,
     const Callback & callback,
     rmw_qos_profile_t custom_qos,
-    rclcpp::SubscriptionOptions options) = 0;
+    rclcpp::SubscriptionOptions options)
+  {
+    subscribeImpl(
+        node_interfaces,
+        base_topic, callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
+        options);
+  }
 
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
