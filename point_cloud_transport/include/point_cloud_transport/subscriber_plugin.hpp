@@ -310,7 +310,14 @@ protected:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const Callback & callback,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default) = 0;
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default)
+  {
+    subscribeImpl(
+        node_interfaces,
+        base_topic,
+        callback,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos));
+  }
 
   virtual void subscribeImpl(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
