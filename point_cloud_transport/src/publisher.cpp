@@ -113,7 +113,7 @@ Publisher::Publisher(
     rclcpp::node_interfaces::NodeTopicsInterface,
     rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
   const std::string & base_topic,
-  PubLoaderPtr loader, rmw_qos_profile_t custom_qos,
+  PubLoaderPtr loader, rclcpp::QoS custom_qos,
   const rclcpp::PublisherOptions & options)
 : impl_(std::make_shared<Impl>(node_interfaces))
 {
@@ -176,6 +176,20 @@ Publisher::Publisher(
             "No plugins found! Does `rospack plugins --attrib=plugin "
             "point_cloud_transport` find any packages?");
   }
+}
+
+Publisher::Publisher(
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+  const std::string & base_topic,
+  PubLoaderPtr loader, rmw_qos_profile_t custom_qos,
+  const rclcpp::PublisherOptions & options)
+: Publisher(node_interfaces, base_topic, loader,
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options)
+{
 }
 
 uint32_t Publisher::getNumSubscribers() const

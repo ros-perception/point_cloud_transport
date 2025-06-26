@@ -148,11 +148,14 @@ TEST_F(MessagePassingTesting, one_message_passing_ni_api)
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  auto pub = point_cloud_transport::create_publisher(node_interfaces_, "pointcloud");
+  auto pub = point_cloud_transport::create_publisher(
+    node_interfaces_,
+    "pointcloud",
+    rclcpp::SystemDefaultsQoS());
   auto sub =
     point_cloud_transport::create_subscription(
     node_interfaces_, "pointcloud", pointcloudCallback,
-    "raw");
+    "raw", rclcpp::SystemDefaultsQoS());
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
 

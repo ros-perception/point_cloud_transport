@@ -160,7 +160,7 @@ TEST_F(TestPublisher, RemappedPublisher_ni_api) {
     [&received](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg) {
       (void)msg;
       received = true;
-    }, "raw");
+    }, "raw", rclcpp::SystemDefaultsQoS());
 
   // Publish
   auto node_node_interfaces = std::make_shared<
@@ -176,7 +176,8 @@ TEST_F(TestPublisher, RemappedPublisher_ni_api) {
       node_->get_node_topics_interface(),
       node_->get_node_logging_interface()
     );
-  auto pub = point_cloud_transport::create_publisher(node_node_interfaces, "new_topic");
+  auto pub = point_cloud_transport::create_publisher(node_node_interfaces, "new_topic",
+    rclcpp::SystemDefaultsQoS());
 
   ASSERT_EQ("/namespace/new_topic", sub.getTopic());
   ASSERT_EQ("/namespace/new_topic", pub.getTopic());
