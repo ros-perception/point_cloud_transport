@@ -132,8 +132,18 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
+  ///
+  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
+  /// this function will first unsubscribe.
+  /// \param node_interfaces the ROS node interfaces required for core node functionality, including
+  ///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
+  /// \param base_topic The topic to subscribe to.
+  /// \param transport The transport hint to pass along
+  /// \param custom_qos Custom quality of service
+  /// \param options Subscriber options
+  ///
   POINT_CLOUD_TRANSPORT_PUBLIC
-  void subscribe(
+  virtual void subscribe(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
@@ -163,7 +173,7 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   const Subscriber & getSubscriber() const;
 
-private:
+protected:
   void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m)
   {
     signalMessage(m);
