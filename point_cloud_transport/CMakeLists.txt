@@ -32,7 +32,6 @@ add_library(${PROJECT_NAME}
   src/raw_subscriber.cpp
   src/single_subscriber_publisher.cpp
   src/subscriber_filter.cpp
-  src/full_subscriber_filter.cpp
   src/subscriber.cpp
 )
 

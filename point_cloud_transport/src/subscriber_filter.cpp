@@ -45,6 +45,20 @@ SubscriberFilter::SubscriberFilter(
   subscribe(node_interfaces, base_topic, transport, rclcpp::SystemDefaultsQoS());
 }
 
+SubscriberFilter::SubscriberFilter(
+  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+  const std::string & base_topic,
+  const std::string & transport,
+  rclcpp::QoS custom_qos,
+  rclcpp::SubscriptionOptions options)
+{
+  subscribe(node_interfaces, base_topic, transport, custom_qos, options);
+}
+
 SubscriberFilter::SubscriberFilter()
 {
 }
@@ -106,6 +120,19 @@ void SubscriberFilter::subscribe(
     node_interfaces, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
     transport, custom_qos, options);
+  // Update class members
+  this->node_interfaces_ = node_interfaces;
+  this->topic_ = base_topic;
+  this->transport_ = transport;
+  this->qos_ = custom_qos;
+  this->options_ = options;
+}
+
+void SubscriberFilter::subscribe()
+{
+  if (node_interfaces_ != nullptr) {
+    subscribe(node_interfaces_, topic_, transport_, qos_, options_);
+  }
 }
 
 void SubscriberFilter::unsubscribe()
@@ -115,7 +142,7 @@ void SubscriberFilter::unsubscribe()
 
 std::string SubscriberFilter::getTopic() const
 {
-  return sub_.getTopic();
+  return this->topic_;
 }
 
 uint32_t SubscriberFilter::getNumPublishers() const
@@ -125,7 +152,7 @@ uint32_t SubscriberFilter::getNumPublishers() const
 
 std::string SubscriberFilter::getTransport() const
 {
-  return sub_.getTransport();
+  return this->transport_;
 }
 
 const Subscriber & SubscriberFilter::getSubscriber() const
