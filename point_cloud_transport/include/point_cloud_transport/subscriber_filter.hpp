@@ -226,6 +226,7 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   const Subscriber & getSubscriber() const;
 
+  private:
   //! Don't use this method
   void subscribe(
     RequiredInterfaces /*node_interfaces*/, const std::string & /*topic*/,
@@ -239,7 +240,6 @@ public:
     rclcpp::SubscriptionOptions /*options*/) override
   {}
 
-private:
   void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m)
   {
     signalMessage(m);
