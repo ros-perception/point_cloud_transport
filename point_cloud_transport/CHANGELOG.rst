@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.2.2 (2025-06-27)
+------------------
+* Deprecated rmw_qos_profile_t (`#125 <https://github.com/ros-perception/point_cloud_transport/issues/125>`_)
+* Contributors: Alejandro Hernández Cordero
+
 5.2.1 (2025-06-04)
 ------------------
 * Feat/Add LifecycleNode Support (`#109 <https://github.com/ros-perception/point_cloud_transport/issues/109>`_)

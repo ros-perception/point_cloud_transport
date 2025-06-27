@@ -2,6 +2,9 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.2.2 (2025-06-27)
+------------------
+
 5.2.1 (2025-06-04)
 ------------------
 * Feat/Add LifecycleNode Support (`#109 <https://github.com/ros-perception/point_cloud_transport/issues/109>`_)
