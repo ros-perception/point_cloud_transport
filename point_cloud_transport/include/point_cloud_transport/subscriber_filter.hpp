@@ -226,7 +226,7 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   const Subscriber & getSubscriber() const;
 
-  private:
+private:
   //! Don't use this method
   void subscribe(
     RequiredInterfaces /*node_interfaces*/, const std::string & /*topic*/,
