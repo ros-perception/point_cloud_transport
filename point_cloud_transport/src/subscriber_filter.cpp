@@ -40,18 +40,6 @@ SubscriberFilter::SubscriberFilter(
     rclcpp::node_interfaces::NodeTopicsInterface,
     rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
   const std::string & base_topic,
-  const std::string & transport)
-{
-  subscribe(node_interfaces, base_topic, transport, rclcpp::SystemDefaultsQoS());
-}
-
-SubscriberFilter::SubscriberFilter(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-    rclcpp::node_interfaces::NodeBaseInterface,
-    rclcpp::node_interfaces::NodeParametersInterface,
-    rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-  const std::string & base_topic,
   const std::string & transport,
   rclcpp::QoS custom_qos,
   rclcpp::SubscriptionOptions options)

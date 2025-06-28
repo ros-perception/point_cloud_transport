@@ -95,27 +95,17 @@ public:
       rclcpp::node_interfaces::NodeTopicsInterface,
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
-    const std::string & transport);
-
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-    const std::string & base_topic,
     const std::string & transport,
-    rclcpp::QoS custom_qos,
+    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
-  template<typename NodeT = rclcpp::Node::SharedPtr>
+  template<typename NodeT>
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     NodeT node,
     const std::string & base_topic,
     const std::string & transport,
-    rclcpp::QoS custom_qos,
+    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
@@ -182,16 +172,16 @@ public:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const std::string & transport,
-    rclcpp::QoS custom_qos,
+    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
-  template<typename NodeT = rclcpp::Node::SharedPtr>
+  template<typename NodeT>
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     NodeT node,
     const std::string & base_topic,
     const std::string & transport,
-    rclcpp::QoS custom_qos,
+    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
