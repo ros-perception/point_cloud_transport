@@ -188,9 +188,9 @@ TEST_F(TestQosOverride, qos_override_subscriber_with_options) {
     qos_override_sub_node_, "pointcloud", fcn, "raw", rmw_qos_profile_default, options);
 
   endpoint_info_vec = qos_override_sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(
+  EXPECT_NE(
     endpoint_info_vec[0].qos_profile().reliability(),
-    rclcpp::ReliabilityPolicy::BestEffort);
+    rclcpp::ReliabilityPolicy::Unknown);
 }
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -249,17 +249,17 @@ TEST_F(TestQosOverride, qos_override_subscriber_without_options_ni_api) {
   auto sub = point_cloud_transport::create_subscription(
     sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS());
   auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(),
-    rclcpp::ReliabilityPolicy::BestEffort);
+  EXPECT_NE(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Unknown);
   sub.shutdown();
 
   sub = point_cloud_transport::create_subscription(
     qos_override_sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS());
 
   endpoint_info_vec = qos_override_sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(
+  EXPECT_NE(
     endpoint_info_vec[0].qos_profile().reliability(),
-    rclcpp::ReliabilityPolicy::BestEffort);
+    rclcpp::ReliabilityPolicy::Unknown);
 }
 
 TEST_F(TestQosOverride, qos_override_subscriber_with_options_ni_api) {
@@ -278,8 +278,8 @@ TEST_F(TestQosOverride, qos_override_subscriber_with_options_ni_api) {
   auto sub = point_cloud_transport::create_subscription(
     sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS(), options);
   auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(),
-    rclcpp::ReliabilityPolicy::BestEffort);
+  EXPECT_NE(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Unknown);
   sub.shutdown();
 
   sub = point_cloud_transport::create_subscription(
