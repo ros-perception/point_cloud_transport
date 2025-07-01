@@ -188,9 +188,9 @@ TEST_F(TestQosOverride, qos_override_subscriber_with_options) {
     qos_override_sub_node_, "pointcloud", fcn, "raw", rmw_qos_profile_default, options);
 
   endpoint_info_vec = qos_override_sub_node_->get_subscriptions_info_by_topic("pointcloud");
-  EXPECT_NE(
+  EXPECT_EQ(
     endpoint_info_vec[0].qos_profile().reliability(),
-    rclcpp::ReliabilityPolicy::Unknown);
+    rclcpp::ReliabilityPolicy::BestEffort);
 }
 #ifdef _MSC_VER
 #pragma warning(pop)
