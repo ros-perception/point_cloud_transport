@@ -40,11 +40,9 @@ SubscriberFilter::SubscriberFilter(
     rclcpp::node_interfaces::NodeTopicsInterface,
     rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
   const std::string & base_topic,
-  const std::string & transport,
-  rclcpp::QoS custom_qos,
-  rclcpp::SubscriptionOptions options)
+  const std::string & transport)
 {
-  subscribe(node_interfaces, base_topic, transport, custom_qos, options);
+  subscribe(node_interfaces, base_topic, transport, rclcpp::SystemDefaultsQoS());
 }
 
 SubscriberFilter::SubscriberFilter()
@@ -54,27 +52,6 @@ SubscriberFilter::SubscriberFilter()
 SubscriberFilter::~SubscriberFilter()
 {
   unsubscribe();
-}
-
-void SubscriberFilter::subscribe(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & base_topic,
-  const std::string & transport,
-  rmw_qos_profile_t custom_qos,
-  rclcpp::SubscriptionOptions options)
-{
-  unsubscribe();
-  auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-  sub_ = point_cloud_transport::create_subscription(
-    node_interfaces, base_topic,
-    std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
-    transport,
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
-    options);
 }
 
 void SubscriberFilter::subscribe(

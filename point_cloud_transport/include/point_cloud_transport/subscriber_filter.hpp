@@ -65,28 +65,7 @@ class SubscriberFilter
   public message_filters::SimpleFilter<sensor_msgs::msg::PointCloud2>
 {
 public:
-  ///
-  /// \brief Constructor
-  /// \param node The rclcpp node to use to subscribe.
-  /// \param base_topic The topic to subscribe to.
-  /// \param queue_size The subscription queue size
-  /// \param transport The transport hint to pass along
-  ///
-  [[deprecated("Use SubscriberFilter(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    const std::string & transport)
-  : SubscriberFilter(
-      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
-      base_topic, transport)
-  {
-  }
-
+  [[deprecated("Use SubscriberFilter(NodeT, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -95,10 +74,16 @@ public:
       rclcpp::node_interfaces::NodeTopicsInterface,
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
-    const std::string & transport,
-    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
+    const std::string & transport);
 
+  ///
+  /// \brief Constructor
+  /// \param node The node used to create the subscription (either a Node or LifecycleNode).
+  /// \param base_topic The topic to subscribe to.
+  /// \param transport The transport hint to pass along
+  /// \param custom_qos Custom quality of service
+  /// \param options Subscriber options
+  ///
   template<typename NodeT>
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
@@ -108,12 +93,7 @@ public:
     rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
-    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-          rclcpp::node_interfaces::NodeBaseInterface,
-          rclcpp::node_interfaces::NodeParametersInterface,
-          rclcpp::node_interfaces::NodeTopicsInterface,
-          rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-    subscribe(node_interfaces, base_topic, transport, custom_qos, options);
+    subscribe(node, base_topic, transport, custom_qos, options);
   }
 
   //! Empty constructor, use subscribe() to subscribe to a topic
@@ -122,23 +102,6 @@ public:
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   ~SubscriberFilter();
-  ///
-  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
-  /// this function will first unsubscribe.
-  /// \param node The rclcpp Node to use to subscribe.
-  /// \param base_topic The topic to subscribe to.
-  /// \param transport The transport hint to pass along
-  /// \param custom_qos Custom quality of service
-  /// \param options Subscriber options
-  ///
-  [[deprecated("Use subscribe(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void subscribe(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    const std::string & transport,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   [[deprecated("Use subscribe(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
@@ -172,9 +135,18 @@ public:
       rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
     const std::string & base_topic,
     const std::string & transport,
-    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
+    rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
+  ///
+  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
+  /// this function will first unsubscribe.
+  /// \param node The Node or/ LifecycleNode to use to subscribe.
+  /// \param base_topic The topic to subscribe to.
+  /// \param transport The transport hint to pass along
+  /// \param custom_qos Custom quality of service
+  /// \param options Subscriber options
+  ///
   template<typename NodeT>
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
@@ -217,17 +189,21 @@ public:
   const Subscriber & getSubscriber() const;
 
 private:
-  //! Don't use this method
+  //! Must override parent message_filters::SubscriberBase method
+  // where RequiredInterfaces are just <NodeParametersInterface, NodeTopicsInterface>
   void subscribe(
-    RequiredInterfaces /*node_interfaces*/, const std::string & /*topic*/,
-    const rclcpp::QoS & /*qos*/) override
+    RequiredInterfaces,
+    const std::string &,
+    const rclcpp::QoS &) override
   {}
-  //! Don't use this method
+
+  //! Must override parent message_filters::SubscriberBase method
+  // where RequiredInterfaces are just <NodeParametersInterface, NodeTopicsInterface>
   void subscribe(
-    RequiredInterfaces  /*node_interfaces*/,
-    const std::string & /*topic*/,
-    const rclcpp::QoS & /*qos*/,
-    rclcpp::SubscriptionOptions /*options*/) override
+    RequiredInterfaces,
+    const std::string &,
+    const rclcpp::QoS &,
+    rclcpp::SubscriptionOptions) override
   {}
 
   void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m)
