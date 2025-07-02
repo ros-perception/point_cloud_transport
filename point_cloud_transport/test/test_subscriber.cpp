@@ -43,28 +43,9 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
-    node_interfaces_ = std::make_shared<
-      rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface
-      >
-      >(
-        node_->get_node_base_interface(),
-        node_->get_node_parameters_interface(),
-        node_->get_node_topics_interface(),
-        node_->get_node_logging_interface()
-      );
   }
 
   rclcpp::Node::SharedPtr node_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >> node_interfaces_;
 };
 
 #ifdef _MSC_VER
@@ -110,7 +91,7 @@ TEST_F(TestSubscriber, construction_and_destruction_ni_api)
       (void)msg;
     };
 
-  auto sub = point_cloud_transport::create_subscription(node_interfaces_, "pointcloud", fcn, "raw",
+  auto sub = point_cloud_transport::create_subscription(*node_, "pointcloud", fcn, "raw",
     rclcpp::SystemDefaultsQoS());
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -122,7 +103,7 @@ TEST_F(TestSubscriber, shutdown_ni_api)
   std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
     [](const auto & msg) {(void)msg;};
 
-  auto sub = point_cloud_transport::create_subscription(node_interfaces_, "pointcloud", fcn, "raw",
+  auto sub = point_cloud_transport::create_subscription(*node_, "pointcloud", fcn, "raw",
     rclcpp::SystemDefaultsQoS());
   EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
   sub.shutdown();

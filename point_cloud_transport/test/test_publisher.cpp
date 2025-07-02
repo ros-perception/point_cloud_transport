@@ -42,28 +42,9 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_publisher");
-    node_interfaces_ = std::make_shared<
-      rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface
-      >
-      >(
-        node_->get_node_base_interface(),
-        node_->get_node_parameters_interface(),
-        node_->get_node_topics_interface(),
-        node_->get_node_logging_interface()
-      );
   }
 
   rclcpp::Node::SharedPtr node_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >> node_interfaces_;
 };
 
 #ifdef _MSC_VER
@@ -98,7 +79,7 @@ TEST_F(TestPublisher, point_cloud_transport_publisher)
 TEST_F(TestPublisher, publisher_ni_api)
 {
   auto pub = point_cloud_transport::create_publisher(
-    node_interfaces_,
+    *node_,
     "point_cloud",
     rclcpp::SystemDefaultsQoS());
   EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
@@ -111,7 +92,7 @@ TEST_F(TestPublisher, publisher_ni_api)
 
 TEST_F(TestPublisher, point_cloud_transport_publisher_ni_api)
 {
-  point_cloud_transport::PointCloudTransport it(node_interfaces_);
+  point_cloud_transport::PointCloudTransport it(*node_);
   auto pub = it.advertise("point_cloud", rclcpp::SystemDefaultsQoS());
 }
 

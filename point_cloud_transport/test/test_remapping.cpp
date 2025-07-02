@@ -142,41 +142,15 @@ TEST_F(TestPublisher, RemappedPublisher_ni_api) {
 
   // Subscribe
   bool received{false};
-  auto node_remap_node_interfaces = std::make_shared<
-    rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >
-    >(
-      node_remap_->get_node_base_interface(),
-      node_remap_->get_node_parameters_interface(),
-      node_remap_->get_node_topics_interface(),
-      node_remap_->get_node_logging_interface()
-    );
   auto sub = point_cloud_transport::create_subscription(
-    node_remap_node_interfaces, "old_topic",
+    *node_remap_, "old_topic",
     [&received](const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg) {
       (void)msg;
       received = true;
     }, "raw", rclcpp::SystemDefaultsQoS());
 
   // Publish
-  auto node_node_interfaces = std::make_shared<
-    rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >
-    >(
-      node_->get_node_base_interface(),
-      node_->get_node_parameters_interface(),
-      node_->get_node_topics_interface(),
-      node_->get_node_logging_interface()
-    );
-  auto pub = point_cloud_transport::create_publisher(node_node_interfaces, "new_topic",
+  auto pub = point_cloud_transport::create_publisher(*node_, "new_topic",
     rclcpp::SystemDefaultsQoS());
 
   ASSERT_EQ("/namespace/new_topic", sub.getTopic());

@@ -63,12 +63,12 @@ private:
   point_cloud_transport::Subscriber sub;
   std::shared_ptr<point_cloud_transport::PublisherPlugin> pub;
   std::shared_ptr<point_cloud_transport::Publisher> simple_pub;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >> node_interfaces_;
+  rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface
+  > node_interfaces_;
 };
 
 Republisher::Republisher(const rclcpp::NodeOptions & options)
@@ -125,13 +125,11 @@ void Republisher::initialize()
       "The 'out_transport' parameter is set to: " << out_transport);
   }
 
-  node_interfaces_ = std::make_shared<
-    rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >
+  node_interfaces_ = rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface
     >(
       this->shared_from_this()->get_node_base_interface(),
       this->shared_from_this()->get_node_parameters_interface(),

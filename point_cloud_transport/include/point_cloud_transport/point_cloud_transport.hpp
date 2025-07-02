@@ -139,11 +139,11 @@ Publisher create_publisher(
 /// \return The advertised publisher
 POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   rclcpp::QoS custom_qos,
   const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
@@ -200,11 +200,11 @@ Subscriber create_subscription(
 /// \return The subscriber
 POINT_CLOUD_TRANSPORT_PUBLIC
 Subscriber create_subscription(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> & node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const Subscriber::Callback & callback,
   const std::string & transport,
@@ -223,11 +223,11 @@ public:
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   explicit PointCloudTransport(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces);
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces);
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   ~PointCloudTransport() override = default;
@@ -237,9 +237,7 @@ public:
   {
     std::string ret;
     if (nullptr == transport_hints) {
-      auto ni_param = node_interfaces_->get_node_parameters_interface();
-      TransportHints th(std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-          rclcpp::node_interfaces::NodeParametersInterface>>(ni_param));
+      TransportHints th(node_interfaces_);
       ret = th.getTransport();
     } else {
       ret = transport_hints->getTransport();
@@ -488,11 +486,11 @@ public:
   }
 
 private:
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces_;
+  rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces_;
 };
 
 }  // namespace point_cloud_transport

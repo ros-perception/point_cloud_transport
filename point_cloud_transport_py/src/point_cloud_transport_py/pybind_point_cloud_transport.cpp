@@ -97,7 +97,7 @@ PYBIND11_MODULE(_point_cloud_transport, m)
     std::thread execution_thread(spin_node);
     execution_thread.detach();
 
-    return point_cloud_transport::PointCloudTransport(node_interfaces);
+    return point_cloud_transport::PointCloudTransport(*node);
   }))
   .def("advertise",
        pybind11::overload_cast<const std::string &, uint32_t>(

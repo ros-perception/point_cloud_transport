@@ -34,11 +34,11 @@
 namespace point_cloud_transport
 {
 SubscriberFilter::SubscriberFilter(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const std::string & transport)
 {
@@ -62,13 +62,8 @@ void SubscriberFilter::subscribe(
   rclcpp::SubscriptionOptions options)
 {
   unsubscribe();
-  auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
   sub_ = point_cloud_transport::create_subscription(
-    node_interfaces, base_topic,
+    *node, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
     transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
@@ -86,16 +81,16 @@ void SubscriberFilter::subscribe(
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
 {
-  subscribe(node_interfaces, base_topic, transport,
+  subscribe(*node_interfaces.get(), base_topic, transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
 void SubscriberFilter::subscribe(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const std::string & transport,
   rclcpp::QoS custom_qos,
