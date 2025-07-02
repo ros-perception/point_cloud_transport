@@ -116,16 +116,7 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
-  ///
-  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
-  /// this function will first unsubscribe.
-  /// \param node_interfaces the ROS node interfaces required for core node functionality, including
-  ///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
-  /// \param base_topic The topic to subscribe to.
-  /// \param transport The transport hint to pass along
-  /// \param custom_qos Custom quality of service
-  /// \param options Subscriber options
-  ///
+  [[deprecated("Use subscribe(NodeT, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -156,12 +147,22 @@ public:
     rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
-    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
+    unsubscribe();
+    auto ni = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
           rclcpp::node_interfaces::NodeBaseInterface,
           rclcpp::node_interfaces::NodeParametersInterface,
           rclcpp::node_interfaces::NodeTopicsInterface,
           rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-    subscribe(node_interfaces, base_topic, transport, custom_qos, options);
+
+    sub_ = point_cloud_transport::create_subscription(
+      ni, base_topic,
+      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
+      transport, custom_qos, options);
+    node_interfaces_ = ni;
+    topic_ = base_topic;
+    transport_ = transport;
+    qos_ = custom_qos;
+    options_ = options;
   }
 
   //! Re-subscribe to a topic.
