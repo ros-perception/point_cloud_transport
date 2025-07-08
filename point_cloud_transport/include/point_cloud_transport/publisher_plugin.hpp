@@ -160,7 +160,7 @@ protected:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
     advertiseImpl(
-      *node_interfaces.get(), base_topic,
+      *node_interfaces, base_topic,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
       options);
   }
