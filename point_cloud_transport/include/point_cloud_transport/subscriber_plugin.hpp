@@ -110,7 +110,7 @@ public:
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     return subscribeImpl(
-      *node_interfaces.get(), base_topic, callback,
+      *node_interfaces, base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 
@@ -159,7 +159,7 @@ public:
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
   {
     return subscribe(
-      *node_interfaces.get(), base_topic,
+      *node_interfaces, base_topic,
       std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>(fp),
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
@@ -302,7 +302,7 @@ protected:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default)
   {
     subscribeImpl(
-        *node_interfaces.get(),
+        *node_interfaces,
         base_topic,
         callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos));
@@ -347,7 +347,7 @@ protected:
     rclcpp::SubscriptionOptions options)
   {
     subscribeImpl(
-        *node_interfaces.get(),
+        *node_interfaces,
         base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
         options);

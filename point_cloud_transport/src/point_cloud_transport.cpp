@@ -96,7 +96,7 @@ Publisher create_publisher(
   rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(*node_interfaces.get(), base_topic, kImpl->getPubLoader(),
+  return Publisher(*node_interfaces, base_topic, kImpl->getPubLoader(),
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
@@ -140,7 +140,7 @@ Subscriber create_subscription(
   rclcpp::SubscriptionOptions options)
 {
   return Subscriber(
-    *node_interfaces.get(), base_topic, callback,
+    *node_interfaces, base_topic, callback,
     kImpl->getSubLoader(), transport,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }

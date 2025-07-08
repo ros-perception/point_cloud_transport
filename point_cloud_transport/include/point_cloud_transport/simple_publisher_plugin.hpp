@@ -227,7 +227,7 @@ protected:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) override
   {
-    advertiseImpl(*node_interfaces.get(), base_topic,
+    advertiseImpl(*node_interfaces, base_topic,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 

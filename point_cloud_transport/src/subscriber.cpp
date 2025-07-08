@@ -150,7 +150,7 @@ Subscriber::Subscriber(
   const std::string & transport,
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
-: Subscriber(*node_interfaces.get(), base_topic, callback, loader, transport,
+: Subscriber(*node_interfaces, base_topic, callback, loader, transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options)
 {
 }

@@ -223,7 +223,7 @@ protected:
     const Callback & callback,
     rmw_qos_profile_t custom_qos) override
   {
-    subscribeImpl(*node_interfaces.get(), base_topic, callback,
+    subscribeImpl(*node_interfaces, base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos));
   }
 
@@ -238,7 +238,7 @@ protected:
     rmw_qos_profile_t custom_qos,
     rclcpp::SubscriptionOptions options) override
   {
-    subscribeImpl(*node_interfaces.get(), base_topic, callback,
+    subscribeImpl(*node_interfaces, base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 

@@ -81,7 +81,7 @@ void SubscriberFilter::subscribe(
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
 {
-  subscribe(*node_interfaces.get(), base_topic, transport,
+  subscribe(*node_interfaces, base_topic, transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 

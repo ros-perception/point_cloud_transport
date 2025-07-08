@@ -187,7 +187,7 @@ Publisher::Publisher(
   const std::string & base_topic,
   PubLoaderPtr loader, rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
-: Publisher(*node_interfaces.get(), base_topic, loader,
+: Publisher(*node_interfaces, base_topic, loader,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options)
 {
 }

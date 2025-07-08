@@ -58,7 +58,7 @@ void PublisherPlugin::advertise(
   rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  advertiseImpl(*node_interfaces.get(), base_topic,
+  advertiseImpl(*node_interfaces, base_topic,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
