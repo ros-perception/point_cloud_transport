@@ -81,12 +81,6 @@ PYBIND11_MODULE(_point_cloud_transport, m)
         .arguments({ "--ros-args", "--params-file", launch_params_filepath });
     }
     rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared(node_name, "", node_options);
-    auto node_interfaces = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor =
         std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
