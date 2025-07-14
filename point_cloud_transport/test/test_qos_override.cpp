@@ -152,6 +152,107 @@ TEST_F(TestQosOverride, qos_override_subscriber_with_options) {
     endpoint_info_vec[0].qos_profile().reliability(),
     rclcpp::ReliabilityPolicy::BestEffort);
 }
+<<<<<<< HEAD
+=======
+#ifdef _MSC_VER
+#pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
+#endif
+
+TEST_F(TestQosOverride, qos_override_publisher_without_options_ni_api) {
+  auto pub = point_cloud_transport::create_publisher(
+    pub_node_ni_, "pointcloud",
+    rclcpp::SystemDefaultsQoS());
+  auto endpoint_info_vec = pub_node_->get_publishers_info_by_topic("pointcloud");
+  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
+  pub.shutdown();
+
+  pub = point_cloud_transport::create_publisher(
+    qos_override_pub_node_ni_, "pointcloud", rclcpp::SystemDefaultsQoS());
+
+  endpoint_info_vec = qos_override_pub_node_->get_publishers_info_by_topic("pointcloud");
+  EXPECT_EQ(
+    endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Reliable);
+  pub.shutdown();
+}
+
+TEST_F(TestQosOverride, qos_override_publisher_with_options_ni_api) {
+  rclcpp::PublisherOptions options;
+  options.qos_overriding_options = rclcpp::QosOverridingOptions(
+  {
+    rclcpp::QosPolicyKind::Depth,
+    rclcpp::QosPolicyKind::Durability,
+    rclcpp::QosPolicyKind::History,
+    rclcpp::QosPolicyKind::Reliability,
+  });
+
+  auto pub = point_cloud_transport::create_publisher(
+    pub_node_ni_, "pointcloud", rclcpp::SystemDefaultsQoS(), options);
+  auto endpoint_info_vec = pub_node_->get_publishers_info_by_topic("pointcloud");
+  EXPECT_EQ(endpoint_info_vec[0].qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
+  pub.shutdown();
+
+  pub = point_cloud_transport::create_publisher(
+    qos_override_pub_node_ni_, "pointcloud", rclcpp::SystemDefaultsQoS(), options);
+
+  endpoint_info_vec = qos_override_pub_node_->get_publishers_info_by_topic("pointcloud");
+  EXPECT_EQ(
+    endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::BestEffort);
+  pub.shutdown();
+}
+
+TEST_F(TestQosOverride, qos_override_subscriber_without_options_ni_api) {
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {(void)msg;};
+
+  auto sub = point_cloud_transport::create_subscription(
+    sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS());
+  auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
+  EXPECT_NE(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Unknown);
+  sub.shutdown();
+
+  sub = point_cloud_transport::create_subscription(
+    qos_override_sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS());
+
+  endpoint_info_vec = qos_override_sub_node_->get_subscriptions_info_by_topic("pointcloud");
+  EXPECT_NE(
+    endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Unknown);
+}
+
+TEST_F(TestQosOverride, qos_override_subscriber_with_options_ni_api) {
+  std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)> fcn =
+    [](const auto & msg) {(void)msg;};
+
+  rclcpp::SubscriptionOptions options;
+  options.qos_overriding_options = rclcpp::QosOverridingOptions(
+  {
+    rclcpp::QosPolicyKind::Depth,
+    rclcpp::QosPolicyKind::Durability,
+    rclcpp::QosPolicyKind::History,
+    rclcpp::QosPolicyKind::Reliability,
+  });
+
+  auto sub = point_cloud_transport::create_subscription(
+    sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS(), options);
+  auto endpoint_info_vec = sub_node_->get_subscriptions_info_by_topic("pointcloud");
+  EXPECT_NE(endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::Unknown);
+  sub.shutdown();
+
+  sub = point_cloud_transport::create_subscription(
+    qos_override_sub_node_ni_, "pointcloud", fcn, "raw", rclcpp::SystemDefaultsQoS(), options);
+
+  endpoint_info_vec = qos_override_sub_node_->get_subscriptions_info_by_topic("pointcloud");
+  EXPECT_EQ(
+    endpoint_info_vec[0].qos_profile().reliability(),
+    rclcpp::ReliabilityPolicy::BestEffort);
+}
+>>>>>>> b8490bb (Fixed QOS override tests (#128))
 
 int main(int argc, char ** argv)
 {
