@@ -96,13 +96,13 @@ public:
   {
     if (simple_impl_) {
       uint ns_len = strlen(simple_impl_->node_interfaces_
-          ->get_node_base_interface()->get_namespace());
+          .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
       std::string param_name = param_base_name + "." + parameter_name;
       rclcpp::Parameter param;
-      if (simple_impl_->node_interfaces_->get_node_parameters_interface()
+      if (simple_impl_->node_interfaces_.get_node_parameters_interface()
         ->get_parameter(param_name, param))
       {
         value = param.get_value<T>();
@@ -121,7 +121,7 @@ public:
     if (simple_impl_) {
       // Declare Parameters
       uint ns_len = strlen(simple_impl_->node_interfaces_
-          ->get_node_base_interface()->get_namespace());
+          .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
@@ -131,7 +131,7 @@ public:
       param_descriptor.name = param_name;
 
       try {
-        simple_impl_->node_interfaces_->get_node_parameters_interface()
+        simple_impl_->node_interfaces_.get_node_parameters_interface()
         ->declare_parameter(param_name, rclcpp::ParameterValue(value));
       } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
         RCLCPP_DEBUG(
@@ -149,7 +149,7 @@ public:
   {
     if (simple_impl_) {
       simple_impl_->on_set_parameters_callback_handle_ =
-        simple_impl_->node_interfaces_->get_node_parameters_interface()
+        simple_impl_->node_interfaces_.get_node_parameters_interface()
         ->add_on_set_parameters_callback(param_change_callback);
     }
   }
@@ -227,16 +227,16 @@ protected:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) override
   {
-    advertiseImpl(node_interfaces, base_topic,
+    advertiseImpl(*node_interfaces, base_topic,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 
   void advertiseImpl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     rclcpp::QoS custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) override
@@ -245,8 +245,8 @@ protected:
     simple_impl_ = std::make_unique<SimplePublisherPluginImpl>(node_interfaces);
 
     RCLCPP_DEBUG(simple_impl_->logger_, "getTopicToAdvertise: %s", transport_topic.c_str());
-    auto node_parameters = node_interfaces->get_node_parameters_interface();
-    auto node_topics = node_interfaces->get_node_topics_interface();
+    auto node_parameters = node_interfaces.get_node_parameters_interface();
+    auto node_topics = node_interfaces.get_node_topics_interface();
     // simple_impl_->pub_ = node->create_publisher<M>(transport_topic, qos, options);
     simple_impl_->pub_ = rclcpp::create_publisher<M>(
       node_parameters, node_topics, transport_topic, custom_qos, options);
@@ -315,21 +315,21 @@ private:
   struct SimplePublisherPluginImpl
   {
     explicit SimplePublisherPluginImpl(
-      std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeInterfaces<
         rclcpp::node_interfaces::NodeBaseInterface,
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces)
-    :node_interfaces_(std::move(node_interfaces)),
-      logger_(node_interfaces_->get_node_logging_interface()->get_logger())
+        rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces)
+    :node_interfaces_(node_interfaces),
+      logger_(node_interfaces_.get_node_logging_interface()->get_logger())
     {
     }
 
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces_;
+    rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces_;
     rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
     rclcpp::Logger logger_;
     typename rclcpp::Publisher<M>::SharedPtr pub_;

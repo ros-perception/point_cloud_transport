@@ -56,29 +56,10 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_message_passing");
-    node_interfaces_ = std::make_shared<
-      rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface
-      >
-      >(
-        node_->get_node_base_interface(),
-        node_->get_node_parameters_interface(),
-        node_->get_node_topics_interface(),
-        node_->get_node_logging_interface()
-      );
     total_pointclouds_received = 0;
   }
 
   rclcpp::Node::SharedPtr node_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >> node_interfaces_;
 };
 
 void pointcloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
@@ -149,12 +130,12 @@ TEST_F(MessagePassingTesting, one_message_passing_ni_api)
   rclcpp::executors::SingleThreadedExecutor executor;
 
   auto pub = point_cloud_transport::create_publisher(
-    node_interfaces_,
+    *node_,
     "pointcloud",
     rclcpp::SystemDefaultsQoS());
   auto sub =
     point_cloud_transport::create_subscription(
-    node_interfaces_, "pointcloud", pointcloudCallback,
+    *node_, "pointcloud", pointcloudCallback,
     "raw", rclcpp::SystemDefaultsQoS());
 
   test_rclcpp::wait_for_subscriber(node_, sub.getTopic());

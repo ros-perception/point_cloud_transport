@@ -88,11 +88,11 @@ public:
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   void advertise(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     rclcpp::QoS custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
@@ -142,13 +142,10 @@ protected:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
     advertiseImpl(
-      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>>(*node),
-      base_topic, rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
-        options);
+      *node,
+      base_topic,
+      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
+      options);
   }
 
   [[deprecated("Use advertiseImpl(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
@@ -163,17 +160,17 @@ protected:
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
   {
     advertiseImpl(
-      node_interfaces, base_topic,
+      *node_interfaces, base_topic,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
       options);
   }
 
   virtual void advertiseImpl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     rclcpp::QoS custom_qos,
     const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) = 0;

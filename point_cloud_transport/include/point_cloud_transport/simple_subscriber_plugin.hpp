@@ -93,14 +93,14 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (impl_) {
-      uint ns_len = strlen(impl_->node_interfaces_->get_node_base_interface()->get_namespace());
+      uint ns_len = strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
       std::string param_name = param_base_name + "." + parameter_name;
 
       rclcpp::Parameter param;
-      if (impl_->node_interfaces_->get_node_parameters_interface()
+      if (impl_->node_interfaces_.get_node_parameters_interface()
         ->get_parameter(param_name, param))
       {
         value = param.get_value<T>();
@@ -117,7 +117,7 @@ public:
     rcl_interfaces::msg::ParameterDescriptor())
   {
     if (impl_) {
-      uint ns_len = strlen(impl_->node_interfaces_->get_node_base_interface()->get_namespace());
+      uint ns_len = strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
@@ -127,7 +127,7 @@ public:
       param_descriptor.name = param_name;
 
       try {
-        impl_->node_interfaces_->get_node_parameters_interface()
+        impl_->node_interfaces_.get_node_parameters_interface()
         ->declare_parameter(param_name, rclcpp::ParameterValue(value));
       } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
         RCLCPP_DEBUG(
@@ -146,7 +146,7 @@ public:
   {
     if (impl_) {
       impl_->on_set_parameters_callback_handle_ =
-        impl_->node_interfaces_->get_node_parameters_interface()
+        impl_->node_interfaces_.get_node_parameters_interface()
         ->add_on_set_parameters_callback(param_change_callback);
     }
   }
@@ -223,7 +223,7 @@ protected:
     const Callback & callback,
     rmw_qos_profile_t custom_qos) override
   {
-    subscribeImpl(node_interfaces, base_topic, callback,
+    subscribeImpl(*node_interfaces, base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos));
   }
 
@@ -238,26 +238,23 @@ protected:
     rmw_qos_profile_t custom_qos,
     rclcpp::SubscriptionOptions options) override
   {
-    subscribeImpl(node_interfaces, base_topic, callback,
+    subscribeImpl(*node_interfaces, base_topic, callback,
         rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
   }
 
   void subscribeImpl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     const Callback & callback,
     rclcpp::QoS custom_qos) override
   {
-    if (!node_interfaces) {
-      throw std::runtime_error("node_interfaces is null");
-    }
     impl_ = std::make_unique<Impl>(node_interfaces);
-    auto node_parameters = node_interfaces->get_node_parameters_interface();
-    auto node_topics = node_interfaces->get_node_topics_interface();
+    auto node_parameters = node_interfaces.get_node_parameters_interface();
+    auto node_topics = node_interfaces.get_node_topics_interface();
     impl_->sub_ = rclcpp::create_subscription<M>(
       node_parameters, node_topics,
       getTopicToSubscribe(base_topic), custom_qos,
@@ -268,19 +265,19 @@ protected:
   }
 
   void subscribeImpl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     const Callback & callback,
     rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options) override
   {
     impl_ = std::make_unique<Impl>(node_interfaces);
-    auto node_parameters = node_interfaces->get_node_parameters_interface();
-    auto node_topics = node_interfaces->get_node_topics_interface();
+    auto node_parameters = node_interfaces.get_node_parameters_interface();
+    auto node_topics = node_interfaces.get_node_topics_interface();
     impl_->sub_ = rclcpp::create_subscription<M>(
       node_parameters, node_topics,
       getTopicToSubscribe(base_topic), custom_qos,
@@ -295,22 +292,22 @@ private:
   struct Impl
   {
     explicit Impl(
-      std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeInterfaces<
         rclcpp::node_interfaces::NodeBaseInterface,
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces)
-    :node_interfaces_(std::move(node_interfaces)),
-      logger_(node_interfaces_->get_node_logging_interface()->get_logger())
+        rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces)
+    :node_interfaces_(node_interfaces),
+      logger_(node_interfaces_.get_node_logging_interface()->get_logger())
     {
     }
 
     rclcpp::SubscriptionBase::SharedPtr sub_;
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces_;
+    rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces_;
     rclcpp::Logger logger_;
     rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
   };

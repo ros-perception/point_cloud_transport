@@ -46,28 +46,9 @@ protected:
   void SetUp()
   {
     node_ = rclcpp::Node::make_shared("test_subscriber");
-    node_interfaces_ = std::make_shared<
-      rclcpp::node_interfaces::NodeInterfaces<
-        rclcpp::node_interfaces::NodeBaseInterface,
-        rclcpp::node_interfaces::NodeParametersInterface,
-        rclcpp::node_interfaces::NodeTopicsInterface,
-        rclcpp::node_interfaces::NodeLoggingInterface
-      >
-      >(
-        node_->get_node_base_interface(),
-        node_->get_node_parameters_interface(),
-        node_->get_node_topics_interface(),
-        node_->get_node_logging_interface()
-      );
   }
 
   rclcpp::Node::SharedPtr node_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface
-    >> node_interfaces_;
 };
 
 void callback(
@@ -117,8 +98,8 @@ TEST_F(TestSubscriber, create_and_release_filter_ni_api)
       sensor_msgs::msg::PointCloud2, sensor_msgs::msg::PointCloud2>
     ApproximateTimePolicy;
 
-  point_cloud_transport::SubscriberFilter pcl_sub1(node_interfaces_, "pointcloud1", "raw");
-  point_cloud_transport::SubscriberFilter pcl_sub2(node_interfaces_, "pointcloud2", "raw");
+  point_cloud_transport::SubscriberFilter pcl_sub1(*node_, "pointcloud1", "raw");
+  point_cloud_transport::SubscriberFilter pcl_sub2(*node_, "pointcloud2", "raw");
 
   auto sync = std::make_shared<message_filters::Synchronizer<ApproximateTimePolicy>>(
     ApproximateTimePolicy(
