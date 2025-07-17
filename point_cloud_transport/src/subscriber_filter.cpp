@@ -34,27 +34,15 @@
 namespace point_cloud_transport
 {
 SubscriberFilter::SubscriberFilter(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const std::string & transport)
 {
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#else
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
   subscribe(node_interfaces, base_topic, transport, rclcpp::SystemDefaultsQoS());
-#ifdef _MSC_VER
-#pragma warning(pop)
-#else
-#pragma GCC diagnostic pop
-#endif
 }
 
 SubscriberFilter::SubscriberFilter()
@@ -64,6 +52,22 @@ SubscriberFilter::SubscriberFilter()
 SubscriberFilter::~SubscriberFilter()
 {
   unsubscribe();
+}
+
+void SubscriberFilter::subscribe(
+  std::shared_ptr<rclcpp::Node> node,
+  const std::string & base_topic,
+  const std::string & transport,
+  rmw_qos_profile_t custom_qos,
+  rclcpp::SubscriptionOptions options)
+{
+  unsubscribe();
+  sub_ = point_cloud_transport::create_subscription(
+    *node, base_topic,
+    std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
+    transport,
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
+    options);
 }
 
 void SubscriberFilter::subscribe(
@@ -77,28 +81,16 @@ void SubscriberFilter::subscribe(
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
 {
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#else
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-  subscribe(node_interfaces, base_topic, transport,
+  subscribe(*node_interfaces, base_topic, transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
-#ifdef _MSC_VER
-#pragma warning(pop)
-#else
-#pragma GCC diagnostic pop
-#endif
 }
 
 void SubscriberFilter::subscribe(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const std::string & transport,
   rclcpp::QoS custom_qos,
@@ -109,19 +101,24 @@ void SubscriberFilter::subscribe(
     node_interfaces, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
     transport, custom_qos, options);
+  node_interfaces_ = node_interfaces;
+  topic_ = base_topic;
+  transport_ = transport;
+  qos_ = custom_qos;
+  options_ = options;
 }
 
 void SubscriberFilter::subscribe()
 {
   unsubscribe();
-  if (node_interfaces_ != nullptr) {
+  if (!topic_.empty()) {
     sub_ = point_cloud_transport::create_subscription(
       node_interfaces_, topic_,
       std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
       transport_, qos_, options_);
   } else {
     RCLCPP_ERROR(
-      node_interfaces_->get_node_logging_interface()->get_logger(),
+      node_interfaces_.get_node_logging_interface()->get_logger(),
       "Cannot re-subscribe: the subscriber filter must be initialized first."
     );
   }

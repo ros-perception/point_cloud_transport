@@ -50,13 +50,13 @@ namespace point_cloud_transport
 struct Subscriber::Impl
 {
   Impl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     SubLoaderPtr loader)
-  : logger_(node_interfaces->get_node_logging_interface()->get_logger()),
+  : logger_(node_interfaces.get_node_logging_interface()->get_logger()),
     loader_(loader),
     unsubscribed_(false)
   {
@@ -90,11 +90,11 @@ struct Subscriber::Impl
 };
 
 Subscriber::Subscriber(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+  rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,
     rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
   const Callback & callback,
   SubLoaderPtr loader,
@@ -150,7 +150,7 @@ Subscriber::Subscriber(
   const std::string & transport,
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
-: Subscriber(node_interfaces, base_topic, callback, loader, transport,
+: Subscriber(*node_interfaces, base_topic, callback, loader, transport,
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options)
 {
 }

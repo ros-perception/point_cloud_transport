@@ -65,36 +65,33 @@ class SubscriberFilter
   public message_filters::SimpleFilter<sensor_msgs::msg::PointCloud2>
 {
 public:
-  [[deprecated("Use SubscriberFilter(NodeT, ...) instead")]]
+  ///
+  /// \brief Constructor
+  /// \param node The rclcpp node to use to subscribe.
+  /// \param base_topic The topic to subscribe to.
+  /// \param queue_size The subscription queue size
+  /// \param transport The transport hint to pass along
+  ///
+  [[deprecated("Use SubscriberFilter(rclcpp::node_interfaces...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
+    const std::string & transport)
+  : SubscriberFilter(
+      *node,
+      base_topic, transport)
+  {
+  }
+
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  SubscriberFilter(
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     const std::string & transport);
-
-  ///
-  /// \brief Constructor
-  /// \param node The node used to create the subscription (either a Node or LifecycleNode).
-  /// \param base_topic The topic to subscribe to.
-  /// \param transport The transport hint to pass along
-  /// \param custom_qos Custom quality of service
-  /// \param options Subscriber options
-  ///
-  template<typename NodeT>
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter(
-    NodeT node,
-    const std::string & base_topic,
-    const std::string & transport,
-    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
-  {
-    subscribe(node, base_topic, transport, custom_qos, options);
-  }
 
   //! Empty constructor, use subscribe() to subscribe to a topic
   POINT_CLOUD_TRANSPORT_PUBLIC
@@ -102,6 +99,23 @@ public:
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   ~SubscriberFilter();
+  ///
+  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
+  /// this function will first unsubscribe.
+  /// \param node The rclcpp Node to use to subscribe.
+  /// \param base_topic The topic to subscribe to.
+  /// \param transport The transport hint to pass along
+  /// \param custom_qos Custom quality of service
+  /// \param options Subscriber options
+  ///
+  [[deprecated("Use subscribe(rclcpp::node_interfaces...) instead")]]
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  void subscribe(
+    std::shared_ptr<rclcpp::Node> node,
+    const std::string & base_topic,
+    const std::string & transport,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   [[deprecated("Use subscribe(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
@@ -116,54 +130,17 @@ public:
     rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
-  [[deprecated("Use subscribe(NodeT, ...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+      rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
     const std::string & transport,
     rclcpp::QoS custom_qos,
     rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
-
-  ///
-  /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
-  /// this function will first unsubscribe.
-  /// \param node The Node or/ LifecycleNode to use to subscribe.
-  /// \param base_topic The topic to subscribe to.
-  /// \param transport The transport hint to pass along
-  /// \param custom_qos Custom quality of service
-  /// \param options Subscriber options
-  ///
-  template<typename NodeT>
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void subscribe(
-    NodeT node,
-    const std::string & base_topic,
-    const std::string & transport,
-    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions())
-  {
-    unsubscribe();
-    auto ni = std::make_shared<rclcpp::node_interfaces::NodeInterfaces<
-          rclcpp::node_interfaces::NodeBaseInterface,
-          rclcpp::node_interfaces::NodeParametersInterface,
-          rclcpp::node_interfaces::NodeTopicsInterface,
-          rclcpp::node_interfaces::NodeLoggingInterface>>(*node);
-
-    sub_ = point_cloud_transport::create_subscription(
-      ni, base_topic,
-      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
-      transport, custom_qos, options);
-    node_interfaces_ = ni;
-    topic_ = base_topic;
-    transport_ = transport;
-    qos_ = custom_qos;
-    options_ = options;
-  }
 
   //! Re-subscribe to a topic.
   // Only works if this subscriber has previously been subscribed to a topic.
@@ -193,7 +170,9 @@ private:
   //! Must override parent message_filters::SubscriberBase method
   // where RequiredInterfaces are just <NodeParametersInterface, NodeTopicsInterface>
   void subscribe(
-    RequiredInterfaces,
+    rclcpp::node_interfaces::NodeInterfaces<
+      NodeParametersInterface,
+      NodeTopicsInterface>,
     const std::string &,
     const rclcpp::QoS &) override
   {}
@@ -201,7 +180,9 @@ private:
   //! Must override parent message_filters::SubscriberBase method
   // where RequiredInterfaces are just <NodeParametersInterface, NodeTopicsInterface>
   void subscribe(
-    RequiredInterfaces,
+    rclcpp::node_interfaces::NodeInterfaces<
+      NodeParametersInterface,
+      NodeTopicsInterface>,
     const std::string &,
     const rclcpp::QoS &,
     rclcpp::SubscriptionOptions) override
@@ -213,11 +194,11 @@ private:
   }
 
   Subscriber sub_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces_;
+  rclcpp::node_interfaces::NodeInterfaces<
+    rclcpp::node_interfaces::NodeBaseInterface,
+    rclcpp::node_interfaces::NodeParametersInterface,
+    rclcpp::node_interfaces::NodeTopicsInterface,
+    rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces_;
 
   std::string topic_;
   std::string transport_;
