@@ -42,6 +42,7 @@
 #include <point_cloud_transport/point_cloud_transport.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
+#include "point_cloud_transport/exception.hpp"
 
 namespace point_cloud_transport
 {
@@ -91,7 +92,9 @@ public:
       rclcpp::node_interfaces::NodeTopicsInterface,
       rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
     const std::string & base_topic,
-    const std::string & transport);
+    const std::string & transport,
+    rclcpp::QoS custom_qos = rclcpp::SystemDefaultsQoS(),
+    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
   //! Empty constructor, use subscribe() to subscribe to a topic
   POINT_CLOUD_TRANSPORT_PUBLIC
@@ -175,7 +178,9 @@ private:
       NodeTopicsInterface>,
     const std::string &,
     const rclcpp::QoS &) override
-  {}
+  {
+    throw point_cloud_transport::Exception("Not implemented");
+  }
 
   //! Must override parent message_filters::SubscriberBase method
   // where RequiredInterfaces are just <NodeParametersInterface, NodeTopicsInterface>
@@ -186,7 +191,9 @@ private:
     const std::string &,
     const rclcpp::QoS &,
     rclcpp::SubscriptionOptions) override
-  {}
+  {
+    throw point_cloud_transport::Exception("Not implemented");
+  }
 
   void cb(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & m)
   {
