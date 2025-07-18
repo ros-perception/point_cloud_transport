@@ -28,6 +28,7 @@
 
 #include "point_cloud_transport/subscriber_filter.hpp"
 
+#include <functional>
 #include <memory>
 #include <string>
 
