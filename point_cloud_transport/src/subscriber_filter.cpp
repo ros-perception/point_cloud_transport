@@ -28,6 +28,7 @@
 
 #include "point_cloud_transport/subscriber_filter.hpp"
 
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -40,9 +41,11 @@ SubscriberFilter::SubscriberFilter(
     rclcpp::node_interfaces::NodeTopicsInterface,
     rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces,
   const std::string & base_topic,
-  const std::string & transport)
+  const std::string & transport,
+  rclcpp::QoS custom_qos,
+  rclcpp::SubscriptionOptions options)
 {
-  subscribe(node_interfaces, base_topic, transport, rclcpp::SystemDefaultsQoS());
+  subscribe(node_interfaces, base_topic, transport, custom_qos, options);
 }
 
 SubscriberFilter::SubscriberFilter()
@@ -61,13 +64,8 @@ void SubscriberFilter::subscribe(
   rmw_qos_profile_t custom_qos,
   rclcpp::SubscriptionOptions options)
 {
-  unsubscribe();
-  sub_ = point_cloud_transport::create_subscription(
-    *node, base_topic,
-    std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
-    transport,
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
-    options);
+  subscribe(*node, base_topic, transport,
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
 void SubscriberFilter::subscribe(
@@ -101,6 +99,27 @@ void SubscriberFilter::subscribe(
     node_interfaces, base_topic,
     std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
     transport, custom_qos, options);
+  node_interfaces_ = node_interfaces;
+  topic_ = base_topic;
+  transport_ = transport;
+  qos_ = custom_qos;
+  options_ = options;
+}
+
+void SubscriberFilter::subscribe()
+{
+  unsubscribe();
+  if (!topic_.empty()) {
+    sub_ = point_cloud_transport::create_subscription(
+      node_interfaces_, topic_,
+      std::bind(&SubscriberFilter::cb, this, std::placeholders::_1),
+      transport_, qos_, options_);
+  } else {
+    RCLCPP_ERROR(
+      node_interfaces_.get_node_logging_interface()->get_logger(),
+      "Cannot re-subscribe: the subscriber filter must be initialized first."
+    );
+  }
 }
 
 void SubscriberFilter::unsubscribe()
@@ -110,7 +129,7 @@ void SubscriberFilter::unsubscribe()
 
 std::string SubscriberFilter::getTopic() const
 {
-  return sub_.getTopic();
+  return this->topic_;
 }
 
 uint32_t SubscriberFilter::getNumPublishers() const
@@ -120,7 +139,7 @@ uint32_t SubscriberFilter::getNumPublishers() const
 
 std::string SubscriberFilter::getTransport() const
 {
-  return sub_.getTransport();
+  return this->transport_;
 }
 
 const Subscriber & SubscriberFilter::getSubscriber() const
