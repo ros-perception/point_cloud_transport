@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.0 (2025-07-25)
+------------------
+* Simplify NodeInterface API mehotd call (`#129 <https://github.com/ros-perception/point_cloud_transport/issues/129>`_)
+* Contributors: Alejandro Hernández Cordero
+
 5.2.2 (2025-06-27)
 ------------------
 

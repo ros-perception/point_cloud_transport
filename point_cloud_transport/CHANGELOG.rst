@@ -2,6 +2,13 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.0 (2025-07-25)
+------------------
+* Update subscriber filter (`#126 <https://github.com/ros-perception/point_cloud_transport/issues/126>`_)
+* Simplify NodeInterface API mehotd call (`#129 <https://github.com/ros-perception/point_cloud_transport/issues/129>`_)
+* Fixed QOS override tests (`#128 <https://github.com/ros-perception/point_cloud_transport/issues/128>`_)
+* Contributors: Alejandro Hernández Cordero, ElSayed ElSheikh
+
 5.2.2 (2025-06-27)
 ------------------
 * Deprecated rmw_qos_profile_t (`#125 <https://github.com/ros-perception/point_cloud_transport/issues/125>`_)
