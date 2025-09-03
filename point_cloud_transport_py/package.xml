@@ -21,7 +21,7 @@
   <build_depend>python3-dev</build_depend>
 
   <depend>point_cloud_transport</depend>
-  <depend>pybind11_vendor</depend>
+  <depend>pybind11-dev</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
