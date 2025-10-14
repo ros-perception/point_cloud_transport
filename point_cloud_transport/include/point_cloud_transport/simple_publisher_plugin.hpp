@@ -95,7 +95,7 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (simple_impl_) {
-      uint ns_len = strlen(simple_impl_->node_interfaces_
+      unsigned int ns_len = strlen(simple_impl_->node_interfaces_
           .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
@@ -120,7 +120,7 @@ public:
   {
     if (simple_impl_) {
       // Declare Parameters
-      uint ns_len = strlen(simple_impl_->node_interfaces_
+      unsigned int ns_len = strlen(simple_impl_->node_interfaces_
           .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
