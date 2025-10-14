@@ -92,12 +92,7 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (impl_) {
-<<<<<<< HEAD
-      uint ns_len = impl_->node_->get_effective_namespace().length();
-=======
-      unsigned int ns_len =
-        strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
->>>>>>> c03fc3b (Use standard unsigned int in place of uint for Windows compatibility (#134))
+      unsigned int ns_len = impl_->node_->get_effective_namespace().length();
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
@@ -116,7 +111,7 @@ public:
   {
     if (impl_) {
 <<<<<<< HEAD
-      uint ns_len = impl_->node_->get_effective_namespace().length();
+      unsigned int ns_len = impl_->node_->get_effective_namespace().length();
 =======
       unsigned int ns_len =
         strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
