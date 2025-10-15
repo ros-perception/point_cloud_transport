@@ -92,7 +92,7 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (impl_) {
-      uint ns_len = impl_->node_->get_effective_namespace().length();
+      unsigned int ns_len = impl_->node_->get_effective_namespace().length();
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
@@ -110,7 +110,7 @@ public:
     rcl_interfaces::msg::ParameterDescriptor())
   {
     if (impl_) {
-      uint ns_len = impl_->node_->get_effective_namespace().length();
+      unsigned int ns_len = impl_->node_->get_effective_namespace().length();
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
 
