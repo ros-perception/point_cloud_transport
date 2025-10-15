@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.5 (2025-10-15)
+------------------
+* Use standard unsigned int in place of uint for Windows compatibility (backport `#134 <https://github.com/ros-perception/point_cloud_transport/issues/134>`_) (`#136 <https://github.com/ros-perception/point_cloud_transport/issues/136>`_)
+* Contributors: mergify[bot]
+
 4.0.4 (2025-04-02)
 ------------------
 * fix: add `rclcpp::shutdown` (`#110 <https://github.com/ros-perception/point_cloud_transport/issues/110>`_) (`#111 <https://github.com/ros-perception/point_cloud_transport/issues/111>`_)
