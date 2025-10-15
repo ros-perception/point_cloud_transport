@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.19 (2025-10-15)
+-------------------
+* Use standard unsigned int in place of uint for Windows compatibility (backport `#134 <https://github.com/ros-perception/point_cloud_transport/issues/134>`_) (`#137 <https://github.com/ros-perception/point_cloud_transport/issues/137>`_)
+* Contributors: mergify[bot]
+
 1.0.18 (2024-05-16)
 -------------------
 * [rolling] Get user specified parameters at startup (`#80 <https://github.com/ros-perception/point_cloud_transport/issues/80>`_) (`#83 <https://github.com/ros-perception/point_cloud_transport/issues/83>`_)
