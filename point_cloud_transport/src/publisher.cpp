@@ -185,7 +185,6 @@ std::string Publisher::getTopic() const
 void Publisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
 {
   if (!impl_ || !impl_->isValid()) {
-    // TODO(ros2) Switch to RCUTILS_ASSERT when ros2/rcutils#112 is merged
     auto logger = impl_ ? impl_->logger_ : rclcpp::get_logger("point_cloud_transport");
     RCLCPP_FATAL(logger, "Call to publish() on an invalid point_cloud_transport::Publisher");
     return;
@@ -201,7 +200,6 @@ void Publisher::publish(const sensor_msgs::msg::PointCloud2 & message) const
 void Publisher::publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const
 {
   if (!impl_ || !impl_->isValid()) {
-    // TODO(ros2) Switch to RCUTILS_ASSERT when ros2/rcutils#112 is merged
     auto logger = impl_ ? impl_->logger_ : rclcpp::get_logger("point_cloud_transport");
     RCLCPP_FATAL(logger, "Call to publish() on an invalid point_cloud_transport::Publisher");
     return;
