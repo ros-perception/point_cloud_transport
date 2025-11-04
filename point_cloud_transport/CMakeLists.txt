@@ -68,7 +68,6 @@ target_compile_definitions(pc_republish_node PRIVATE "POINT_CLOUD_TRANSPORT_BUIL
 target_include_directories(pc_republish_node PRIVATE
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-rclcpp_components_register_nodes(pc_republish_node "point_cloud_transport::Republisher")
 
 rclcpp_components_register_node(pc_republish_node
   PLUGIN "point_cloud_transport::Republisher"
