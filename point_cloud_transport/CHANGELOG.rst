@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.2 (2025-11-06)
+------------------
+* Fix duplicate component registration for Republisher (`#142 <https://github.com/ros-perception/point_cloud_transport/issues/142>`_)
+* Removed outdated comment (`#138 <https://github.com/ros-perception/point_cloud_transport/issues/138>`_)
+* Contributors: Alejandro Hernández Cordero, mini-1235
+
 5.3.1 (2025-10-15)
 ------------------
 * Use standard unsigned int in place of uint for Windows compatibility (`#134 <https://github.com/ros-perception/point_cloud_transport/issues/134>`_)

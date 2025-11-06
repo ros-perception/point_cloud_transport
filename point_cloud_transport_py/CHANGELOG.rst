@@ -2,6 +2,9 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.2 (2025-11-06)
+------------------
+
 5.3.1 (2025-10-15)
 ------------------
 * Use pybind11 from deb or pixi (`#131 <https://github.com/ros-perception/point_cloud_transport/issues/131>`_)
