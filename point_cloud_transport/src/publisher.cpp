@@ -220,12 +220,12 @@ void Publisher::shutdown()
   }
 }
 
-std::vector<rclcpp::PublisherBase::SharedPtr> Publisher::getPublishers() const
+std::map<std::string, rclcpp::PublisherBase::SharedPtr> Publisher::getPublishers() const
 {
   if (impl_) {
-    std::vector<rclcpp::PublisherBase::SharedPtr> pubs;
+    std::map<std::string, rclcpp::PublisherBase::SharedPtr> pubs;
     for (const auto & pub : impl_->publishers_) {
-      pubs.push_back(pub->getPublisher());
+      pubs[pub->getTransportName()] = pub->getPublisher();
     }
     return pubs;
   }

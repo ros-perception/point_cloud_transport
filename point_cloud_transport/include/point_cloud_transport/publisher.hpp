@@ -34,6 +34,7 @@
 
 #include <memory>
 #include <string>
+#include <map>
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
@@ -83,9 +84,9 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
 
-  //! Get the underlying ROS publisher handles.
+  //! Get the underlying ROS publisher handles mapped by transport name.
   POINT_CLOUD_TRANSPORT_PUBLIC
-  std::vector<rclcpp::PublisherBase::SharedPtr> getPublishers() const;
+  std::map<std::string, rclcpp::PublisherBase::SharedPtr> getPublishers() const;
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   operator void *() const;
