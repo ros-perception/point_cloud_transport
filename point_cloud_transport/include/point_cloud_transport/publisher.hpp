@@ -83,6 +83,10 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
 
+  //! Get the underlying ROS publisher handles.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  std::vector<rclcpp::PublisherBase::SharedPtr> getPublishers() const;
+
   POINT_CLOUD_TRANSPORT_PUBLIC
   operator void *() const;
 

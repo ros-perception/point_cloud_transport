@@ -220,6 +220,18 @@ void Publisher::shutdown()
   }
 }
 
+std::vector<rclcpp::PublisherBase::SharedPtr> Publisher::getPublishers() const
+{
+  if (impl_) {
+    std::vector<rclcpp::PublisherBase::SharedPtr> pubs;
+    for (const auto & pub : impl_->publishers_) {
+      pubs.push_back(pub->getPublisher());
+    }
+    return pubs;
+  }
+  return {};
+}
+
 Publisher::operator void *() const
 {
   return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
