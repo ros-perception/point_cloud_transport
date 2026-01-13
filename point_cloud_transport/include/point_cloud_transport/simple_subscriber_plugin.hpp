@@ -155,6 +155,14 @@ public:
     impl_.reset();
   }
 
+  rclcpp::SubscriptionBase::SharedPtr getSubscription() const override
+  {
+    if (impl_) {
+      return impl_->sub_;
+    }
+    return nullptr;
+  }
+
   ///
   /// \brief Decode the given compressed pointcloud into a raw message.
   /// \param[in] compressed The input compressed pointcloud.
