@@ -186,6 +186,14 @@ void Subscriber::shutdown()
   }
 }
 
+rclcpp::SubscriptionBase::SharedPtr Subscriber::getSubscription() const
+{
+  if (impl_) {
+    return impl_->subscriber_->getSubscription();
+  }
+  return nullptr;
+}
+
 Subscriber::operator void *() const
 {
   return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
