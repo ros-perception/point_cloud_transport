@@ -33,11 +33,8 @@
 #define POINT_CLOUD_TRANSPORT__PUBLISHER_HPP_
 
 #include <string>
-<<<<<<< HEAD
-#include <memory>
-=======
 #include <map>
->>>>>>> 39d0293 (Expose original ROS Publishers and Subscription (#146))
+#include <memory>
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
