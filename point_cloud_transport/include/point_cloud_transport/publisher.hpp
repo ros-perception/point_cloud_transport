@@ -33,7 +33,11 @@
 #define POINT_CLOUD_TRANSPORT__PUBLISHER_HPP_
 
 #include <string>
+<<<<<<< HEAD
 #include <memory>
+=======
+#include <map>
+>>>>>>> 39d0293 (Expose original ROS Publishers and Subscription (#146))
 
 #include "rclcpp/macros.hpp"
 #include "rclcpp/node.hpp"
@@ -82,6 +86,10 @@ public:
   //! Shutdown the advertisements associated with this Publisher.
   POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
+
+  //! Get the underlying ROS publisher handles mapped by transport name.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  std::map<std::string, rclcpp::PublisherBase::SharedPtr> getPublishers() const;
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   operator void *() const;
