@@ -94,6 +94,9 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   virtual void publish(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & message) const;
 
+  //! Get the underlying ROS publisher handle, if available.
+  virtual rclcpp::PublisherBase::SharedPtr getPublisher() const = 0;
+
   //! Shutdown any advertisements associated with this PublisherPlugin.
   virtual void shutdown() = 0;
 
