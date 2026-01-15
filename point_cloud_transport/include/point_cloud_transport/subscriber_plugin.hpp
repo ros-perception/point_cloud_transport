@@ -110,6 +110,9 @@ public:
       custom_qos, options);
   }
 
+  /// \brief Get the underlying ROS subscription handle, if available.
+  virtual rclcpp::SubscriptionBase::SharedPtr getSubscription() const = 0;
+
   ///
   /// \brief Subscribe to an pointcloud topic, version for class member function with bare pointer.
   ///
