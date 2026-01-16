@@ -142,6 +142,10 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   void shutdown();
 
+  //! Get the underlying ROS subscription handle.
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  rclcpp::SubscriptionBase::SharedPtr getSubscription() const;
+
   operator void *() const;
 
   POINT_CLOUD_TRANSPORT_PUBLIC

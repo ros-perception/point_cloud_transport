@@ -187,6 +187,14 @@ public:
     simple_impl_.reset();
   }
 
+  rclcpp::PublisherBase::SharedPtr getPublisher() const override
+  {
+    if (simple_impl_) {
+      return simple_impl_->pub_;
+    }
+    return nullptr;
+  }
+
   ///
   /// \brief Encode the given raw pointcloud into a compressed message.
   /// \param[in] raw The input raw pointcloud.

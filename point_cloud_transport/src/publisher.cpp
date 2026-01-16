@@ -246,6 +246,18 @@ void Publisher::shutdown()
   }
 }
 
+std::map<std::string, rclcpp::PublisherBase::SharedPtr> Publisher::getPublishers() const
+{
+  if (impl_) {
+    std::map<std::string, rclcpp::PublisherBase::SharedPtr> pubs;
+    for (const auto & pub : impl_->publishers_) {
+      pubs[pub->getTransportName()] = pub->getPublisher();
+    }
+    return pubs;
+  }
+  return {};
+}
+
 Publisher::operator void *() const
 {
   return (impl_ && impl_->isValid()) ? reinterpret_cast<void *>(1) : reinterpret_cast<void *>(0);
