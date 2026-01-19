@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.7 (2026-01-19)
+------------------
+* Expose original ROS Publishers and Subscription (`#146 <https://github.com/ros-perception/point_cloud_transport/issues/146>`_)
+* Contributors: Raphael van Kempen
+
 4.0.6 (2025-11-06)
 ------------------
 * Fix duplicate component registration for Republisher (`#142 <https://github.com/ros-perception/point_cloud_transport/issues/142>`_) (`#144 <https://github.com/ros-perception/point_cloud_transport/issues/144>`_)
