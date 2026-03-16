@@ -36,13 +36,13 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/node.hpp"
-#include "rclcpp/node_interfaces/node_interfaces.hpp"
+#include <rclcpp/node.hpp>
+#include <rclcpp/node_interfaces/node_interfaces.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
-#include "point_cloud_transport/visibility_control.hpp"
+#include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
 {
@@ -51,7 +51,7 @@ namespace point_cloud_transport
 class PublisherPlugin
 {
 public:
-  /// \brief Result of cloud encoding. Either an holding the compressed cloud,
+  /// \brief Result of cloud encoding. Either a value holding the compressed cloud,
   /// empty value or error message.
   typedef tl::expected<std::optional<const std::shared_ptr<rclcpp::SerializedMessage>>,
       std::string> EncodeResult;
@@ -60,7 +60,7 @@ public:
   PublisherPlugin(const PublisherPlugin &) = delete;
   PublisherPlugin & operator=(const PublisherPlugin &) = delete;
 
-  virtual ~PublisherPlugin() {}
+  virtual ~PublisherPlugin() = default;
 
   //! Get a string identifier for the transport provided by this plugin
   virtual std::string getTransportName() const = 0;

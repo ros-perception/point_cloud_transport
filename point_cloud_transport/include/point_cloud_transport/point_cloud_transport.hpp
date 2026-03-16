@@ -38,7 +38,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "rclcpp/node.hpp"
+#include <rclcpp/node.hpp>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
@@ -48,14 +48,10 @@
 #include <point_cloud_transport/subscriber.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
-#include "point_cloud_transport/visibility_control.hpp"
+#include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
 {
-
-//! Advertise and subscribe to PointCloud2 topics.
-//! PointCloudTransport is analogous to rclcpp::Node in that it contains functions
-//! to create publishers and subscriptions of PointCloud2 topics.
 
 class PointCloudTransportLoader
 {
@@ -118,7 +114,7 @@ Publisher create_publisher(
 /// \param custom_qos The QoS profile to use for the underlying publisher(s)
 /// \param options The publisher options to use for the underlying publisher(s)
 /// \return The advertised publisher
-[[deprecated("Use create_subscription(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
+[[deprecated("Use create_publisher(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
 POINT_CLOUD_TRANSPORT_PUBLIC
 Publisher create_publisher(
   std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
@@ -150,7 +146,7 @@ Publisher create_publisher(
 
 /// \brief Subscribe to a pointcloud transport topic, free function version.
 /// \param node The ROS node to use for any ROS operations
-/// \param base_topic The base topic for the sbuscription
+/// \param base_topic The base topic for the subscription
 /// \param callback The callback to invoke on receipt of a message
 /// \param transport The transport to use for the subscription
 /// \param custom_qos The QoS profile to use for the underlying publisher
@@ -169,7 +165,7 @@ Subscriber create_subscription(
 /// \brief Subscribe to a pointcloud transport topic, free function version.
 /// \param node_interfaces the ROS node interfaces required for core node functionality, including
 ///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
-/// \param base_topic The base topic for the sbuscription
+/// \param base_topic The base topic for the subscription
 /// \param callback The callback to invoke on receipt of a message
 /// \param transport The transport to use for the subscription
 /// \param custom_qos The QoS profile to use for the underlying publisher
@@ -192,7 +188,7 @@ Subscriber create_subscription(
 /// \brief Subscribe to a pointcloud transport topic, free function version.
 /// \param node_interfaces the ROS node interfaces required for core node functionality, including
 ///    NodeBaseInterface, NodeParametersInterface, NodeTopicsInterface, and NodeLoggingInterface.
-/// \param base_topic The base topic for the sbuscription
+/// \param base_topic The base topic for the subscription
 /// \param callback The callback to invoke on receipt of a message
 /// \param transport The transport to use for the subscription
 /// \param custom_qos The QoS profile to use for the underlying publisher
@@ -211,6 +207,9 @@ Subscriber create_subscription(
   rclcpp::QoS custom_qos,
   rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
 
+/// \brief Advertise and subscribe to PointCloud2 topics.
+/// PointCloudTransport is analogous to rclcpp::Node in that it contains functions
+/// to create publishers and subscriptions of PointCloud2 topics.
 class PointCloudTransport : public PointCloudTransportLoader
 {
   using VoidPtr = std::shared_ptr<void>;
@@ -251,10 +250,7 @@ public:
     const std::string & base_topic,
     uint32_t queue_size)
   {
-    rclcpp::PublisherOptions options = rclcpp::PublisherOptions();
-    auto custom_qos = rclcpp::SensorDataQoS();
-    custom_qos.keep_last(queue_size);
-    return Publisher(node_interfaces_, base_topic, pub_loader_, custom_qos, options);
+    return advertise(base_topic, queue_size, rclcpp::PublisherOptions());
   }
 
   //! Advertise a PointCloud2 topic, simple version.
@@ -288,26 +284,6 @@ public:
   {
     return Publisher(node_interfaces_, base_topic, pub_loader_, custom_qos, options);
   }
-
-  // //! Subscribe to a point cloud topic, version for arbitrary std::function object.
-  // POINT_CLOUD_TRANSPORT_PUBLIC
-  // point_cloud_transport::Subscriber subscribe(
-  //   const std::string & base_topic,
-  //   uint32_t queue_size,
-  //   const std::function<void(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> & callback)
-  // {
-  //   rmw_qos_profile_t custom_qos = rmw_qos_profile_sensor_data;
-  //   custom_qos.depth = queue_size;
-  //   return subscribe(
-  //     base_topic, custom_qos, callback, {}, nullptr);
-  // }
-
-  //! Advertise an PointCloud2 topic with subscriber status callbacks.
-  // TODO(ros2) Implement when SubscriberStatusCallback is available
-  // point_cloud_transport::Publisher advertise(const std::string& base_topic, uint32_t queue_size,
-  //  const point_cloud_transport::SubscriberStatusCallback& connect_cb,
-  //  const point_cloud_transport::SubscriberStatusCallback& disconnect_cb = {},
-  //  const ros::VoidPtr& tracked_object = {}, bool latch = false);
 
   //! Subscribe to a point cloud topic, version for arbitrary std::function object.
   [[deprecated("Use subscribe(..., rclcpp::QoS custom_qos, ...) instead")]]

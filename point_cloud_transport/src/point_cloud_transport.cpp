@@ -74,7 +74,8 @@ PointCloudTransportLoader::~PointCloudTransportLoader()
 {
 }
 
-static PointCloudTransportLoader * kImpl = new PointCloudTransportLoader();
+static std::unique_ptr<PointCloudTransportLoader> kImpl =
+  std::make_unique<PointCloudTransportLoader>();
 
 Publisher create_publisher(
   std::shared_ptr<rclcpp::Node> node,
