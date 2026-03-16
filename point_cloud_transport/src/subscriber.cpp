@@ -129,7 +129,8 @@ Subscriber::Subscriber(
         "transport-specific point_cloud topic '%s', in which case you will likely get a  "
         "connection error. Try subscribing to the base topic '%s' instead with parameter "
         "~point_cloud_transport set to '%s' (on the command line, _point_cloud_transport:=%s). ",
-        clean_topic.c_str(), real_base_topic.c_str(), maybe_transport.c_str(), maybe_transport.c_str());
+        clean_topic.c_str(), real_base_topic.c_str(), maybe_transport.c_str(),
+        maybe_transport.c_str());
     }
   }
 
