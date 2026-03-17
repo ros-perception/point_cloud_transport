@@ -76,21 +76,18 @@ void serializedMsgToString(const rclcpp::SerializedMessage & serial_msg, std::st
 
 void stringToPointCloud2(const std::string & buffer, sensor_msgs::msg::PointCloud2 & cloud)
 {
-  // serialize the pointcloud2 msg and use stringToSerialziedMsg
-  auto serialized_msg_ptr = std::make_shared<rclcpp::SerializedMessage>();
-  stringToSerializedMsg(buffer, *serialized_msg_ptr);
-
+  rclcpp::SerializedMessage serialized_msg;
+  stringToSerializedMsg(buffer, serialized_msg);
   rclcpp::Serialization<sensor_msgs::msg::PointCloud2> deserializer;
-  deserializer.deserialize_message(serialized_msg_ptr.get(), &(cloud));
+  deserializer.deserialize_message(&serialized_msg, &cloud);
 }
 
 void pointCloud2ToString(const sensor_msgs::msg::PointCloud2 & cloud, std::string & buffer)
 {
-  // serialize the pointcloud2 msg and use stringToSerialziedMsg
-  auto serialized_msg_ptr = std::make_shared<rclcpp::SerializedMessage>();
+  rclcpp::SerializedMessage serialized_msg;
   rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serializer;
-  serializer.serialize_message(&(cloud), serialized_msg_ptr.get());
-  serializedMsgToString(*serialized_msg_ptr, buffer);
+  serializer.serialize_message(&cloud, &serialized_msg);
+  serializedMsgToString(serialized_msg, buffer);
 }
 }  // namespace point_cloud_transport
 
