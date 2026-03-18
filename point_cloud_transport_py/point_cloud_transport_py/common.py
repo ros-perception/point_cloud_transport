@@ -30,39 +30,35 @@
 
 """Common definitions."""
 
+from dataclasses import dataclass
 from importlib import import_module
 
 from rclpy.serialization import deserialize_message, serialize_message
 from sensor_msgs.msg import PointCloud2
 
 
-class TransportInfo(object):
-
-    def __init__(self, name: str, topic: str, data_type: str):
-        self.name = name
-        self.topic = topic
-        self.data_type = data_type
-
-
-def stringToPointCloud2(buffer: str):
-    cloud = deserialize_message(buffer, 'sensor_msgs/msg/PointCloud2')
-    return cloud
+@dataclass
+class TransportInfo:
+    name: str
+    topic: str
+    data_type: str
 
 
-def pointCloud2ToString(msg: PointCloud2):
-    buffer = serialize_message(msg)
-    return buffer
+def stringToPointCloud2(buffer: bytes) -> PointCloud2:
+    return deserialize_message(buffer, PointCloud2)
 
 
-def stringToMsgType(message_type_str):
+def pointCloud2ToString(msg: PointCloud2) -> bytes:
+    return serialize_message(msg)
+
+
+def stringToMsgType(message_type_str: str):
     try:
         # Dynamically import the message type
         package_name, message_type = message_type_str.replace(
             '/', '.').rsplit('.', 1)
         module = import_module(package_name)
-        message_class = getattr(module, message_type)
-        # Return the subscription object
-        return message_class
+        return getattr(module, message_type)
     except Exception as e:
         print(f'Error creating subscription: {e}')
         return None
