@@ -41,14 +41,14 @@
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
-#include "rclcpp/serialization.hpp"
+#include <rclcpp/serialization.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
 #include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/publisher_plugin.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
-#include "point_cloud_transport/visibility_control.hpp"
+#include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
 {
@@ -78,9 +78,7 @@ public:
   /// empty value, or error message.
   typedef tl::expected<std::optional<M>, std::string> TypedEncodeResult;
 
-  ~SimplePublisherPlugin()
-  {
-  }
+  ~SimplePublisherPlugin() = default;
 
   rclcpp::Logger getLogger() const
   {
@@ -95,7 +93,7 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (simple_impl_) {
-      unsigned int ns_len = strlen(simple_impl_->node_interfaces_
+      size_t ns_len = strlen(simple_impl_->node_interfaces_
           .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
@@ -114,13 +112,13 @@ public:
 
   template<typename T>
   bool declareParam(
-    const std::string parameter_name, const T value,
+    const std::string & parameter_name, const T value,
     const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
     rcl_interfaces::msg::ParameterDescriptor())
   {
     if (simple_impl_) {
       // Declare Parameters
-      unsigned int ns_len = strlen(simple_impl_->node_interfaces_
+      size_t ns_len = strlen(simple_impl_->node_interfaces_
           .get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
@@ -328,7 +326,7 @@ private:
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
         rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces)
-    :node_interfaces_(node_interfaces),
+    : node_interfaces_(node_interfaces),
       logger_(node_interfaces_.get_node_logging_interface()->get_logger())
     {
     }

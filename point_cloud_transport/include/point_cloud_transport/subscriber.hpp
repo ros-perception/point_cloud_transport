@@ -36,14 +36,14 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/node.hpp"
+#include <rclcpp/node.hpp>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/loader_fwds.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
 
-#include "point_cloud_transport/visibility_control.hpp"
+#include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
 {
@@ -66,7 +66,7 @@ namespace point_cloud_transport
 class Subscriber
 {
 public:
-  typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
+  using Callback = std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)>;
 
   POINT_CLOUD_TRANSPORT_PUBLIC
   Subscriber() = default;

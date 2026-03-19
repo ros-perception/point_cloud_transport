@@ -117,8 +117,8 @@ Subscriber::Subscriber(
   std::string clean_topic = base_topic;
   size_t found = clean_topic.rfind('/');
   if (found != std::string::npos) {
-    std::string transport = clean_topic.substr(found + 1);
-    std::string plugin_name = SubscriberPlugin::getLookupName(transport);
+    std::string maybe_transport = clean_topic.substr(found + 1);
+    std::string plugin_name = SubscriberPlugin::getLookupName(maybe_transport);
     std::vector<std::string> plugins = loader->getDeclaredClasses();
     if (std::find(plugins.begin(), plugins.end(), plugin_name) != plugins.end()) {
       std::string real_base_topic = clean_topic.substr(0, found);
@@ -129,13 +129,14 @@ Subscriber::Subscriber(
         "transport-specific point_cloud topic '%s', in which case you will likely get a  "
         "connection error. Try subscribing to the base topic '%s' instead with parameter "
         "~point_cloud_transport set to '%s' (on the command line, _point_cloud_transport:=%s). ",
-        clean_topic.c_str(), real_base_topic.c_str(), transport.c_str(), transport.c_str());
+        clean_topic.c_str(), real_base_topic.c_str(), maybe_transport.c_str(),
+        maybe_transport.c_str());
     }
   }
 
   // Tell plugin to subscribe.
   impl_->subscriber_->subscribe(node_interfaces, base_topic, callback, custom_qos, options);
-  RCLCPP_INFO(impl_->logger_, "Subscribing to: %s\n", impl_->subscriber_->getTopic().c_str());
+  RCLCPP_INFO(impl_->logger_, "Subscribing to: %s", impl_->subscriber_->getTopic().c_str());
 }
 
 Subscriber::Subscriber(

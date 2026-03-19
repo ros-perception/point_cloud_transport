@@ -32,19 +32,18 @@
 #ifndef POINT_CLOUD_TRANSPORT__SUBSCRIBER_PLUGIN_HPP_
 #define POINT_CLOUD_TRANSPORT__SUBSCRIBER_PLUGIN_HPP_
 
-#include <list>
 #include <memory>
 #include <string>
 #include <optional>
 
-#include "rclcpp/macros.hpp"
-#include "rclcpp/node.hpp"
+#include <rclcpp/macros.hpp>
+#include <rclcpp/node.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
 #include <point_cloud_transport/transport_hints.hpp>
 
-#include "point_cloud_transport/visibility_control.hpp"
+#include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
 {
@@ -84,7 +83,7 @@ public:
   0;
 
   ///
-  /// \brief Subscribe to an pointcloud topic, version for arbitrary std::function object.
+  /// \brief Subscribe to a pointcloud topic, version for arbitrary std::function object.
   ///
   [[deprecated("Use subscribe(rclcpp::node_interfaces...) instead")]]
   void subscribe(
@@ -185,7 +184,7 @@ public:
   virtual rclcpp::SubscriptionBase::SharedPtr getSubscription() const = 0;
 
   ///
-  /// \brief Subscribe to an pointcloud topic, version for class member function with bare pointer.
+  /// \brief Subscribe to a pointcloud topic, version for class member function with bare pointer.
   ///
   template<class T>
   [[deprecated("Use subscribe(rclcpp::node_interfaces...) instead")]]
@@ -268,7 +267,7 @@ public:
   /// \brief Return the lookup name of the SubscriberPlugin associated with a specific
   /// transport identifier.
   /// \param transport_type The transport identifier.
-  /// \return The lookup name of the SubscriberPlugin associated with a specific
+  /// \return The lookup name of the SubscriberPlugin associated with the given transport.
   ///
   static std::string getLookupName(const std::string & transport_type)
   {

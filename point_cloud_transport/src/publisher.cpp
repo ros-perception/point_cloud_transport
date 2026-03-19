@@ -154,8 +154,8 @@ Publisher::Publisher(
   }
 
   std::set<std::string> whitelist;
-  for (size_t i = 0; i < whitelist_vec.size(); ++i) {
-    whitelist.insert(whitelist_vec[i]);
+  for (const auto & w : whitelist_vec) {
+    whitelist.insert(w);
   }
 
   for (const auto & transport_name : whitelist) {
