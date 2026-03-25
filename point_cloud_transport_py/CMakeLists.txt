@@ -52,7 +52,7 @@ pybind11_add_module(_point_cloud_transport SHARED
 target_link_libraries(_point_cloud_transport PUBLIC
   point_cloud_transport::point_cloud_transport
   rclcpp::rclcpp
-  ${sensor_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
 )
 
 pybind11_add_module(_codec SHARED
