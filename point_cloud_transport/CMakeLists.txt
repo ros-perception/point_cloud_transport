@@ -45,7 +45,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   rclcpp::rclcpp
   rcpputils::rcpputils
   rmw::rmw
-  ${sensor_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
 
@@ -57,7 +57,7 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME}_plugins ALIAS ${PROJECT_NAME}_plugi
 target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
   ${PROJECT_NAME}
   pluginlib::pluginlib
-  ${sensor_msgs_TARGETS}
+  sensor_msgs::sensor_msgs
 )
 
 add_library(pc_republish_node SHARED src/republish.cpp)
@@ -127,38 +127,38 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-codec test/test_point_cloud_codec.cpp)
   if(TARGET ${PROJECT_NAME}-codec)
-    target_link_libraries(${PROJECT_NAME}-codec ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-codec ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-subscriber)
-    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-subscriber ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-message_passing test/test_message_passing.cpp)
   if(TARGET ${PROJECT_NAME}-message_passing)
-    target_link_libraries(${PROJECT_NAME}-message_passing ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-message_passing ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-qos_override test/test_qos_override.cpp)
   if(TARGET ${PROJECT_NAME}-qos_override)
-    target_link_libraries(${PROJECT_NAME}-qos_override ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-qos_override ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-remapping test/test_remapping.cpp)
   if(TARGET ${PROJECT_NAME}-remapping)
-    target_link_libraries(${PROJECT_NAME}-remapping ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-remapping ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-message-filter test/test_message_filter.cpp)
   if(TARGET ${PROJECT_NAME}-message-filter)
     target_link_libraries(${PROJECT_NAME}-message-filter
-      ${PROJECT_NAME} message_filters::message_filters rclcpp::rclcpp ${sensor_msgs_TARGETS})
+      ${PROJECT_NAME} message_filters::message_filters rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-single_subscriber_publisher test/test_single_subscriber_publisher.cpp)
   if(TARGET ${PROJECT_NAME}-single_subscriber_publisher)
-    target_link_libraries(${PROJECT_NAME}-single_subscriber_publisher ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-single_subscriber_publisher ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 endif()
 
