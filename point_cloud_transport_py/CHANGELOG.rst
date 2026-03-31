@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.4 (2026-03-26)
+------------------
+* Use new aggregate rosidl target instead of _TARGETS (`#153 <https://github.com/ros-perception/point_cloud_transport/issues/153>`_)
+* Python improvements (`#151 <https://github.com/ros-perception/point_cloud_transport/issues/151>`_)
+* Contributors: Alejandro Hernández Cordero, Alexis Tsogias
+
 5.3.3 (2026-01-19)
 ------------------
 

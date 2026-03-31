@@ -2,6 +2,13 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.3.4 (2026-03-26)
+------------------
+* Use new aggregate rosidl target instead of _TARGETS (`#153 <https://github.com/ros-perception/point_cloud_transport/issues/153>`_)
+  Co-authored-by: Alexis Tsogias <a.tsogias@cellumation.com>
+* Improvements (`#150 <https://github.com/ros-perception/point_cloud_transport/issues/150>`_)
+* Contributors: Alejandro Hernández Cordero, Alexis Tsogias
+
 5.3.3 (2026-01-19)
 ------------------
 * Expose original ROS Publishers and Subscription (`#146 <https://github.com/ros-perception/point_cloud_transport/issues/146>`_) (`#148 <https://github.com/ros-perception/point_cloud_transport/issues/148>`_)
