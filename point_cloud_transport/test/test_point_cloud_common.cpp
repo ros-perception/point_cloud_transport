@@ -57,13 +57,13 @@ TEST(DefaultPluginsXml, raw_sub_transport_name) {
 TEST(DefaultPluginsXml, raw_pub_message_type) {
   const std::string msg_type = point_cloud_transport::get_message_type_from_manifest(
     DEFAULT_PLUGINS_XML, "point_cloud_transport/raw_pub");
-  EXPECT_EQ("", msg_type);
+  EXPECT_EQ("sensor_msgs/msg/PointCloud2", msg_type);
 }
 
 TEST(DefaultPluginsXml, raw_sub_message_type) {
   const std::string msg_type = point_cloud_transport::get_message_type_from_manifest(
     DEFAULT_PLUGINS_XML, "point_cloud_transport/raw_sub");
-  EXPECT_EQ("", msg_type);
+  EXPECT_EQ("sensor_msgs/msg/PointCloud2", msg_type);
 }
 
 TEST(DefaultPluginsXml, unknown_lookup_name_returns_empty) {
