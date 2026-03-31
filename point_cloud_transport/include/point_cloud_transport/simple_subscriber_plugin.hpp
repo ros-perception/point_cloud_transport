@@ -39,8 +39,8 @@
 #include <utility>
 #include <type_traits>
 
-#include "rclcpp/serialization.hpp"
-#include "rclcpp/subscription.hpp"
+#include <rclcpp/serialization.hpp>
+#include <rclcpp/subscription.hpp>
 
 #include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/subscriber_plugin.hpp>
@@ -68,9 +68,7 @@ template<class M>
 class SimpleSubscriberPlugin : public SubscriberPlugin
 {
 public:
-  virtual ~SimpleSubscriberPlugin()
-  {
-  }
+  virtual ~SimpleSubscriberPlugin() = default;
 
   rclcpp::Logger getLogger() const
   {
@@ -93,7 +91,7 @@ public:
   bool getParam(const std::string & parameter_name, T & value) const
   {
     if (impl_) {
-      unsigned int ns_len =
+      size_t ns_len =
         strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
@@ -113,12 +111,12 @@ public:
 
   template<typename T>
   bool declareParam(
-    const std::string parameter_name, const T value,
+    const std::string & parameter_name, const T value,
     const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor =
     rcl_interfaces::msg::ParameterDescriptor())
   {
     if (impl_) {
-      unsigned int ns_len =
+      size_t ns_len =
         strlen(impl_->node_interfaces_.get_node_base_interface()->get_namespace());
       std::string param_base_name = getTopic().substr(ns_len);
       std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
@@ -307,7 +305,7 @@ private:
         rclcpp::node_interfaces::NodeParametersInterface,
         rclcpp::node_interfaces::NodeTopicsInterface,
         rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces)
-    :node_interfaces_(node_interfaces),
+    : node_interfaces_(node_interfaces),
       logger_(node_interfaces_.get_node_logging_interface()->get_logger())
     {
     }

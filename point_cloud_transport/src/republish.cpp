@@ -63,18 +63,12 @@ private:
   point_cloud_transport::Subscriber sub;
   std::shared_ptr<point_cloud_transport::PublisherPlugin> pub;
   std::shared_ptr<point_cloud_transport::Publisher> simple_pub;
-  rclcpp::node_interfaces::NodeInterfaces<
-    rclcpp::node_interfaces::NodeBaseInterface,
-    rclcpp::node_interfaces::NodeParametersInterface,
-    rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface
-  > node_interfaces_;
 };
 
 Republisher::Republisher(const rclcpp::NodeOptions & options)
 : Node("point_cloud_republisher", options)
 {
-  // Initialize Republishercomponent after construction
+  // Initialize Republisher component after construction
   // shared_from_this can't be used in the constructor
   this->timer_ = create_wall_timer(
     1ms, [this]() {
