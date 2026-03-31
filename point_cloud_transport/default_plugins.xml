@@ -1,4 +1,6 @@
 <library path="point_cloud_transport_plugins">
+    <transport_name>raw</transport_name>
+    <message_type>sensor_msgs/msg/PointCloud2</message_type>
     <class name="point_cloud_transport/raw_pub" type="point_cloud_transport::RawPublisher" base_class_type="point_cloud_transport::PublisherPlugin">
         <description>
             This is the default publisher. It publishes the PointCloud2 as-is on the base topic.

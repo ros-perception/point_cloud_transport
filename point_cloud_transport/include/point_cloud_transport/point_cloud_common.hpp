@@ -39,6 +39,63 @@
 namespace point_cloud_transport
 {
 
+/// Data read from a plugin manifest XML for one class.
+struct PluginManifestData
+{
+  std::string transport_name;  ///< e.g. "draco"
+  std::string message_type;    ///< e.g. "point_cloud_interfaces/msg/CompressedPointCloud2"
+  std::string lookup_name;     ///< e.g. "point_cloud_transport/draco_pub"
+};
+
+/**
+ * \brief Demangle a C++ ABI type name to its human-readable form.
+ *
+ * Returns the input name in case no specific demangling algorithm
+ * is known for the current platform.
+ */
+POINT_CLOUD_TRANSPORT_PUBLIC
+std::string demangle_cpp_type_name(const char * mangled_name);
+
+/**
+ * \brief Read the transport name declared in a plugin manifest XML for a given
+ * class lookup name.
+ */
+POINT_CLOUD_TRANSPORT_PUBLIC
+std::string get_transport_name_from_manifest(
+  const std::string & manifest_path,
+  const std::string & lookup_name);
+
+/**
+ * \brief Read the message type declared in a plugin manifest XML for a given
+ * class lookup name.
+ */
+POINT_CLOUD_TRANSPORT_PUBLIC
+std::string get_message_type_from_manifest(
+  const std::string & manifest_path,
+  const std::string & lookup_name);
+
+/**
+ * \brief Search the pluginlib publisher-plugin registry for the class whose
+ * concrete (derived) C++ type equals \p cpp_type_name and return its manifest
+ * data (transport name, message type, lookup name).
+ *
+ * No plugin is instantiated; the function only parses XML.  Returns an empty
+ * PluginManifestData if no match is found.
+ */
+POINT_CLOUD_TRANSPORT_PUBLIC
+PluginManifestData get_pub_manifest_data_from_class_type(const std::string & cpp_type_name);
+
+/**
+ * \brief Search the pluginlib subscriber-plugin registry for the class whose
+ * concrete (derived) C++ type equals \p cpp_type_name and return its manifest
+ * data (transport name, message type, lookup name).
+ *
+ * Analogous to get_pub_manifest_data_from_class_type but searches
+ * point_cloud_transport::SubscriberPlugin classes.
+ */
+POINT_CLOUD_TRANSPORT_PUBLIC
+PluginManifestData get_sub_manifest_data_from_class_type(const std::string & cpp_type_name);
+
 /// \brief Remove the last copy of the given substring from the given string.
 /// \param input original string
 /// \param search substring to remove the last entry of
