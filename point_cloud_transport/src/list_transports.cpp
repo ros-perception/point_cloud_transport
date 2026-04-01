@@ -144,20 +144,20 @@ int main(int /*argc*/, char ** /*argv*/)
     if (td.pub_status == DOES_NOT_EXIST) {
       std::cout << " - No publisher provided" << std::endl;
     } else {
-      std::cout << " - Publisher: " << pub_loader.getClassDescription(td.pub_name).c_str()
-                << std::endl;
+      std::cout << " - Publisher";
       if (!td.pub_data_type.empty()) {
-        std::cout << " - Publisher message type: " << td.pub_data_type << std::endl;
+        std::cout << " (" << td.pub_data_type << ")";
       }
+      std::cout << ": " << pub_loader.getClassDescription(td.pub_name) << "\n";
     }
     if (td.sub_status == DOES_NOT_EXIST) {
       std::cout << " - No subscriber provided" << std::endl;
     } else {
-      std::cout << " - Subscriber: " << sub_loader.getClassDescription(td.sub_name).c_str()
-                << std::endl;
+      std::cout << " - Subscriber";
       if (!td.sub_data_type.empty()) {
-        std::cout << " - Subscriber message type: " << td.sub_data_type << std::endl;
+        std::cout << " (" << td.sub_data_type << ")";
       }
+      std::cout << ": " << pub_loader.getClassDescription(td.sub_name) << "\n";
     }
   }
 

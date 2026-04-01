@@ -41,14 +41,16 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  message_filters::message_filters
-  pluginlib::pluginlib
-  rclcpp::rclcpp
-  rcpputils::rcpputils
-  rmw::rmw
-  sensor_msgs::sensor_msgs
-  tinyxml2::tinyxml2
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    message_filters::message_filters
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+    rcpputils::rcpputils
+    rmw::rmw
+    sensor_msgs::sensor_msgs
+  PRIVATE
+    tinyxml2::tinyxml2
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
 
@@ -110,7 +112,7 @@ ament_export_include_directories("include/${PROJECT_NAME}")
 
 ament_export_targets(export_${PROJECT_NAME})
 
-ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib rcpputils rmw tinyxml2)
+ament_export_dependencies(message_filters rclcpp sensor_msgs pluginlib rcpputils rmw)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
