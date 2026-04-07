@@ -51,7 +51,7 @@ namespace point_cloud_transport
 ///
 /// Base class for plugins to Subscriber.
 ///
-class POINT_CLOUD_TRANSPORT_PUBLIC SubscriberPlugin
+class SubscriberPlugin
 {
 public:
   /// \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2`
