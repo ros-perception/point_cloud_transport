@@ -11,7 +11,7 @@
       base_class_type="point_cloud_transport::PublisherPlugin">
       <description>Publisher whose transport name and message type are declared per-class.</description>
       <transport_name>class_transport</transport_name>
-      <message_type>sensor_msgs/msg/CompressedPointCloud2</message_type>
+      <message_type>point_cloud_interfaces/msg/CompressedPointCloud2</message_type>
     </class>
 
     <!-- This class relies on the library-level defaults. -->

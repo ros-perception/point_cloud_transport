@@ -144,6 +144,7 @@ std::string demangle_cpp_type_name(const char * mangled_name)
   }
   return result;
 #else
+#warning "Your platform does not support C++ type name demangling"
   return mangled_name;
 #endif
 }

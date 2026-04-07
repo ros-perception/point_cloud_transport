@@ -123,7 +123,7 @@ TEST(PluginManifestXml, class_level_transport_name_overrides_library) {
 
 TEST(PluginManifestXml, class_level_message_type_overrides_library) {
   EXPECT_EQ(
-    "sensor_msgs/msg/CompressedPointCloud2",
+    "point_cloud_interfaces/msg/CompressedPointCloud2",
     point_cloud_transport::get_message_type_from_manifest(
       TEST_PLUGIN_MANIFEST_XML, "point_cloud_transport/class_override_pub"));
 }
