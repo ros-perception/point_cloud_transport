@@ -41,8 +41,8 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/transport_hints.hpp>
-
 #include <point_cloud_transport/visibility_control.hpp>
 
 namespace point_cloud_transport
@@ -51,7 +51,7 @@ namespace point_cloud_transport
 ///
 /// Base class for plugins to Subscriber.
 ///
-class POINT_CLOUD_TRANSPORT_PUBLIC SubscriberPlugin
+class SubscriberPlugin
 {
 public:
   /// \brief Result of cloud decoding. Either a `sensor_msgs::msg::PointCloud2`
@@ -67,11 +67,29 @@ public:
 
   typedef std::function<void (const sensor_msgs::msg::PointCloud2::ConstSharedPtr &)> Callback;
 
-  ///
-  /// Get a string identifier for the transport provided by
-  /// this plugin.
-  ///
-  virtual std::string getTransportName() const = 0;
+  /**
+   * \brief Get a string identifier for the transport provided by this plugin.
+   *
+   * The default implementation auto-discovers the name from the pluginlib
+   * manifest XML by matching the demangled C++ type name of \c *this against
+   * the \c type attribute of each \c <class> element.  The result is cached
+   * after the first call.
+   *
+   * Plugins that override getTransportName() continue to work unchanged.
+   * Returning a different value than what is in the manifest is considered problematic.
+   */
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  virtual std::string getTransportName() const;
+
+  /**
+   * \brief Get the primary message type used by this plugin.
+   *
+   * Returns the value of the \c <message_type> element from the plugin
+   * manifest XML.  The result is cached after the first call.
+   * Override this method if you need a different value at runtime.
+   */
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  virtual std::string getMessageType() const;
 
   ///
   /// \brief Decode the given compressed pointcloud into a raw cloud.
@@ -273,6 +291,11 @@ public:
   {
     return "point_cloud_transport/" + transport_type + "_sub";
   }
+
+private:
+  // Cache for manifest-discovered data (populated lazily by the base-class
+  // implementation of getTransportName() / getMessageType()).
+  mutable std::optional<PluginManifestData> manifest_data_;
 
 protected:
   ///

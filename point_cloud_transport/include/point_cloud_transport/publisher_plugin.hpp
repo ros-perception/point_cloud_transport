@@ -33,6 +33,7 @@
 #define POINT_CLOUD_TRANSPORT__PUBLISHER_PLUGIN_HPP_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -41,6 +42,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 
+#include <point_cloud_transport/point_cloud_common.hpp>
 #include <point_cloud_transport/single_subscriber_publisher.hpp>
 #include <point_cloud_transport/visibility_control.hpp>
 
@@ -62,8 +64,29 @@ public:
 
   virtual ~PublisherPlugin() = default;
 
-  //! Get a string identifier for the transport provided by this plugin
-  virtual std::string getTransportName() const = 0;
+  /**
+   * \brief Get a string identifier for the transport provided by this plugin.
+   *
+   * The default implementation auto-discovers the name from the pluginlib
+   * manifest XML by matching the demangled C++ type name of \c *this against
+   * the \c type attribute of each \c <class> element.  The result is cached
+   * after the first call.
+   *
+   * Plugins that override getTransportName() continue to work unchanged.
+   * Returning a different value than what is in the manifest is considered problematic.
+   */
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  virtual std::string getTransportName() const;
+
+  /**
+   * \brief Get the primary message type used by this plugin.
+   *
+   * Returns the value of the \c <message_type> element from the plugin
+   * manifest XML.  The result is cached after the first call.
+   * Override this method if you need a different value at runtime.
+   */
+  POINT_CLOUD_TRANSPORT_PUBLIC
+  virtual std::string getMessageType() const;
 
   //! \brief Advertise a topic, simple version.
   [[deprecated("Use advertise(rclcpp::node_interfaces...) instead")]]
@@ -135,6 +158,11 @@ public:
   //! Return the lookup name of the PublisherPlugin associated with a specific transport identifier.
   POINT_CLOUD_TRANSPORT_PUBLIC
   static std::string getLookupName(const std::string & transport_name);
+
+private:
+  // Cache for manifest-discovered data (populated lazily by the base-class
+  // implementation of getTransportName() / getMessageType()).
+  mutable std::optional<PluginManifestData> manifest_data_;
 
 protected:
   //! Advertise a topic. Must be implemented by the subclass.

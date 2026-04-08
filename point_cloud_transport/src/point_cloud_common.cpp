@@ -27,10 +27,25 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#if defined(__GNUC__) || defined(__clang__)
+#include <cxxabi.h>
+#endif
+
+#include "pluginlib/class_loader.hpp"
+#include "tinyxml2.h"  // NOLINT(build/include_subdir)
 
 #include "point_cloud_transport/point_cloud_common.hpp"
+
+// Forward declarations needed by ClassLoader template instantiation.
+#include "point_cloud_transport/publisher_plugin.hpp"
+#include "point_cloud_transport/subscriber_plugin.hpp"
 
 namespace point_cloud_transport
 {
@@ -109,6 +124,175 @@ bool transportNameMatches(
     return true;
   }
   return false;
+}
+
+std::string demangle_cpp_type_name(const char * mangled_name)
+{
+#if defined(__GNUC__) || defined(__clang__)
+  int status = 0;
+  char * d = abi::__cxa_demangle(mangled_name, nullptr, nullptr, &status);
+  std::string result = (status == 0 && d) ? d : mangled_name;
+  std::free(d);
+  return result;
+#elif defined(_MSC_VER)
+  std::string result = mangled_name;
+  if (result.size() > 6 && result.substr(0, 6) == "class ") {
+    result = result.substr(6);
+  }
+  if (result.size() > 7 && result.substr(0, 7) == "struct ") {
+    result = result.substr(7);
+  }
+  return result;
+#else
+#warning "Your platform does not support C++ type name demangling"
+  return mangled_name;
+#endif
+}
+
+namespace
+{
+/// Extract the text content of a child element named @child_name.
+const char * get_child_text(
+  tinyxml2::XMLElement * elem,
+  const char * child_name)
+{
+  auto * child = elem->FirstChildElement(child_name);
+  return child ? child->GetText() : nullptr;
+}
+
+/// Return the first <library> element, handling both <library> and <class_libraries> as root.
+tinyxml2::XMLElement * first_library(tinyxml2::XMLDocument & doc)
+{
+  auto * root = doc.RootElement();
+  if (!root) {
+    return nullptr;
+  }
+  if (std::string(root->Name()) == "class_libraries") {
+    return root->FirstChildElement("library");
+  }
+  if (std::string(root->Name()) == "library") {
+    return root;
+  }
+  return nullptr;
+}
+}  // namespace
+
+std::string get_transport_name_from_manifest(
+  const std::string & manifest_path,
+  const std::string & lookup_name)
+{
+  tinyxml2::XMLDocument doc;
+  if (doc.LoadFile(manifest_path.c_str()) != tinyxml2::XML_SUCCESS) {
+    return "";
+  }
+  for (auto * lib = first_library(doc); lib != nullptr; lib = lib->NextSiblingElement("library")) {
+    const char * lib_transport = get_child_text(lib, "transport_name");
+    for (auto * cls = lib->FirstChildElement("class");
+      cls != nullptr;
+      cls = cls->NextSiblingElement("class"))
+    {
+      const char * name = cls->Attribute("name");
+      if (!name || lookup_name != name) {
+        continue;
+      }
+      const char * cls_transport = get_child_text(cls, "transport_name");
+      if (cls_transport) {
+        return cls_transport;
+      }
+      if (lib_transport) {
+        return lib_transport;
+      }
+      if (!lookup_name.empty()) {
+        const auto pos = lookup_name.rfind('/');
+        const std::string short_name = (pos != std::string::npos) ?
+          lookup_name.substr(pos + 1) :
+          lookup_name;
+        auto lookup_name_transport = erase_last_copy(short_name, "_sub");
+        lookup_name_transport = erase_last_copy(lookup_name_transport, "_pub");
+        return lookup_name_transport;
+      }
+      return "";
+    }
+  }
+  return "";
+}
+
+std::string get_message_type_from_manifest(
+  const std::string & manifest_path,
+  const std::string & lookup_name)
+{
+  tinyxml2::XMLDocument doc;
+  if (doc.LoadFile(manifest_path.c_str()) != tinyxml2::XML_SUCCESS) {
+    return "";
+  }
+  for (auto * lib = first_library(doc); lib != nullptr; lib = lib->NextSiblingElement("library")) {
+    const char * lib_type = get_child_text(lib, "message_type");
+    for (auto * cls = lib->FirstChildElement("class");
+      cls != nullptr;
+      cls = cls->NextSiblingElement("class"))
+    {
+      const char * name = cls->Attribute("name");
+      if (!name || lookup_name != name) {
+        continue;
+      }
+      const char * cls_type = get_child_text(cls, "message_type");
+      if (cls_type) {
+        return cls_type;
+      }
+      return lib_type ? lib_type : "";
+    }
+  }
+  return "";
+}
+
+}  // namespace point_cloud_transport
+
+// ---------------------------------------------------------------------------
+// Manifest auto-discovery helpers
+// ---------------------------------------------------------------------------
+
+namespace
+{
+
+template<class BaseT>
+point_cloud_transport::PluginManifestData search_manifest_for_type(
+  const std::string & package,
+  const std::string & base_class_type,
+  const std::string & cpp_type_name)
+{
+  try {
+    pluginlib::ClassLoader<BaseT> loader(package, base_class_type);
+    for (const auto & lookup_name : loader.getDeclaredClasses()) {
+      if (loader.getClassType(lookup_name) == cpp_type_name) {
+        const std::string manifest_path = loader.getPluginManifestPath(lookup_name);
+        return {
+          point_cloud_transport::get_transport_name_from_manifest(manifest_path, lookup_name),
+          point_cloud_transport::get_message_type_from_manifest(manifest_path, lookup_name),
+          lookup_name
+        };
+      }
+    }
+  } catch (const std::exception &) {
+    // Silently ignore: ament index unavailable, no plugins registered, etc.
+  }
+  return {};
+}
+
+}  // anonymous namespace
+
+namespace point_cloud_transport
+{
+
+PluginManifestData get_pub_manifest_data_from_class_type(const std::string & cpp_type_name)
+{
+  return search_manifest_for_type<PublisherPlugin>(
+    "point_cloud_transport", "point_cloud_transport::PublisherPlugin", cpp_type_name);
+}
+
+PluginManifestData get_sub_manifest_data_from_class_type(const std::string & cpp_type_name)
+{
+  return search_manifest_for_type<SubscriberPlugin>(
+    "point_cloud_transport", "point_cloud_transport::SubscriberPlugin", cpp_type_name);
 }
 
 }  // namespace point_cloud_transport
