@@ -1,0 +1,19 @@
+## rosdoc2 configuration for point_cloud_transport_py.
+
+type: 'rosdoc2 config'
+version: 1
+
+---
+
+settings:
+  ## Treat this pybind11/CMake package as Python for documentation purposes
+  ## so rosdoc2 runs sphinx-apidoc and autodoc instead of Doxygen.
+  override_build_type: 'ament_python'
+  python_source: 'point_cloud_transport_py'
+
+builders:
+    - sphinx: {
+        name: 'point_cloud_transport_py',
+        sphinx_sourcedir: doc,
+        output_dir: ''
+    }
