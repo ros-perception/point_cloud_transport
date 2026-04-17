@@ -70,7 +70,6 @@ public:
   /// \brief Constructor
   /// \param node The rclcpp node to use to subscribe.
   /// \param base_topic The topic to subscribe to.
-  /// \param queue_size The subscription queue size
   /// \param transport The transport hint to pass along
   ///
   [[deprecated("Use SubscriberFilter(rclcpp::node_interfaces...) instead")]]
