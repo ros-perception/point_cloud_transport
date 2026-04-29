@@ -37,7 +37,6 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <type_traits>
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>

@@ -30,7 +30,6 @@
 //
 
 #include <iostream>
-#include <cstdio>
 #include <map>
 #include <string>
 
