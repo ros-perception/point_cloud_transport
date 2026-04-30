@@ -82,9 +82,11 @@ public:
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubLoaderPtr getSubscriberLoader() const;
 
+  [[deprecated("Use getPublisherLoader() instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::PubLoaderPtr getPubLoader();
 
+  [[deprecated("Use getSubscriberLoader() instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
   point_cloud_transport::SubLoaderPtr getSubLoader();
 

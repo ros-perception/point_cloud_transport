@@ -83,7 +83,7 @@ Publisher create_publisher(
   rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(*node, base_topic, kImpl->getPubLoader(),
+  return Publisher(*node, base_topic, kImpl->getPublisherLoader(),
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
@@ -97,7 +97,7 @@ Publisher create_publisher(
   rmw_qos_profile_t custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(*node_interfaces, base_topic, kImpl->getPubLoader(),
+  return Publisher(*node_interfaces, base_topic, kImpl->getPublisherLoader(),
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
@@ -111,7 +111,7 @@ Publisher create_publisher(
   rclcpp::QoS custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(node_interfaces, base_topic, kImpl->getPubLoader(), custom_qos, options);
+  return Publisher(node_interfaces, base_topic, kImpl->getPublisherLoader(), custom_qos, options);
 }
 
 Subscriber create_subscription(
@@ -124,7 +124,7 @@ Subscriber create_subscription(
 {
   return Subscriber(
     *node, base_topic, callback,
-    kImpl->getSubLoader(), transport,
+    kImpl->getSubscriberLoader(), transport,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
@@ -142,7 +142,7 @@ Subscriber create_subscription(
 {
   return Subscriber(
     *node_interfaces, base_topic, callback,
-    kImpl->getSubLoader(), transport,
+    kImpl->getSubscriberLoader(), transport,
       rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
 }
 
@@ -160,7 +160,7 @@ Subscriber create_subscription(
 {
   return Subscriber(
     node_interfaces, base_topic, callback,
-    kImpl->getSubLoader(), transport, custom_qos, options);
+    kImpl->getSubscriberLoader(), transport, custom_qos, options);
 }
 
 std::vector<std::string> PointCloudTransportLoader::getDeclaredTransports() const
