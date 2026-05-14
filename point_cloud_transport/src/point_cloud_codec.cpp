@@ -129,7 +129,7 @@ void PointCloudCodec::getTopicsToPublish(
     } catch (const pluginlib::PluginlibException & e) {
       RCLCPP_ERROR(
         rclcpp::get_logger("point_cloud_transport"),
-        "pointCloudTransportGetTopicsToPublish: %s", e.what());
+        "PointCloudCodec::getTopicsToPublish: %s", e.what());
     }
   }
 }
