@@ -161,7 +161,7 @@ void PointCloudCodec::getTopicToSubscribe(
     } catch (const pluginlib::PluginlibException & e) {
       RCLCPP_ERROR(
         rclcpp::get_logger("point_cloud_transport"),
-        "pointCloudTransportGetTopicToSubscribe: %s", e.what());
+        "PointCloudCodec::getTopicToSubscribe: %s", e.what());
     }
   }
 }
