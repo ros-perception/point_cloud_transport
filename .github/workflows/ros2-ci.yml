@@ -10,13 +10,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "ubuntu:24.04"
-            ros-distro: "rolling"
+          - docker-image: "ubuntu:26.04"
+            ros-distro: "lyrical"
     container:
       image: ${{ matrix.docker-image }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build and Test
         run: .github/workflows/build-and-test.sh
         env:
