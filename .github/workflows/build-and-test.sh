@@ -8,11 +8,13 @@ export DEBIAN_FRONTEND=noninteractive
 export ROS_PYTHON_VERSION=3
 
 apt update -qq
-apt install -qq -y lsb-release wget curl build-essential
+apt install -qq -y lsb-release wget curl build-essential gnupg
 
 # Dependencies.
-echo "deb http://packages.ros.org/ros2-testing/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-testing.list
-curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc \
+    | gpg --dearmor -o /etc/apt/keyrings/ros2-testing-archive-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/ros2-testing-archive-keyring.gpg] http://packages.ros.org/ros2-testing/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-testing.list
 apt-get update -qq
 apt-get install -y python3-colcon-common-extensions \
                    python3-rosdep
