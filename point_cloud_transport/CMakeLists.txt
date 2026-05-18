@@ -163,8 +163,5 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
-<<<<<<< HEAD
-=======
 
 ament_generate_version_header(${PROJECT_NAME})
->>>>>>> 50d0b89 (Added version.h (#163))
