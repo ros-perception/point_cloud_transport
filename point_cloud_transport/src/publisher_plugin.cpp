@@ -29,15 +29,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-<<<<<<< HEAD
-#include <list>
-=======
-#include <optional>
->>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
+#include <memory>
 #include <string>
 
+#include <rclcpp/node.hpp>
+#include <rclcpp/publisher_options.hpp>
+#include <rmw/types.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+
 #include <point_cloud_transport/publisher_plugin.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {

@@ -35,13 +35,8 @@
 
 #include <functional>
 #include <memory>
-#include <string>
-<<<<<<< HEAD
-#include <type_traits>
-=======
-#include <utility>
->>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
 #include <optional>
+#include <string>
 
 #include <rclcpp/rclcpp.hpp>
 #include "rclcpp/serialization.hpp"
