@@ -34,7 +34,6 @@
 
 #include <rclcpp/node.hpp>
 #include <rclcpp/publisher_options.hpp>
-#include <rmw/types.h>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <point_cloud_transport/publisher_plugin.hpp>
