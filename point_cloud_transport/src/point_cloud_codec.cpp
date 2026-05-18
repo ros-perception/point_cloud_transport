@@ -127,8 +127,9 @@ void PointCloudCodec::getTopicsToPublish(
       topics.push_back(pub->getTopicToAdvertise(baseTopic));
       dataTypes.push_back(pub->getDataType());
     } catch (const pluginlib::PluginlibException & e) {
-      std::cout << "pointCloudTransportGetTopicsToPublish: " << e.what() << "\n"
-                << std::endl;
+      RCLCPP_ERROR(
+        rclcpp::get_logger("point_cloud_transport"),
+        "PointCloudCodec::getTopicsToPublish: %s", e.what());
     }
   }
 }
@@ -158,8 +159,9 @@ void PointCloudCodec::getTopicToSubscribe(
       dataType = sub->getDataType();
       return;
     } catch (const pluginlib::PluginlibException & e) {
-      std::cout << "pointCloudTransportGetTopicToSubscribe: " << e.what() << "\n"
-                << std::endl;
+      RCLCPP_ERROR(
+        rclcpp::get_logger("point_cloud_transport"),
+        "PointCloudCodec::getTopicToSubscribe: %s", e.what());
     }
   }
 }

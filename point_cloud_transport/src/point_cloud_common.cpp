@@ -27,8 +27,23 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+<<<<<<< HEAD
 #include <cstring>
 #include <limits>
+=======
+#include <cstdlib>
+#include <exception>
+#include <limits>
+#include <string>
+#include <vector>
+
+#if defined(__GNUC__) || defined(__clang__)
+#include <cxxabi.h>
+#endif
+
+#include "pluginlib/class_loader.hpp"
+#include "tinyxml2.h"  // NOLINT(build/include_subdir)
+>>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
 
 #include "point_cloud_transport/point_cloud_common.hpp"
 

@@ -36,7 +36,11 @@
 #include <functional>
 #include <memory>
 #include <string>
+<<<<<<< HEAD
 #include <type_traits>
+=======
+#include <utility>
+>>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
@@ -277,8 +281,6 @@ private:
   };
 
   std::unique_ptr<SimplePublisherPluginImpl> simple_impl_;
-
-  typedef std::function<void (const sensor_msgs::msg::PointCloud2 &)> PointCloudPublishFn;
 
   ///
   /// \brief Returns a function object for publishing the transport-specific message type
