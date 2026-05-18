@@ -29,7 +29,11 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+<<<<<<< HEAD
 #include <list>
+=======
+#include <optional>
+>>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
 #include <string>
 
 #include <point_cloud_transport/publisher_plugin.hpp>
