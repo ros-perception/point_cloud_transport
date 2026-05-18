@@ -11,12 +11,12 @@ jobs:
       matrix:
         include:
           - docker-image: "ubuntu:24.04"
-            ros-distro: "rolling"
+            ros-distro: "kilted"
     container:
       image: ${{ matrix.docker-image }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build and Test
         run: .github/workflows/build-and-test.sh
         env:
