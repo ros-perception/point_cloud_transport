@@ -37,7 +37,6 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <type_traits>
 
 #include <rclcpp/serialization.hpp>
 #include <rclcpp/subscription.hpp>

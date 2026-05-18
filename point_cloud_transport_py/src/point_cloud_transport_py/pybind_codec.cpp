@@ -27,6 +27,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
+#include <cstdlib>
+#include <cstring>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <vector>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
