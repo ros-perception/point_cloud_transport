@@ -33,14 +33,12 @@
 #define POINT_CLOUD_TRANSPORT__SIMPLE_SUBSCRIBER_PLUGIN_HPP_
 
 
+#include <algorithm>
+#include <cstdint> 
+#include <exception>
 #include <functional>
 #include <memory>
 #include <string>
-<<<<<<< HEAD
-#include <type_traits>
-=======
-#include <utility>
->>>>>>> abfd1f3 (Cleanups headers and avoid use std::cout (#158))
 
 #include "rclcpp/serialization.hpp"
 #include "rclcpp/subscription.hpp"
