@@ -34,7 +34,7 @@
 
 
 #include <algorithm>
-#include <cstdint> 
+#include <cstdint>
 #include <exception>
 #include <functional>
 #include <memory>
