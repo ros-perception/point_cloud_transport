@@ -29,11 +29,14 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <list>
+#include <memory>
 #include <string>
 
+#include <rclcpp/node.hpp>
+#include <rclcpp/publisher_options.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+
 #include <point_cloud_transport/publisher_plugin.hpp>
-#include <point_cloud_transport/single_subscriber_publisher.hpp>
 
 namespace point_cloud_transport
 {

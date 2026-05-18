@@ -27,8 +27,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <cstring>
+#include <cstddef>
 #include <limits>
+#include <string>
+#include <vector>
 
 #include "point_cloud_transport/point_cloud_common.hpp"
 
