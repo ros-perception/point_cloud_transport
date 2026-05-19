@@ -114,7 +114,8 @@ Publisher create_publisher(
   rclcpp::QoS custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(node_interfaces, base_topic, get_loader().getPublisherLoader(), custom_qos, options);
+  return Publisher(node_interfaces, base_topic, get_loader().getPublisherLoader(), custom_qos,
+      options);
 }
 
 Subscriber create_subscription(
