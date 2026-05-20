@@ -18,6 +18,7 @@
   <url type="bugtracker">https://github.com/ros-perception/point_cloud_transport/issues</url>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>ament_cmake_gen_version_h</buildtool_depend>
 
   <depend>message_filters</depend>
   <depend>pluginlib</depend>
