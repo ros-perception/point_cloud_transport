@@ -223,6 +223,20 @@ protected:
   std::string base_topic_;
 
   void advertiseImpl(
+    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
+      rclcpp::node_interfaces::NodeBaseInterface,
+      rclcpp::node_interfaces::NodeParametersInterface,
+      rclcpp::node_interfaces::NodeTopicsInterface,
+      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
+    const std::string & base_topic,
+    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
+    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions()) override
+  {
+    advertiseImpl(*node_interfaces, base_topic,
+        rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
+  }
+
+  void advertiseImpl(
     rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
       rclcpp::node_interfaces::NodeParametersInterface,
