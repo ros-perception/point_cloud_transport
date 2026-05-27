@@ -28,9 +28,8 @@
 //
 
 #include <cstdlib>
-#include <cstring>
+#include <exception>
 #include <limits>
-#include <stdexcept>
 #include <string>
 #include <vector>
 

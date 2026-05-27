@@ -90,7 +90,8 @@ Publisher create_publisher(
   rclcpp::QoS custom_qos,
   const rclcpp::PublisherOptions & options)
 {
-  return Publisher(node_interfaces, base_topic, get_loader().getPubLoader(), custom_qos, options);
+  return Publisher(node_interfaces, base_topic, get_loader().getPublisherLoader(), custom_qos,
+      options);
 }
 
 Subscriber create_subscription(
@@ -107,7 +108,7 @@ Subscriber create_subscription(
 {
   return Subscriber(
     node_interfaces, base_topic, callback,
-    get_loader().getSubLoader(), transport, custom_qos, options);
+    get_loader().getSubscriberLoader(), transport, custom_qos, options);
 }
 
 std::vector<std::string> PointCloudTransportLoader::getDeclaredTransports() const

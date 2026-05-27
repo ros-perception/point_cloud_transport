@@ -37,7 +37,6 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <type_traits>
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
@@ -328,8 +327,6 @@ private:
   };
 
   std::unique_ptr<SimplePublisherPluginImpl> simple_impl_;
-
-  typedef std::function<void (const sensor_msgs::msg::PointCloud2 &)> PointCloudPublishFn;
 
   ///
   /// \brief Returns a function object for publishing the transport-specific message type

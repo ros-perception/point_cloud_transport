@@ -29,7 +29,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include <list>
 #include <optional>
 #include <string>
 #include <typeinfo>
