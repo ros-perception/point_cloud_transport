@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.4.2 (2026-05-29)
+------------------
+* Added version.h (`#163 <https://github.com/ros-perception/point_cloud_transport/issues/163>`_) (`#169 <https://github.com/ros-perception/point_cloud_transport/issues/169>`_)
+* Cleanups headers and avoid use std::cout (`#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_) (`#164 <https://github.com/ros-perception/point_cloud_transport/issues/164>`_)
+* Contributors: mergify[bot]
+
 5.4.1 (2026-04-30)
 ------------------
 * Fix exit crash on aarch64 by using leaky singleton for global loader (`#157 <https://github.com/ros-perception/point_cloud_transport/issues/157>`_)
