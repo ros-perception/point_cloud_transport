@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.22 (2026-05-29)
+-------------------
+* Cleanups headers and avoid use std::cout (backport `#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_) (`#167 <https://github.com/ros-perception/point_cloud_transport/issues/167>`_)
+* Added version.h (backport `#163 <https://github.com/ros-perception/point_cloud_transport/issues/163>`_) (`#172 <https://github.com/ros-perception/point_cloud_transport/issues/172>`_)
+* Contributors: mergify[bot]
+
 1.0.21 (2026-01-19)
 -------------------
 * Expose original ROS Publishers and Subscription (backport `#146 <https://github.com/ros-perception/point_cloud_transport/issues/146>`_) (`#149 <https://github.com/ros-perception/point_cloud_transport/issues/149>`_)
