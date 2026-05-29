@@ -68,22 +68,12 @@ class SubscriberFilter
 public:
   ///
   /// \brief Constructor
-  /// \param node The rclcpp node to use to subscribe.
+  /// \param node_interfaces Node interfaces to use to subscribe.
   /// \param base_topic The topic to subscribe to.
-  /// \param queue_size The subscription queue size
   /// \param transport The transport hint to pass along
+  /// \param custom_qos Custom quality of service
+  /// \param options Subscriber options
   ///
-  [[deprecated("Use SubscriberFilter(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  SubscriberFilter(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    const std::string & transport)
-  : SubscriberFilter(
-      *node,
-      base_topic, transport)
-  {
-  }
-
   POINT_CLOUD_TRANSPORT_PUBLIC
   SubscriberFilter(
     rclcpp::node_interfaces::NodeInterfaces<
@@ -105,34 +95,12 @@ public:
   ///
   /// \brief Subscribe to a topic. If this Subscriber is already subscribed to a topic,
   /// this function will first unsubscribe.
-  /// \param node The rclcpp Node to use to subscribe.
+  /// \param node_interfaces Node interfaces to use to subscribe.
   /// \param base_topic The topic to subscribe to.
   /// \param transport The transport hint to pass along
   /// \param custom_qos Custom quality of service
   /// \param options Subscriber options
   ///
-  [[deprecated("Use subscribe(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void subscribe(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    const std::string & transport,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
-
-  [[deprecated("Use subscribe(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void subscribe(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-    const std::string & base_topic,
-    const std::string & transport,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    rclcpp::SubscriptionOptions options = rclcpp::SubscriptionOptions());
-
   POINT_CLOUD_TRANSPORT_PUBLIC
   void subscribe(
     rclcpp::node_interfaces::NodeInterfaces<

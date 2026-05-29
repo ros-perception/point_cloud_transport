@@ -66,30 +66,6 @@ std::string PublisherPlugin::getMessageType() const
 }
 
 void PublisherPlugin::advertise(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & base_topic,
-  rmw_qos_profile_t custom_qos,
-  const rclcpp::PublisherOptions & options)
-{
-  advertiseImpl(*node, base_topic,
-      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
-}
-
-void PublisherPlugin::advertise(
-  std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-    rclcpp::node_interfaces::NodeBaseInterface,
-    rclcpp::node_interfaces::NodeParametersInterface,
-    rclcpp::node_interfaces::NodeTopicsInterface,
-    rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-  const std::string & base_topic,
-  rmw_qos_profile_t custom_qos,
-  const rclcpp::PublisherOptions & options)
-{
-  advertiseImpl(*node_interfaces, base_topic,
-      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos), options);
-}
-
-void PublisherPlugin::advertise(
   rclcpp::node_interfaces::NodeInterfaces<
     rclcpp::node_interfaces::NodeBaseInterface,
     rclcpp::node_interfaces::NodeParametersInterface,

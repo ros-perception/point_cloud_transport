@@ -68,59 +68,6 @@ void pointcloudCallback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & ms
   total_pointclouds_received++;
 }
 
-TEST_F(MessagePassingTesting, one_message_passing)
-{
-  const size_t max_retries = 3;
-  const size_t max_loops = 200;
-  const std::chrono::milliseconds sleep_per_loop = std::chrono::milliseconds(10);
-
-  rclcpp::executors::SingleThreadedExecutor executor;
-
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#else
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-  auto pub = point_cloud_transport::create_publisher(node_, "pointcloud");
-  auto sub =
-    point_cloud_transport::create_subscription(
-    node_, "pointcloud", pointcloudCallback,
-    "raw");
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#else
-#pragma GCC diagnostic pop
-#endif
-
-  test_rclcpp::wait_for_subscriber(node_, sub.getTopic());
-
-  ASSERT_EQ(0, total_pointclouds_received);
-  ASSERT_EQ(1u, pub.getNumSubscribers());
-  ASSERT_EQ(1u, sub.getNumPublishers());
-
-  executor.spin_node_some(node_);
-  ASSERT_EQ(0, total_pointclouds_received);
-
-  size_t retry = 0;
-  while (retry < max_retries && total_pointclouds_received == 0) {
-    // generate random pointcloud and publish it
-    pub.publish(generate_random_cloudpoint());
-
-    executor.spin_node_some(node_);
-    size_t loop = 0;
-    while ((total_pointclouds_received != 1) && (loop++ < max_loops)) {
-      std::this_thread::sleep_for(sleep_per_loop);
-      executor.spin_node_some(node_);
-    }
-  }
-
-  ASSERT_EQ(1, total_pointclouds_received);
-}
-
 TEST_F(MessagePassingTesting, one_message_passing_ni_api)
 {
   const size_t max_retries = 3;

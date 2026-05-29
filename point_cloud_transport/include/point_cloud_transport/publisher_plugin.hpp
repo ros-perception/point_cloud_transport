@@ -89,26 +89,6 @@ public:
   virtual std::string getMessageType() const;
 
   //! \brief Advertise a topic, simple version.
-  [[deprecated("Use advertise(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void advertise(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & base_topic,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
-
-  [[deprecated("Use advertise(rclcpp::node_interfaces, ..., rclcpp::QoS, ...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  void advertise(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-    const std::string & base_topic,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions());
-
   POINT_CLOUD_TRANSPORT_PUBLIC
   void advertise(
     rclcpp::node_interfaces::NodeInterfaces<
@@ -166,36 +146,6 @@ private:
 
 protected:
   //! Advertise a topic. Must be implemented by the subclass.
-  [[deprecated("Use advertiseImpl(rclcpp::node_interfaces...) instead")]]
-  virtual void advertiseImpl(
-    std::shared_ptr<rclcpp::Node> node, const std::string & base_topic,
-    rmw_qos_profile_t custom_qos,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
-  {
-    advertiseImpl(
-      *node,
-      base_topic,
-      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
-      options);
-  }
-
-  [[deprecated("Use advertiseImpl(rclcpp::node_interfaces..., rclcpp::QoS, ...) instead")]]
-  virtual void advertiseImpl(
-    std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<
-      rclcpp::node_interfaces::NodeBaseInterface,
-      rclcpp::node_interfaces::NodeParametersInterface,
-      rclcpp::node_interfaces::NodeTopicsInterface,
-      rclcpp::node_interfaces::NodeLoggingInterface>> node_interfaces,
-    const std::string & base_topic,
-    rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
-    const rclcpp::PublisherOptions & options = rclcpp::PublisherOptions())
-  {
-    advertiseImpl(
-      *node_interfaces, base_topic,
-      rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(custom_qos), custom_qos),
-      options);
-  }
-
   virtual void advertiseImpl(
     rclcpp::node_interfaces::NodeInterfaces<
       rclcpp::node_interfaces::NodeBaseInterface,
