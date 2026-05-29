@@ -47,35 +47,6 @@ protected:
   rclcpp::Node::SharedPtr node_;
 };
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#else
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-TEST_F(TestPublisher, publisher)
-{
-  auto pub = point_cloud_transport::create_publisher(node_, "point_cloud");
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
-  pub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 0u);
-  // coverage tests: invalid publisher should fail but not crash
-  pub.publish(sensor_msgs::msg::PointCloud2());
-  pub.publish(sensor_msgs::msg::PointCloud2::ConstSharedPtr());
-}
-
-TEST_F(TestPublisher, point_cloud_transport_publisher)
-{
-  point_cloud_transport::PointCloudTransport it(node_);
-  auto pub = it.advertise("point_cloud", rmw_qos_profile_sensor_data);
-}
-#ifdef _MSC_VER
-#pragma warning(pop)
-#else
-#pragma GCC diagnostic pop
-#endif
-
 TEST_F(TestPublisher, publisher_ni_api)
 {
   auto pub = point_cloud_transport::create_publisher(
