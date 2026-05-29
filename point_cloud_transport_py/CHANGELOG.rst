@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.8 (2026-05-29)
+------------------
+* Cleanups headers and avoid use std::cout (backport `#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_) (`#166 <https://github.com/ros-perception/point_cloud_transport/issues/166>`_)
+* Contributors: mergify[bot]
+
 4.0.7 (2026-01-19)
 ------------------
 
