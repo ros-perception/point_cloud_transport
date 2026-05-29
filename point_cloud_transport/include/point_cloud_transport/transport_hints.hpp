@@ -55,20 +55,9 @@ public:
   /// in the node's local namespace. For consistency across ROS applications, the
   /// name of this parameter should not be changed without good reason.
   ///
-  /// \param node Node to use when looking up the transport parameter.
+  /// \param node_interfaces Node interfaces to use when looking up the transport parameter.
   /// \param default_transport Preferred transport to use
   /// \param parameter_name The name of the transport parameter
-  [[deprecated("Use TransportHints(rclcpp::node_interfaces...) instead")]]
-  POINT_CLOUD_TRANSPORT_PUBLIC
-  TransportHints(
-    const std::shared_ptr<rclcpp::Node> node,
-    const std::string & default_transport = "raw",
-    const std::string & parameter_name = "point_cloud_transport")
-  {
-    node->declare_parameter<std::string>(parameter_name, transport_);
-    node->get_parameter_or<std::string>(parameter_name, transport_, default_transport);
-  }
-
   POINT_CLOUD_TRANSPORT_PUBLIC
   TransportHints(
     rclcpp::node_interfaces::NodeInterfaces<

@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.0 (2026-05-06)
+------------------
+* Fix exit crash on aarch64 by using leaky singleton for global loader (`#157 <https://github.com/ros-perception/point_cloud_transport/issues/157>`_)
+* Contributors: Michael Carroll
+
 5.4.0 (2026-04-08)
 ------------------
 * Include message type (`#152 <https://github.com/ros-perception/point_cloud_transport/issues/152>`_)
