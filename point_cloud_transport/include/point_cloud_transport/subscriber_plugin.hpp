@@ -170,7 +170,7 @@ public:
   //! Unsubscribe the callback associated with this SubscriberPlugin.
   virtual void shutdown() = 0;
 
-  //! Return the datatype of the transported messages (as text in the form `package/Message`).
+  //! Return the datatype of the transported messages (as text in the form `package/msg/Message`).
   virtual std::string getDataType() const = 0;
 
   //! Declare parameter with this SubscriberPlugin.
