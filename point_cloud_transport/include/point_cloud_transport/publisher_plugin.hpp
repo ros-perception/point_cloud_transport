@@ -106,7 +106,7 @@ public:
   //! Returns the topic that this PublisherPlugin will publish on.
   virtual std::string getTopic() const = 0;
 
-  //! Return the datatype of the transported messages (as text in the form `package/Message`).
+  //! Return the datatype of the transported messages (as text in the form `package/msg/Message`).
   virtual std::string getDataType() const = 0;
 
   /// \brief Encode the given raw pointcloud into EncodeResult
