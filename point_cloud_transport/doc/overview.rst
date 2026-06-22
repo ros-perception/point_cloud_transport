@@ -73,7 +73,7 @@ Creating Publishers and Subscribers
    point_cloud_transport::PointCloudTransport pct(*node);
 
    // Publish
-   auto pub = pct.advertise("points", rclcpp::SensorDataQoS());
+   auto pub = pct.advertise("points", rclcpp::SystemDefaultsQoS());
 
    // Subscribe (transport selected via ROS parameter or TransportHints)
    auto sub = pct.subscribe(
@@ -87,7 +87,7 @@ Free-function equivalents exist for cases where a
 
 .. code-block:: cpp
 
-   auto pub = point_cloud_transport::create_publisher(*node, "points", rclcpp::SensorDataQoS());
+   auto pub = point_cloud_transport::create_publisher(*node, "points", rclcpp::SystemDefaultsQoS());
    auto sub = point_cloud_transport::create_subscription(
      *node, "points", callback, "raw", rclcpp::SensorDataQoS());
 

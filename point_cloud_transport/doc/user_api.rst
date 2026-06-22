@@ -45,7 +45,7 @@ internally advertises one ROS publisher per available transport:
 
 .. code-block:: cpp
 
-   auto pub = pct.advertise("points", rclcpp::SensorDataQoS());
+   auto pub = pct.advertise("points", rclcpp::SystemDefaultsQoS());
 
    sensor_msgs::msg::PointCloud2 cloud;
    // ... populate cloud ...
@@ -155,7 +155,7 @@ free-function equivalents exist:
 .. code-block:: cpp
 
    auto pub = point_cloud_transport::create_publisher(
-     *node, "points", rclcpp::SensorDataQoS());
+     *node, "points", rclcpp::SystemDefaultsQoS());
 
    auto sub = point_cloud_transport::create_subscription(
      *node, "points", callback, "raw",
