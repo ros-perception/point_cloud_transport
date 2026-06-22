@@ -145,9 +145,9 @@ Subclasses must implement:
      DecodeResult decodeTyped(
        const my_msgs::msg::Compressed & compressed) const override
      {
-       sensor_msgs::msg::PointCloud2 raw;
-       // ... decompress compressed into raw ...
-       return std::make_shared<sensor_msgs::msg::PointCloud2>(raw);
+       auto raw = std::make_shared<sensor_msgs::msg::PointCloud2>();
+       // ... decompress compressed into *raw ...
+       return raw;
      }
    };
 
