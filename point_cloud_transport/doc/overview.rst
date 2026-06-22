@@ -180,7 +180,10 @@ a running ROS node — useful for offline tools and tests:
 
    // Decode it back into a PointCloud2.
    sensor_msgs::msg::PointCloud2 decoded;
-   codec.decode("draco", serialized, decoded);
+   if (!codec.decode("draco", serialized, decoded)) {
+     std::cerr << "Decoding the pointcloud failed" << std::endl;
+     return false;
+   }
 
 message_filters Integration
 -----------------------------
