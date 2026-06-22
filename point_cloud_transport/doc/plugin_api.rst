@@ -98,7 +98,7 @@ Subclasses must implement:
      : public point_cloud_transport::SimplePublisherPlugin<my_msgs::msg::Compressed>
    {
    public:
-     std::string getDataType() const override { return "my_msgs/msg/Compressed"; }
+     std::string getDataType() const override { return this->getMessageType(); }
 
      void declareParameters(const std::string & base_topic) override
      {
