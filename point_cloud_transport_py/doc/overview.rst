@@ -86,7 +86,7 @@ unit tests, and rosbag post-processing.
 
    codec = PointCloudCodec()
    raw = PointCloud2()
-   compressed_buf = codec.encode("draco", pointCloudToString(raw));
+   compressed_buf = codec.encode("draco", pointCloud2ToString(raw))
 
 Serialization Helpers
 ---------------------
