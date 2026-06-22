@@ -86,6 +86,7 @@ unit tests, and rosbag post-processing.
 
    codec = PointCloudCodec()
    raw = PointCloud2()
+   # fill the pointcloud
    compressed_buf = codec.encode("draco", pointCloud2ToString(raw))
 
 Serialization Helpers
