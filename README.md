@@ -33,7 +33,7 @@ void Callback(const sensor_msgs::msg::PointCloud2::ConstSharedPtr& msg)
 }
 
 auto node = std::make_shared<rclcpp::Node>();
-point_cloud_transport::PointCloudTransport pct(node);
+point_cloud_transport::PointCloudTransport pct(*node);
 point_cloud_transport::Subscriber sub = pct.subscribe("in_point_cloud_base_topic", 1, Callback);
 point_cloud_transport::Publisher pub = pct.advertise("out_point_cloud_base_topic", 1);
 ```

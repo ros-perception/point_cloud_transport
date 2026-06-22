@@ -35,7 +35,7 @@ component composition.
    #include <rclcpp/rclcpp.hpp>
 
    auto node = std::make_shared<rclcpp::Node>("publisher_node");
-   point_cloud_transport::PointCloudTransport pct(node);
+   point_cloud_transport::PointCloudTransport pct(*node);
 
 Advertising a topic
 ~~~~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ Member-function callbacks are supported via additional overloads:
    public:
      Consumer() : Node("consumer") {
        transport_ = std::make_unique<point_cloud_transport::PointCloudTransport>(
-         this->get_node_interfaces());
+         *this);
        sub_ = transport_->subscribe(
          "points", rclcpp::SensorDataQoS(),
          &Consumer::onCloud, this);
@@ -136,7 +136,7 @@ Full API page:
 .. code-block:: cpp
 
    // Select transport explicitly
-   point_cloud_transport::TransportHints hints(node, "draco");
+   point_cloud_transport::TransportHints hints(*node, "draco");
    auto sub = pct.subscribe("points", qos, callback, {}, &hints);
 
    // Or rely on the 'point_cloud_transport' parameter:
@@ -155,8 +155,8 @@ free-function equivalents exist:
 .. code-block:: cpp
 
    auto pub = point_cloud_transport::create_publisher(
-     node->get_node_interfaces(), "points", rclcpp::SensorDataQoS());
+     *node, "points", rclcpp::SensorDataQoS());
 
    auto sub = point_cloud_transport::create_subscription(
-     node->get_node_interfaces(), "points", callback, "raw",
+     *node, "points", callback, "raw",
      rclcpp::SensorDataQoS());
