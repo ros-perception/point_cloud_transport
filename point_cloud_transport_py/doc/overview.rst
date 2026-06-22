@@ -85,8 +85,8 @@ unit tests, and rosbag post-processing.
    from point_cloud_transport_py.common import pointCloud2ToString
 
    codec = PointCloudCodec()
-   for name in codec.getLoadableTransports():
-       print('Available transport:', name)
+   raw = PointCloud2()
+   compressed_buf = codec.encode("draco", pointCloudToString(raw));
 
 Serialization Helpers
 ---------------------
