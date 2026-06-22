@@ -231,7 +231,8 @@ Full API page:
    // Encode a raw cloud into a transport-specific serialized message...
    rclcpp::SerializedMessage serialized;
    if (!codec.encode("draco", raw_cloud, serialized)) {
-     std::cerr << "encoding failed\n";
+     std::cerr << "Encoding the pointcloud failed" << std::endl;
+     return false;
    }
 
    // ...and decode it back into a PointCloud2.
