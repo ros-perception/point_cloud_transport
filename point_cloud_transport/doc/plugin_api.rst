@@ -27,13 +27,19 @@ Full API page:
 
 Required overrides (among others):
 
-- ``getTransportName()`` — short identifier (e.g. ``"draco"``).  The default
-  implementation reads the ``type`` attribute of the pluginlib manifest.
-- ``getMessageType()`` — fully-qualified name of the transport-specific message.
-- ``advertiseImpl()`` — advertise one ROS publisher per output topic.
+- ``getDataType()`` — datatype of the transport-specific message, as text in the
+  form ``package/msg/Message``.
+- ``advertiseImpl()`` — advertise the transport-specific topic(s) for the
+  transport.
 - ``encode()`` — convert a raw ``PointCloud2`` into the transport-specific type.
 - ``publish()`` — send the encoded message on the wire.
+- ``declareParameters()`` — declare any runtime parameters for the transport.
 - ``shutdown()`` — release advertised publishers.
+
+``getTransportName()`` (short identifier, e.g. ``"draco"``) and
+``getMessageType()`` are *not* required overrides: their default implementations
+read the ``<transport_name>`` and ``<message_type>`` elements of the pluginlib
+manifest XML.  Override them only if you need a different value at runtime.
 
 SubscriberPlugin
 ~~~~~~~~~~~~~~~~
@@ -48,11 +54,16 @@ Full API page:
 
 Required overrides (among others):
 
-- ``getTransportName()``
-- ``getMessageType()``
-- ``subscribeImpl()`` — create the underlying ROS subscription.
+- ``getDataType()`` — datatype of the transport-specific message, as text in the
+  form ``package/msg/Message``.
+- ``subscribeImpl()`` — subscribe to the transport-specific topic(s).
 - ``decode()`` — convert the transport-specific message back into ``PointCloud2``.
+- ``declareParameters()`` — declare any runtime parameters for the transport.
 - ``getTopic()`` / ``getNumPublishers()`` / ``shutdown()``.
+
+As with the publisher base, ``getTransportName()`` and ``getMessageType()`` are
+*not* required overrides — they default to the ``<transport_name>`` and
+``<message_type>`` elements of the pluginlib manifest XML.
 
 Simple Template Bases
 ---------------------
@@ -70,7 +81,11 @@ Full API page:
 
 Subclasses must implement:
 
-- ``encodeTyped(const sensor_msgs::msg::PointCloud2 &, M &)`` — the conversion.
+- ``encodeTyped(const sensor_msgs::msg::PointCloud2 &)`` — the conversion; returns
+  the transport-specific message (``TypedEncodeResult``) directly.
+- ``getDataType()`` — datatype of the transport-specific message.  This is still
+  required today; a future release intends to derive it from the manifest and
+  drop the override.
 - ``declareParameters(const std::string & base_topic)`` — declare ROS
   parameters on the node so users can tune the transport at runtime.
 
@@ -83,22 +98,24 @@ Subclasses must implement:
      : public point_cloud_transport::SimplePublisherPlugin<my_msgs::msg::Compressed>
    {
    public:
-     std::string getTransportName() const override { return "my_transport"; }
+     std::string getDataType() const override { return this->getMessageType(); }
 
-   protected:
      void declareParameters(const std::string & base_topic) override
      {
        declareParam<int>(base_topic, "level", 5);
      }
 
-     EncodeResult encodeTyped(
-       const sensor_msgs::msg::PointCloud2 & raw,
-       my_msgs::msg::Compressed & compressed) override
+     TypedEncodeResult encodeTyped(
+       const sensor_msgs::msg::PointCloud2 & raw) const override
      {
+       my_msgs::msg::Compressed compressed;
        // ... compress raw into compressed ...
-       return true;
+       return compressed;
      }
    };
+
+The transport name is taken from the ``<transport_name>`` element of the plugin
+manifest, so ``getTransportName()`` does not need to be overridden.
 
 SimpleSubscriberPlugin<M>
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -108,7 +125,11 @@ Full API page:
 
 Subclasses must implement:
 
-- ``decodeTyped(const M &, sensor_msgs::msg::PointCloud2 &)`` — the conversion.
+- ``decodeTyped(const M &)`` — the conversion; returns the decoded
+  ``PointCloud2`` (``DecodeResult``) directly.
+- ``getDataType()`` — datatype of the transport-specific message.  As on the
+  publisher side this is still required today, with a pending issue to derive it
+  from the manifest instead.
 - ``declareParameters()`` — declare ROS parameters on the node.
 
 .. code-block:: cpp
@@ -117,29 +138,33 @@ Subclasses must implement:
      : public point_cloud_transport::SimpleSubscriberPlugin<my_msgs::msg::Compressed>
    {
    public:
-     std::string getTransportName() const override { return "my_transport"; }
+     std::string getDataType() const override { return "my_msgs/msg/Compressed"; }
 
-   protected:
      void declareParameters() override {}
 
      DecodeResult decodeTyped(
-       const my_msgs::msg::Compressed & compressed,
-       sensor_msgs::msg::PointCloud2 & raw) override
+       const my_msgs::msg::Compressed & compressed) const override
      {
-       // ... decompress compressed into raw ...
-       return true;
+       auto raw = std::make_shared<sensor_msgs::msg::PointCloud2>();
+       // ... decompress compressed into *raw ...
+       return raw;
      }
    };
 
 Registering a Plugin
 --------------------
 
-Plugins are registered with pluginlib as usual:
+Plugins are registered with pluginlib as usual.  The ``<transport_name>`` and
+``<message_type>`` elements feed the default ``getTransportName()`` /
+``getMessageType()`` implementations.  By convention, the publisher plugin's
+lookup name ends with ``_pub`` and the subscriber's with ``_sub``:
 
 .. code-block:: xml
    :caption: my_pkg_plugins.xml
 
    <library path="my_pkg_plugin">
+     <transport_name>my_transport</transport_name>
+     <message_type>my_msgs/msg/Compressed</message_type>
      <class
          name="point_cloud_transport/my_transport_pub"
          type="my_pkg::MyPublisher"
@@ -159,6 +184,17 @@ And in ``CMakeLists.txt``:
 .. code-block:: cmake
 
    pluginlib_export_plugin_description_file(point_cloud_transport my_pkg_plugins.xml)
+
+The plugin package must depend on ``point_cloud_transport`` (and on the package
+that provides the transport-specific message) in its ``package.xml``:
+
+.. code-block:: xml
+   :caption: package.xml
+
+   <depend>point_cloud_transport</depend>
+   <depend>pluginlib</depend>
+   <depend>sensor_msgs</depend>
+   <depend>my_msgs</depend>
 
 Built-in Plugins
 ----------------
@@ -184,10 +220,24 @@ Full API page:
 .. code-block:: cpp
 
    point_cloud_transport::PointCloudCodec codec;
-   for (const auto & name : codec.getLoadableTransports()) {
+
+   // List the transports that can be loaded.
+   std::vector<std::string> transports, names;
+   codec.getLoadableTransports(transports, names);
+   for (const auto & name : names) {
      std::cout << "Available transport: " << name << "\n";
    }
 
-   auto encoder = codec.getEncoderByName("draco");
-   rclcpp::SerializedMessage out;
-   encoder->encode(raw_cloud, out);
+   // Encode a raw cloud into a transport-specific serialized message...
+   rclcpp::SerializedMessage serialized;
+   if (!codec.encode("draco", raw_cloud, serialized)) {
+     std::cerr << "Encoding the pointcloud failed" << std::endl;
+     return false;
+   }
+
+   // ...and decode it back into a PointCloud2.
+   sensor_msgs::msg::PointCloud2 decoded;
+   if (!codec.decode("draco", serialized, decoded)) {
+     std::cerr << "Decoding the pointcloud failed" << std::endl;
+     return false;
+   }
