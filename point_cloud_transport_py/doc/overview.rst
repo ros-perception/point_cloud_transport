@@ -79,6 +79,8 @@ unit tests, and rosbag post-processing.
 
 .. code-block:: python
 
+   from sensor_msgs.msg import PointCloud2
+
    from point_cloud_transport_py import PointCloudCodec
    from point_cloud_transport_py.common import pointCloud2ToString
 
