@@ -2,6 +2,14 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.1 (2026-05-29)
+------------------
+* Removed deprecated API (`#160 <https://github.com/ros-perception/point_cloud_transport/issues/160>`_)
+* getPubLoader() and getSubLoader() marked deprecated (`#159 <https://github.com/ros-perception/point_cloud_transport/issues/159>`_)
+* Added version.h (`#163 <https://github.com/ros-perception/point_cloud_transport/issues/163>`_)
+* Cleanups headers and avoid use std::cout (`#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_)
+* Contributors: Alejandro Hernández Cordero, Martin Pecka
+
 6.0.0 (2026-05-06)
 ------------------
 * Fix exit crash on aarch64 by using leaky singleton for global loader (`#157 <https://github.com/ros-perception/point_cloud_transport/issues/157>`_)
