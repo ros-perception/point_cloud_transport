@@ -173,7 +173,10 @@ a running ROS node — useful for offline tools and tests:
 
    // Encode a raw cloud into a transport-specific serialized message.
    rclcpp::SerializedMessage serialized;
-   codec.encode("draco", raw_cloud, serialized);
+   if (!codec.encode("draco", raw_cloud, serialized)) {
+     std::cerr << "Encoding the pointcloud failed" << std::endl;
+     return false;
+   }
 
    // Decode it back into a PointCloud2.
    sensor_msgs::msg::PointCloud2 decoded;
