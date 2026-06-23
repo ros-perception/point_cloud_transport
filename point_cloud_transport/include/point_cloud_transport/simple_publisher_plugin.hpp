@@ -58,11 +58,9 @@ namespace point_cloud_transport
 /// This base class vastly simplifies implementing a PublisherPlugin in the common
 /// case that all communication with the matching SubscriberPlugin happens over a
 /// single ROS topic using a transport-specific message type. SimplePublisherPlugin
-/// is templated on the transport-specific message type and publisher dynamic
-/// reconfigure type.
+/// is templated on the transport-specific message type.
 ///
 /// A subclass needs to implement:
-/// - getTransportName() from PublisherPlugin
 /// - encodeTyped()
 /// - getDataType()
 /// - declareParameters()

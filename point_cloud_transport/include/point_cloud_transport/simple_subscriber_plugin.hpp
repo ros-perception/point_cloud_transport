@@ -56,7 +56,6 @@ namespace point_cloud_transport
 /// on the transport-specific message type.
 ///
 /// A subclass needs to implement:
-/// - getTransportName() from SubscriberPlugin
 /// - decodeTyped()
 /// - getDataType()
 /// - declareParameters()
