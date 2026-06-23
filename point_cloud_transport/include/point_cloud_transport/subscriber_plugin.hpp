@@ -72,7 +72,7 @@ public:
    *
    * The default implementation auto-discovers the name from the pluginlib
    * manifest XML by matching the demangled C++ type name of \c *this against
-   * the \c type attribute of each \c <class> element.  The result is cached
+   * the \c type attribute of each ``<class>`` element.  The result is cached
    * after the first call.
    *
    * Plugins that override getTransportName() continue to work unchanged.
@@ -84,7 +84,7 @@ public:
   /**
    * \brief Get the primary message type used by this plugin.
    *
-   * Returns the value of the \c <message_type> element from the plugin
+   * Returns the value of the ``<message_type>`` element from the plugin
    * manifest XML.  The result is cached after the first call.
    * Override this method if you need a different value at runtime.
    */
@@ -170,7 +170,7 @@ public:
   //! Unsubscribe the callback associated with this SubscriberPlugin.
   virtual void shutdown() = 0;
 
-  //! Return the datatype of the transported messages (as text in the form `package/Message`).
+  //! Return the datatype of the transported messages (as text in the form `package/msg/Message`).
   virtual std::string getDataType() const = 0;
 
   //! Declare parameter with this SubscriberPlugin.
@@ -180,7 +180,7 @@ public:
   /// \brief Get the name of the topic that this SubscriberPlugin will subscribe to.
   /// \param[in] base_topic The topic that the subscriber was constructed with.
   /// \return The name of the topic that this SubscriberPlugin will subscribe to
-  /// (e.g. <base_topic>/<transport_name>).
+  /// (e.g. ``<base_topic>/<transport_name>``).
   virtual std::string getTopicToSubscribe(const std::string & base_topic) const = 0;
 
   ///

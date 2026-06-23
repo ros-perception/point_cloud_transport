@@ -69,7 +69,7 @@ public:
    *
    * The default implementation auto-discovers the name from the pluginlib
    * manifest XML by matching the demangled C++ type name of \c *this against
-   * the \c type attribute of each \c <class> element.  The result is cached
+   * the \c type attribute of each ``<class>`` element.  The result is cached
    * after the first call.
    *
    * Plugins that override getTransportName() continue to work unchanged.
@@ -81,7 +81,7 @@ public:
   /**
    * \brief Get the primary message type used by this plugin.
    *
-   * Returns the value of the \c <message_type> element from the plugin
+   * Returns the value of the ``<message_type>`` element from the plugin
    * manifest XML.  The result is cached after the first call.
    * Override this method if you need a different value at runtime.
    */
@@ -106,7 +106,7 @@ public:
   //! Returns the topic that this PublisherPlugin will publish on.
   virtual std::string getTopic() const = 0;
 
-  //! Return the datatype of the transported messages (as text in the form `package/Message`).
+  //! Return the datatype of the transported messages (as text in the form `package/msg/Message`).
   virtual std::string getDataType() const = 0;
 
   /// \brief Encode the given raw pointcloud into EncodeResult
