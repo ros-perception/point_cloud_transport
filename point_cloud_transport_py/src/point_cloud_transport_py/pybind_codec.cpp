@@ -138,7 +138,7 @@ PYBIND11_MODULE(_codec, m)
       if (success) {
         serializedMsgToString(serialized_msg, serialized_buffer);
       }
-      return serialized_buffer;
+      return py::bytes(serialized_buffer);
     }
   )
   .def(
@@ -156,7 +156,7 @@ PYBIND11_MODULE(_codec, m)
       if (success) {
         pointCloud2ToString(msg, buffer);
       }
-      return buffer;
+      return py::bytes(buffer);
     }
   );
 }
