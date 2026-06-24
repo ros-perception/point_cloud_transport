@@ -129,9 +129,9 @@ Subscriber create_subscription(
 
 class PointCloudTransport : public PointCloudTransportLoader
 {
+public:
   using VoidPtr = std::shared_ptr<void>;
 
-public:
   //! Constructor
   POINT_CLOUD_TRANSPORT_PUBLIC
   explicit PointCloudTransport(rclcpp::Node::SharedPtr node);
