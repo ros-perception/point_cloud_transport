@@ -212,9 +212,9 @@ Subscriber create_subscription(
 /// to create publishers and subscriptions of PointCloud2 topics.
 class PointCloudTransport : public PointCloudTransportLoader
 {
+public:
   using VoidPtr = std::shared_ptr<void>;
 
-public:
   //! Constructor
   [[deprecated("Use PointCloudTransport(rclcpp::node_interfaces...) instead")]]
   POINT_CLOUD_TRANSPORT_PUBLIC
