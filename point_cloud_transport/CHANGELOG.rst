@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.4.3 (2026-06-26)
+------------------
+* Make VoidPtr public in PointCloudTransport class (`#186 <https://github.com/ros-perception/point_cloud_transport/issues/186>`_) (`#187 <https://github.com/ros-perception/point_cloud_transport/issues/187>`_)
+* Contributors: mergify[bot]
+
 5.4.2 (2026-05-29)
 ------------------
 * Added version.h (`#163 <https://github.com/ros-perception/point_cloud_transport/issues/163>`_) (`#169 <https://github.com/ros-perception/point_cloud_transport/issues/169>`_)
@@ -96,7 +101,7 @@ Changelog for package point_cloud_transport
   and we don't need to link it into every test.  But that also means
   we don't need some of the forward-declarations that were in
   loader_fwds.hpp, as we can just get those through the header file.
-  2. republish.hpp doesn't really need to exist at all.  That's
+  1. republish.hpp doesn't really need to exist at all.  That's
   because it is only a header file, but the implementation is in
   an executable.  Thus, no downstream could ever use it.  So just
   remove the file and put the declaration straight into the cpp file.
