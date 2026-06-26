@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.8 (2026-06-26)
+------------------
+* Fixed PointCloudCodec encode/decode in Python (`#181 <https://github.com/ros-perception/point_cloud_transport/issues/181>`_) (`#183 <https://github.com/ros-perception/point_cloud_transport/issues/183>`_)
+* Contributors: mergify[bot]
+
 5.1.7 (2026-05-29)
 ------------------
 * Cleanups headers and avoid use std::cout (backport `#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_) (`#165 <https://github.com/ros-perception/point_cloud_transport/issues/165>`_)
