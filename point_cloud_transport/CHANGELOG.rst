@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.23 (2026-06-26)
+-------------------
+* Make VoidPtr public in PointCloudTransport class (`#186 <https://github.com/ros-perception/point_cloud_transport/issues/186>`_) (`#190 <https://github.com/ros-perception/point_cloud_transport/issues/190>`_)
+* Contributors: mergify[bot]
+
 1.0.22 (2026-05-29)
 -------------------
 * Cleanups headers and avoid use std::cout (backport `#158 <https://github.com/ros-perception/point_cloud_transport/issues/158>`_) (`#167 <https://github.com/ros-perception/point_cloud_transport/issues/167>`_)
