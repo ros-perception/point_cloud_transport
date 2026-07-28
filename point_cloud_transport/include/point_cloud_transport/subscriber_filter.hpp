@@ -35,7 +35,13 @@
 #include <memory>
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node_interfaces/node_base_interface.hpp>
+#include <rclcpp/node_interfaces/node_interfaces.hpp>
+#include <rclcpp/node_interfaces/node_logging_interface.hpp>
+#include <rclcpp/node_interfaces/node_parameters_interface.hpp>
+#include <rclcpp/node_interfaces/node_topics_interface.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/subscription_options.hpp>
 #include <message_filters/subscriber.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 

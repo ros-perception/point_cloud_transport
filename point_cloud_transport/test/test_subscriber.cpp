@@ -31,7 +31,10 @@
 #include <string>
 #include <memory>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 

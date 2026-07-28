@@ -15,6 +15,7 @@
 #ifndef UTILS_HPP_
 #define UTILS_HPP_
 
+#include <chrono>
 #include <cinttypes>
 #include <memory>
 #include <stdexcept>
@@ -22,7 +23,8 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/event.hpp"
+#include "rclcpp/node.hpp"
 
 namespace test_rclcpp
 {
