@@ -33,7 +33,15 @@
 #include <string>
 #include <utility>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/expand_topic_or_service_name.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/node_options.hpp>
+#include <rclcpp/publisher_options.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/qos_overriding_options.hpp>
+#include <rclcpp/subscription_options.hpp>
+#include <rclcpp/timer.hpp>
 
 #include <pluginlib/class_loader.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>

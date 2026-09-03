@@ -21,8 +21,12 @@
 #include <point_cloud_transport/point_cloud_transport.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/node_options.hpp>
 #include <rclcpp/serialization.hpp>
+#include <rclcpp/serialized_message.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include "./pybind11.hpp"
 
