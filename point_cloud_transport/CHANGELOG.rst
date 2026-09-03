@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.3 (2026-09-03)
+------------------
+* Optimize includes (`#191 <https://github.com/ros-perception/point_cloud_transport/issues/191>`_)
+* Removed manifest.cpp and moved to cpp file (`#192 <https://github.com/ros-perception/point_cloud_transport/issues/192>`_)
+* Contributors: Alejandro Hernández Cordero
+
 6.0.2 (2026-06-26)
 ------------------
 * Make VoidPtr public in PointCloudTransport class (`#186 <https://github.com/ros-perception/point_cloud_transport/issues/186>`_)
