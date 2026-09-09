@@ -28,14 +28,16 @@
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <message_filters/subscriber.hpp>
 #include <message_filters/sync_policies/approximate_time.hpp>
 #include <message_filters/synchronizer.hpp>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
 #include "point_cloud_transport/subscriber_filter.hpp"

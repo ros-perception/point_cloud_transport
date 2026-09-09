@@ -29,12 +29,16 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
-#include <string>
 #include <memory>
+#include <string>
+#include <thread>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/node.hpp>
+#include <rclcpp/node_options.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/utilities.hpp>
 #include "utils.hpp"
 
 #include "point_cloud_transport/point_cloud_transport.hpp"

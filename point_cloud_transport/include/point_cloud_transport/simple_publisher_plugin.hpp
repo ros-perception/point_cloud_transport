@@ -33,14 +33,31 @@
 #define POINT_CLOUD_TRANSPORT__SIMPLE_PUBLISHER_PLUGIN_HPP_
 
 
+#include <algorithm>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
-#include <optional>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/create_publisher.hpp>
+#include <rclcpp/exceptions.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/node_interfaces/node_base_interface.hpp>
+#include <rclcpp/node_interfaces/node_interfaces.hpp>
+#include <rclcpp/node_interfaces/node_logging_interface.hpp>
+#include <rclcpp/node_interfaces/node_parameters_interface.hpp>
+#include <rclcpp/node_interfaces/node_topics_interface.hpp>
+#include <rclcpp/parameter.hpp>
+#include <rclcpp/parameter_value.hpp>
+#include <rclcpp/publisher.hpp>
+#include <rclcpp/publisher_base.hpp>
+#include <rclcpp/publisher_options.hpp>
+#include <rclcpp/qos.hpp>
 #include <rclcpp/serialization.hpp>
+#include <rclcpp/serialized_message.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rcpputils/tl_expected/expected.hpp>
 

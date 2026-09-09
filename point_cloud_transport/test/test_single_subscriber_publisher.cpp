@@ -27,12 +27,13 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
 
 #include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/utilities.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include "point_cloud_transport/single_subscriber_publisher.hpp"
