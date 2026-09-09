@@ -28,8 +28,8 @@
 
 #include <gtest/gtest.h>
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <rclcpp/node.hpp>
 #include <rclcpp/node_interfaces/node_interfaces.hpp>

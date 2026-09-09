@@ -37,9 +37,9 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
-#include <optional>
 
 #include <rcl_interfaces/msg/parameter_descriptor.hpp>
 #include <rclcpp/create_publisher.hpp>

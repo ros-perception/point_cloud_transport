@@ -28,8 +28,9 @@
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <message_filters/subscriber.hpp>
 #include <message_filters/sync_policies/approximate_time.hpp>

@@ -28,8 +28,9 @@
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <rclcpp/node.hpp>
 #include <rclcpp/node_options.hpp>
