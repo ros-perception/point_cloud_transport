@@ -34,7 +34,11 @@
 
 #include <memory>
 
-#include "pluginlib/class_loader.hpp"
+namespace pluginlib
+{
+template<class T>
+class ClassLoader;
+}  // namespace pluginlib
 
 namespace point_cloud_transport
 {

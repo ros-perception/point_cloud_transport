@@ -34,17 +34,18 @@
 
 
 #include <algorithm>
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
 
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
 #include <rclcpp/create_publisher.hpp>
 #include <rclcpp/exceptions.hpp>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
-#include <rclcpp/node.hpp>
 #include <rclcpp/node_interfaces/node_base_interface.hpp>
 #include <rclcpp/node_interfaces/node_interfaces.hpp>
 #include <rclcpp/node_interfaces/node_logging_interface.hpp>
@@ -336,7 +337,8 @@ private:
       rclcpp::node_interfaces::NodeParametersInterface,
       rclcpp::node_interfaces::NodeTopicsInterface,
       rclcpp::node_interfaces::NodeLoggingInterface> node_interfaces_;
-    rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr on_set_parameters_callback_handle_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+      on_set_parameters_callback_handle_;
     rclcpp::Logger logger_;
     typename rclcpp::Publisher<M>::SharedPtr pub_;
   };

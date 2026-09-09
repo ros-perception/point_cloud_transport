@@ -32,7 +32,7 @@ component composition.
 .. code-block:: cpp
 
    #include <point_cloud_transport/point_cloud_transport.hpp>
-   #include <rclcpp/rclcpp.hpp>
+   #include <rclcpp/node.hpp>
 
    auto node = std::make_shared<rclcpp::Node>("publisher_node");
    point_cloud_transport::PointCloudTransport pct(*node);

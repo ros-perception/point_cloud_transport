@@ -32,6 +32,10 @@
 #include <memory>
 #include <string>
 
+#include <rclcpp/logging.hpp>
+
+#include "point_cloud_transport/point_cloud_transport.hpp"
+
 namespace point_cloud_transport
 {
 SubscriberFilter::SubscriberFilter(

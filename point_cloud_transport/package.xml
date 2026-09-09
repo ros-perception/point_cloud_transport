@@ -1,7 +1,7 @@
 <package format="3">
   <name>point_cloud_transport</name>
 
-  <version>6.0.2</version>
+  <version>6.0.3</version>
 
   <description>
     Support for transporting PointCloud2 messages in compressed format and plugin interface for implementing additional PointCloud2 transports.
@@ -19,6 +19,8 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>ament_cmake_gen_version_h</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
+  <buildtool_export_depend>ament_cmake_ros_core</buildtool_export_depend>
 
   <depend>message_filters</depend>
   <depend>pluginlib</depend>

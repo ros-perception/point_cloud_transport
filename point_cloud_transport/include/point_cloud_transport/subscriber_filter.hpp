@@ -45,8 +45,7 @@
 #include <message_filters/subscriber.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <point_cloud_transport/point_cloud_transport.hpp>
-#include <point_cloud_transport/transport_hints.hpp>
+#include <point_cloud_transport/subscriber.hpp>
 #include "point_cloud_transport/visibility_control.hpp"
 #include "point_cloud_transport/exception.hpp"
 

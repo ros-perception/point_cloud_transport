@@ -1,7 +1,7 @@
 <package format="3">
   <name>point_cloud_transport_py</name>
 
-  <version>6.0.2</version>
+  <version>6.0.3</version>
 
   <description>Python API for point_cloud_transport</description>
 
@@ -17,6 +17,7 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
 
   <build_depend>python3-dev</build_depend>
 
