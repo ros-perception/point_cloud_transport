@@ -39,7 +39,6 @@
 
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
-#include <rclcpp/serialization.hpp>
 #include <rclcpp/serialized_message.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 

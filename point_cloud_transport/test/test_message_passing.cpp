@@ -30,6 +30,7 @@
 
 #include <chrono>
 #include <memory>
+#include <thread>
 
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/node.hpp>

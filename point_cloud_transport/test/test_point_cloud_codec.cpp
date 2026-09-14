@@ -27,8 +27,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include <functional>
-#include <string>
+#include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "gtest/gtest.h"
 

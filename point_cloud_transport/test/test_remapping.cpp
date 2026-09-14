@@ -29,8 +29,9 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
-#include <string>
 #include <memory>
+#include <string>
+#include <thread>
 #include <vector>
 
 #include <rclcpp/executors/single_threaded_executor.hpp>

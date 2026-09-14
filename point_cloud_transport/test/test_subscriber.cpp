@@ -28,8 +28,9 @@
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <rclcpp/node.hpp>
