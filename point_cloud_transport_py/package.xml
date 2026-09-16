@@ -15,20 +15,24 @@
   <url type="repository">https://github.com/ros-perception/point_cloud_transport</url>
   <url type="bugtracker">https://github.com/ros-perception/point_cloud_transport/issues</url>
 
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
   <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
 
   <build_depend>python3-dev</build_depend>
+  <build_depend>pybind11-dev</build_depend>
 
   <depend>point_cloud_transport</depend>
-  <depend>pybind11-dev</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>rpyutils</exec_depend>
+
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
