@@ -15,10 +15,10 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(ament_cmake_ros_core REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(rcl_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rcpputils REQUIRED)
-find_package(rmw REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tinyxml2 REQUIRED)
 
@@ -45,12 +45,12 @@ target_link_libraries(${PROJECT_NAME}
   PUBLIC
     ament_cmake_ros_core::ament_ros_defaults
     message_filters::message_filters
-    pluginlib::pluginlib
+    rcl_interfaces::rcl_interfaces
     rclcpp::rclcpp
     rcpputils::rcpputils
-    rmw::rmw
     sensor_msgs::sensor_msgs
   PRIVATE
+    pluginlib::pluginlib
     tinyxml2::tinyxml2
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE "POINT_CLOUD_TRANSPORT_BUILDING_DLL")
@@ -103,7 +103,7 @@ ament_export_include_directories("include/${PROJECT_NAME}")
 ament_export_targets(export_${PROJECT_NAME})
 
 ament_export_dependencies(
-  ament_cmake_ros_core message_filters rclcpp sensor_msgs pluginlib rcpputils rmw)
+  ament_cmake_ros_core message_filters rcl_interfaces rclcpp sensor_msgs rcpputils)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
