@@ -66,7 +66,7 @@ public:
     const std::string & parameter_name = "point_cloud_transport")
   {
     auto node_parameter = node_interfaces.get_node_parameters_interface();
-    node_parameter->declare_parameter(parameter_name, rclcpp::ParameterValue(transport_));
+    node_parameter->declare_parameter(parameter_name, rclcpp::ParameterValue(default_transport));
     auto transport_param = node_parameter->get_parameter(parameter_name).get_value<std::string>();
     transport_ = transport_param.empty() ? default_transport : transport_param;
   }

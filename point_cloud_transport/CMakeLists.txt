@@ -119,6 +119,11 @@ if(BUILD_TESTING)
       TEST_PLUGIN_MANIFEST_XML="${CMAKE_CURRENT_SOURCE_DIR}/test/test_plugin_manifest.xml")
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-transport_hints test/test_transport_hints.cpp)
+  if(TARGET ${PROJECT_NAME}-transport_hints)
+    target_link_libraries(${PROJECT_NAME}-transport_hints ${PROJECT_NAME} rclcpp::rclcpp)
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-publisher test/test_publisher.cpp)
   if(TARGET ${PROJECT_NAME}-publisher)
     target_link_libraries(${PROJECT_NAME}-publisher ${PROJECT_NAME} rclcpp::rclcpp)
