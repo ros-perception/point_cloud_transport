@@ -28,11 +28,15 @@
 
 #include <gtest/gtest.h>
 
+#include <memory>
+#include <string>
+
 #include <rclcpp/node.hpp>
 #include <rclcpp/node_options.hpp>
 #include <rclcpp/parameter.hpp>
 #include <rclcpp/utilities.hpp>
 
+#include "point_cloud_transport/point_cloud_transport.hpp"
 #include "point_cloud_transport/transport_hints.hpp"
 
 TEST(TransportHints, default_transport_is_raw) {
@@ -70,6 +74,24 @@ TEST(TransportHints, empty_override_uses_default) {
       {rclcpp::Parameter("point_cloud_transport", "")}));
   point_cloud_transport::TransportHints hints(*node, "draco");
   EXPECT_EQ("draco", hints.getTransport());
+}
+
+TEST(TransportHints, repeated_construction_on_same_node_does_not_throw) {
+  auto node = rclcpp::Node::make_shared("test_transport_hints");
+  point_cloud_transport::TransportHints first(*node, "draco");
+  EXPECT_EQ("draco", first.getTransport());
+  // The parameter is already declared, so a later instance must not redeclare it
+  // and uses the value already held by the node.
+  auto make_second = [&node]() {return point_cloud_transport::TransportHints(*node, "zlib");};
+  EXPECT_NO_THROW(make_second());
+  EXPECT_EQ("draco", make_second().getTransport());
+}
+
+TEST(TransportHints, default_hints_usable_more_than_once_per_node) {
+  auto node = rclcpp::Node::make_shared("test_transport_hints");
+  point_cloud_transport::PointCloudTransport pct(*node);
+  EXPECT_EQ("raw", pct.getTransportOrDefault(nullptr));
+  EXPECT_NO_THROW(pct.getTransportOrDefault(nullptr));
 }
 
 int main(int argc, char ** argv)
