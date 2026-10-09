@@ -55,6 +55,10 @@ public:
   /// in the node's local namespace. For consistency across ROS applications, the
   /// name of this parameter should not be changed without good reason.
   ///
+  /// The parameter is declared with \p default_transport as its default value. If it is
+  /// already declared on the node (e.g. by an earlier TransportHints or subscription), its
+  /// current value is used and it is not declared again.
+  ///
   /// \param node_interfaces Node interfaces to use when looking up the transport parameter.
   /// \param default_transport Preferred transport to use
   /// \param parameter_name The name of the transport parameter
@@ -66,7 +70,9 @@ public:
     const std::string & parameter_name = "point_cloud_transport")
   {
     auto node_parameter = node_interfaces.get_node_parameters_interface();
-    node_parameter->declare_parameter(parameter_name, rclcpp::ParameterValue(transport_));
+    if (!node_parameter->has_parameter(parameter_name)) {
+      node_parameter->declare_parameter(parameter_name, rclcpp::ParameterValue(default_transport));
+    }
     auto transport_param = node_parameter->get_parameter(parameter_name).get_value<std::string>();
     transport_ = transport_param.empty() ? default_transport : transport_param;
   }

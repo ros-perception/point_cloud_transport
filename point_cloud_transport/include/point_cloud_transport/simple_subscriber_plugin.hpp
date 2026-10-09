@@ -38,6 +38,7 @@
 #include <string>
 #include <utility>
 
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
 #include <rclcpp/serialization.hpp>
 #include <rclcpp/subscription.hpp>
 
