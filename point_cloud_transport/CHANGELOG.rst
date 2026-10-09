@@ -2,6 +2,13 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.4 (2026-10-09)
+------------------
+* Honor the caller default in TransportHints (`#198 <https://github.com/ros-perception/point_cloud_transport//issues/198>`_)
+* Missing deps in package.xml (`#194 <https://github.com/ros-perception/point_cloud_transport//issues/194>`_)
+* Include what you use (`#193 <https://github.com/ros-perception/point_cloud_transport//issues/193>`_)
+* Contributors: Alejandro Hernández Cordero, Miko Parkkinen
+
 6.0.3 (2026-09-03)
 ------------------
 * Optimize includes (`#191 <https://github.com/ros-perception/point_cloud_transport/issues/191>`_)

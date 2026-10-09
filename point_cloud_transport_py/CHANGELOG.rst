@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.4 (2026-10-09)
+------------------
+* Added common tests to point_cloud_transport_py and fix package.xml (`#195 <https://github.com/ros-perception/point_cloud_transport//issues/195>`_)
+* Include what you use (`#193 <https://github.com/ros-perception/point_cloud_transport//issues/193>`_)
+* Contributors: Alejandro Hernández Cordero
+
 6.0.3 (2026-09-03)
 ------------------
 * Optimize includes (`#191 <https://github.com/ros-perception/point_cloud_transport/issues/191>`_)
