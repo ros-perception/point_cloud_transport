@@ -1,3 +1,17 @@
+# Copyright 2024 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import contextlib
 import inspect
 import os
@@ -22,7 +36,8 @@ sys.modules.setdefault('rpyutils', _rpyutils)
 
 
 def _install_stub_module(name, attrs):
-    """Register a fake module with the given attributes in sys.modules.
+    """
+    Register a fake module with the given attributes in sys.modules.
 
     rosdoc2 overwrites ``autodoc_mock_imports`` with a list derived from
     ``exec_depends``, so a mock installed via that mechanism does not survive.
@@ -60,7 +75,7 @@ except ImportError:
                 break
 
 project = 'point_cloud_transport_py'
-copyright = '2023, Open Source Robotics Foundation, Inc.'
+project_copyright = '2023, Open Source Robotics Foundation, Inc.'
 author = 'Open Source Robotics Foundation, Inc.'
 
 extensions = [
