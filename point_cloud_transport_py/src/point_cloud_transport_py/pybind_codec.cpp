@@ -31,64 +31,21 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
-#include <rcl/rcl.h>
-#include <rcl/error_handling.h>
-#include <rcl/types.h>
-#include <rcl/allocator.h>
-
-#include <cstdlib>
-#include <cstring>
-#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
 
 #include <rclcpp/serialization.hpp>
+#include <rclcpp/serialized_message.hpp>
 
 #include <point_cloud_transport/point_cloud_codec.hpp>
 
+#include "./borrowed_serialized_message.hpp"
+
 namespace py = pybind11;
 using namespace point_cloud_transport;  // NOLINT
-
-// Utilities for handling the transfer of information to/from python
-namespace point_cloud_transport
-{
-void stringToSerializedMsg(const std::string & buffer, rclcpp::SerializedMessage & serial_msg)
-{
-  if (buffer.empty()) {
-    throw std::runtime_error("Serialized message buffer is empty.");
-  }
-  // Let the SerializedMessage own its storage. The previous implementation malloc'ed a
-  // buffer, copied it into the message (which copies again) and never freed it.
-  serial_msg.reserve(buffer.size());
-  auto & raw = serial_msg.get_rcl_serialized_message();
-  memcpy(raw.buffer, buffer.data(), buffer.size());
-  raw.buffer_length = buffer.size();
-}
-
-void serializedMsgToString(const rclcpp::SerializedMessage & serial_msg, std::string & buffer)
-{
-  buffer = std::string(
-    reinterpret_cast<const char *>(serial_msg.get_rcl_serialized_message().buffer),
-    serial_msg.get_rcl_serialized_message().buffer_length);
-}
-
-void stringToPointCloud2(const std::string & buffer, sensor_msgs::msg::PointCloud2 & cloud)
-{
-  rclcpp::SerializedMessage serialized_msg;
-  stringToSerializedMsg(buffer, serialized_msg);
-  rclcpp::Serialization<sensor_msgs::msg::PointCloud2> deserializer;
-  deserializer.deserialize_message(&serialized_msg, &cloud);
-}
-
-void pointCloud2ToString(const sensor_msgs::msg::PointCloud2 & cloud, std::string & buffer)
-{
-  rclcpp::SerializedMessage serialized_msg;
-  rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serializer;
-  serializer.serialize_message(&cloud, &serialized_msg);
-  serializedMsgToString(serialized_msg, buffer);
-}
-}  // namespace point_cloud_transport
+using point_cloud_transport_python::BorrowedSerializedMessage;
+using point_cloud_transport_python::serialized_message_to_bytes;
 
 // Bindings for STL vector of strings
 PYBIND11_MAKE_OPAQUE(std::vector<std::string>)
@@ -115,37 +72,44 @@ PYBIND11_MODULE(_codec, m)
   .def(
     "encode",
     [](PointCloudCodec & codec, const std::string & transport_name,
-    const std::string & pointcloud_buffer)
+    const py::buffer & pointcloud_buffer)
     {
+      // Deserialize straight from the Python memory, without intermediate copies.
       sensor_msgs::msg::PointCloud2 msg;
-      stringToPointCloud2(pointcloud_buffer, msg);
+      {
+        BorrowedSerializedMessage borrowed(pointcloud_buffer);
+        rclcpp::Serialization<sensor_msgs::msg::PointCloud2> deserializer;
+        deserializer.deserialize_message(&borrowed.get(), &msg);
+      }
 
       rclcpp::SerializedMessage serialized_msg;
-      bool success = codec.encode(transport_name, msg, serialized_msg);
-
-      std::string serialized_buffer;
-      if (success) {
-        serializedMsgToString(serialized_msg, serialized_buffer);
+      if (!codec.encode(transport_name, msg, serialized_msg)) {
+        return py::bytes();
       }
-      return py::bytes(serialized_buffer);
-    }
+      return serialized_message_to_bytes(serialized_msg);
+    },
+    "Encode a serialized sensor_msgs/PointCloud2 (bytes) with the given transport. "
+    "Returns the serialized transport message, or empty bytes on failure."
   )
   .def(
     "decode",
     [](PointCloudCodec & codec, const std::string & transport_name,
-    const std::string & serialized_buffer)
+    const py::buffer & serialized_buffer)
     {
-      rclcpp::SerializedMessage serialized_msg;
-      stringToSerializedMsg(serialized_buffer, serialized_msg);
-
       sensor_msgs::msg::PointCloud2 msg;
-      bool success = codec.decode(transport_name, serialized_msg, msg);
-
-      std::string buffer;
-      if (success) {
-        pointCloud2ToString(msg, buffer);
+      {
+        BorrowedSerializedMessage borrowed(serialized_buffer);
+        if (!codec.decode(transport_name, borrowed.get(), msg)) {
+          return py::bytes();
+        }
       }
-      return py::bytes(buffer);
-    }
+
+      rclcpp::SerializedMessage serialized_msg;
+      rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serializer;
+      serializer.serialize_message(&msg, &serialized_msg);
+      return serialized_message_to_bytes(serialized_msg);
+    },
+    "Decode a serialized transport message (bytes) with the given transport. "
+    "Returns the serialized sensor_msgs/PointCloud2, or empty bytes on failure."
   );
 }
