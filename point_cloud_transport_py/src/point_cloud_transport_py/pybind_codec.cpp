@@ -54,24 +54,15 @@ namespace point_cloud_transport
 {
 void stringToSerializedMsg(const std::string & buffer, rclcpp::SerializedMessage & serial_msg)
 {
-  rcl_serialized_message_t raw_serialized_msg = rmw_get_zero_initialized_serialized_message();
-
-  // Allocate memory for the serialized message
-  raw_serialized_msg.buffer_capacity = buffer.size();
-  raw_serialized_msg.buffer_length = buffer.size();
-  raw_serialized_msg.buffer = static_cast<uint8_t *>(malloc(raw_serialized_msg.buffer_capacity));
-  raw_serialized_msg.allocator = rcl_get_default_allocator();
-
-  if (!raw_serialized_msg.buffer) {
-    // Handle memory allocation error
-    // For simplicity, we just throw an exception here
-    throw std::runtime_error("Failed to allocate memory for serialized message.");
+  if (buffer.empty()) {
+    throw std::runtime_error("Serialized message buffer is empty.");
   }
-
-  // Copy the string data into the serialized message buffer
-  memcpy(raw_serialized_msg.buffer, buffer.data(), raw_serialized_msg.buffer_length);
-
-  serial_msg = rclcpp::SerializedMessage(raw_serialized_msg);
+  // Let the SerializedMessage own its storage. The previous implementation malloc'ed a
+  // buffer, copied it into the message (which copies again) and never freed it.
+  serial_msg.reserve(buffer.size());
+  auto & raw = serial_msg.get_rcl_serialized_message();
+  memcpy(raw.buffer, buffer.data(), buffer.size());
+  raw.buffer_length = buffer.size();
 }
 
 void serializedMsgToString(const rclcpp::SerializedMessage & serial_msg, std::string & buffer)
