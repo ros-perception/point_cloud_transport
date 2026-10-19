@@ -23,7 +23,7 @@
 
 #include <rclcpp/serialized_message.hpp>
 
-#include "./pybind11.hpp"
+#include "pybind11.hpp"
 
 namespace point_cloud_transport_python
 {

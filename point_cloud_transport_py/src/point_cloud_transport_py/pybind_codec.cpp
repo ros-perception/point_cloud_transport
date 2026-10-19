@@ -40,7 +40,7 @@
 
 #include <point_cloud_transport/point_cloud_codec.hpp>
 
-#include "./borrowed_serialized_message.hpp"
+#include "borrowed_serialized_message.hpp"
 
 namespace py = pybind11;
 using namespace point_cloud_transport;  // NOLINT
