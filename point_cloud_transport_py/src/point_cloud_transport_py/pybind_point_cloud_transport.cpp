@@ -53,14 +53,14 @@ PYBIND11_MODULE(_point_cloud_transport, m)
       "Unsubscribe the callback associated with this Publisher.")
   .def("publish", [](point_cloud_transport::Publisher & publisher,
     const pybind11::buffer & buffer) {
-       // Deserialize straight from the Python memory, without intermediate copies.
-       sensor_msgs::msg::PointCloud2 pc2;
-       {
-         point_cloud_transport_python::BorrowedSerializedMessage borrowed(buffer);
-         rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serialization;
-         serialization.deserialize_message(&borrowed.get(), &pc2);
-       }
-       publisher.publish(pc2);
+      // Deserialize straight from the Python memory, without intermediate copies.
+      sensor_msgs::msg::PointCloud2 pc2;
+      {
+        point_cloud_transport_python::BorrowedSerializedMessage borrowed(buffer);
+        rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serialization;
+        serialization.deserialize_message(&borrowed.get(), &pc2);
+      }
+      publisher.publish(pc2);
        },
        "Publish a serialized sensor_msgs/PointCloud2 (bytes) on the topics associated with this "
        "Publisher.");
