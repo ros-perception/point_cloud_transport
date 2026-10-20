@@ -77,9 +77,10 @@ if(BUILD_TESTING)
 
   ament_lint_auto_find_test_dependencies()
 
-  ament_add_pytest_test(test_codec test/test_codec.py TIMEOUT 120)
-  ament_add_pytest_test(test_common test/test_common.py TIMEOUT 120)
-  ament_add_pytest_test(test_point_cloud_transport test/test_point_cloud_transport.py TIMEOUT 300)
+  ament_add_ros_isolated_pytest_test(test_codec test/test_codec.py TIMEOUT 120)
+  ament_add_ros_isolated_pytest_test(test_common test/test_common.py TIMEOUT 120)
+  ament_add_ros_isolated_pytest_test(
+    test_point_cloud_transport test/test_point_cloud_transport.py TIMEOUT 300)
 endif()
 
 ament_package()

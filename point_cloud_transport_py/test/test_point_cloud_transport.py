@@ -19,6 +19,7 @@ import time
 from point_cloud_transport_py import PointCloudTransport, Publisher, Subscriber
 import pytest
 import rclpy
+from rclpy.executors import SingleThreadedExecutor
 from rclpy.qos import qos_profile_sensor_data
 from rclpy.serialization import serialize_message
 from sensor_msgs.msg import PointCloud2
@@ -46,7 +47,7 @@ def listener(ros_context):
 
 @pytest.fixture
 def executor(ros_context, listener):
-    executor = rclpy.executors.SingleThreadedExecutor(context=ros_context)
+    executor = SingleThreadedExecutor(context=ros_context)
     executor.add_node(listener)
     yield executor
     executor.remove_node(listener)
@@ -73,7 +74,7 @@ def wait_until(predicate, timeout=MATCH_TIMEOUT):
 def wait_until_matched(publisher):
     """Wait until the middleware connected a subscriber to the given publisher."""
     if not wait_until(lambda: publisher.get_num_subscribers() > 0):
-        pytest.skip(f'no subscriber was matched on {publisher.get_topic()}')
+        pytest.fail(f'no subscriber was matched on {publisher.get_topic()}')
 
 
 def publish_until(publisher, payload, received, executor, count=1):
@@ -133,7 +134,7 @@ def test_shutdown_resets_the_publisher(transport, listener):
     publisher = transport.advertise(base_topic, 10)
     if not wait_until(lambda: base_topic in advertised_topics(listener)):
         publisher.shutdown()
-        pytest.skip(f'{base_topic} did not show up in the graph')
+        pytest.fail(f'{base_topic} did not show up in the graph')
     publisher.shutdown()
     assert publisher.get_topic() == ''
     assert publisher.get_num_subscribers() == 0
@@ -169,7 +170,7 @@ def test_advertise_shows_the_topic_in_the_graph(transport, listener):
     assert publisher.get_topic() == base_topic
     if not wait_until(lambda: base_topic in advertised_topics(listener)):
         publisher.shutdown()
-        pytest.skip(f'{base_topic} did not show up in the graph')
+        pytest.fail(f'{base_topic} did not show up in the graph')
     assert advertised_topics(listener)[base_topic] == ['sensor_msgs/msg/PointCloud2']
     publisher.shutdown()
 
@@ -185,7 +186,7 @@ def test_publish_delivers_the_point_cloud(transport, listener, executor, point_c
         delivered = publish_until(publisher, serialize_message(point_cloud), received, executor)
         publisher.shutdown()
         if not delivered:
-            pytest.skip(f'no point cloud was delivered on {base_topic}')
+            pytest.fail(f'no point cloud was delivered on {base_topic}')
         assert received[0] == point_cloud
 
 
@@ -198,7 +199,7 @@ def test_publish_reaches_every_subscriber(transport, listener, executor, seriali
             publisher = transport.advertise(base_topic, 10)
             if not wait_until(lambda: publisher.get_num_subscribers() == 2):
                 publisher.shutdown()
-                pytest.skip('both subscribers were not matched on the base topic')
+                pytest.fail('both subscribers were not matched on the base topic')
 
             deadline = time.monotonic() + MATCH_TIMEOUT
             while not all(received.values()) and time.monotonic() < deadline:
@@ -208,7 +209,7 @@ def test_publish_reaches_every_subscriber(transport, listener, executor, seriali
             publisher.shutdown()
 
             if not all(received.values()):
-                pytest.skip(f'the subscriptions on {base_topic} were not both served')
+                pytest.fail(f'the subscriptions on {base_topic} were not both served')
             assert received['first'][0] == received['second'][0]
             assert publisher.get_num_subscribers() == 0
 
@@ -257,7 +258,7 @@ def test_publish_many_point_clouds(transport, listener, executor, make_cloud):
             publisher.shutdown()
 
         if seen_frames != expected_frames:
-            pytest.skip(f'not every point cloud was delivered on {base_topic}')
+            pytest.fail(f'not every point cloud was delivered on {base_topic}')
         for message in (m for m in received if m.header.frame_id == 'frame_64'):
             assert message.width == 64
             assert message.row_step == message.width * message.point_step
