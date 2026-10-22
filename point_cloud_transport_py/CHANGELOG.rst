@@ -2,6 +2,11 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.10 (2026-10-22)
+-------------------
+* point_cloud_transport_py: fix memory leak in PointCloudCodec.encode/decode (`#203 <https://github.com/ros-perception/point_cloud_transport//issues/203>`_)
+* Contributors: mergify[bot]
+
 4.0.9 (2026-06-26)
 ------------------
 * Fixed PointCloudCodec encode/decode in Python (`#181 <https://github.com/ros-perception/point_cloud_transport/issues/181>`_) (`#184 <https://github.com/ros-perception/point_cloud_transport/issues/184>`_)

@@ -2,6 +2,9 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.10 (2026-10-22)
+-------------------
+
 4.0.9 (2026-06-26)
 ------------------
 * Make VoidPtr public in PointCloudTransport class (`#186 <https://github.com/ros-perception/point_cloud_transport/issues/186>`_) (`#189 <https://github.com/ros-perception/point_cloud_transport/issues/189>`_)
