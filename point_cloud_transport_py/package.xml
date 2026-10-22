@@ -1,7 +1,7 @@
 <package format="3">
   <name>point_cloud_transport_py</name>
 
-  <version>1.0.23</version>
+  <version>1.0.24</version>
 
   <description>Python API for point_cloud_transport</description>
 
