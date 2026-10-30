@@ -41,6 +41,8 @@
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
 
+#include "utils.hpp"
+
 class TestSubscriber : public ::testing::Test
 {
 protected:
@@ -73,9 +75,9 @@ TEST_F(TestSubscriber, shutdown_ni_api)
 
   auto sub = point_cloud_transport::create_subscription(*node_, "pointcloud", fcn, "raw",
     rclcpp::SystemDefaultsQoS());
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 1u);
+  EXPECT_TRUE(test_rclcpp::wait_for_subscriber_count(node_, "pointcloud", 1u));
   sub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_subscribers("pointcloud"), 0u);
+  EXPECT_TRUE(test_rclcpp::wait_for_subscriber_count(node_, "pointcloud", 0u));
 }
 
 int main(int argc, char ** argv)

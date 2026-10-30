@@ -38,6 +38,8 @@
 
 #include "point_cloud_transport/point_cloud_transport.hpp"
 
+#include "utils.hpp"
+
 class TestPublisher : public ::testing::Test
 {
 protected:
@@ -55,9 +57,9 @@ TEST_F(TestPublisher, publisher_ni_api)
     *node_,
     "point_cloud",
     rclcpp::SystemDefaultsQoS());
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 1u);
+  EXPECT_TRUE(test_rclcpp::wait_for_publisher_count(node_, "point_cloud", 1u));
   pub.shutdown();
-  EXPECT_EQ(node_->get_node_graph_interface()->count_publishers("point_cloud"), 0u);
+  EXPECT_TRUE(test_rclcpp::wait_for_publisher_count(node_, "point_cloud", 0u));
   // coverage tests: invalid publisher should fail but not crash
   pub.publish(sensor_msgs::msg::PointCloud2());
   pub.publish(sensor_msgs::msg::PointCloud2::ConstSharedPtr());
