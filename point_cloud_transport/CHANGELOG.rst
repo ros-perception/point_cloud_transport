@@ -2,6 +2,9 @@
 Changelog for package point_cloud_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.5 (2026-10-22)
+------------------
+
 6.0.4 (2026-10-09)
 ------------------
 * Honor the caller default in TransportHints (`#198 <https://github.com/ros-perception/point_cloud_transport//issues/198>`_)

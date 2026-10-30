@@ -2,6 +2,12 @@
 Changelog for package point_cloud_transport_py
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+6.0.5 (2026-10-22)
+------------------
+* point_cloud_transport_py: avoid intermediate copies in publish/encode/decode (`#200 <https://github.com/ros-perception/point_cloud_transport//issues/200>`_)
+* point_cloud_transport_py: fix memory leak in PointCloudCodec.encode/decode
+* Contributors: Alejandro Hernández Cordero
+
 6.0.4 (2026-10-09)
 ------------------
 * Added common tests to point_cloud_transport_py and fix package.xml (`#195 <https://github.com/ros-perception/point_cloud_transport//issues/195>`_)
